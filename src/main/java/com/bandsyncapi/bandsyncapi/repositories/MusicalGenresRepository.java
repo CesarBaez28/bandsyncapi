@@ -5,6 +5,10 @@ import org.springframework.stereotype.Repository;
 
 import com.bandsyncapi.bandsyncapi.models.MusicalGenresModel;
 
+/*
+ * This interface is a repository for the musical_genres table in the database.
+ * Provides methods for performing CRUD operations on the musical_genres table.
+ */
 @Repository
 public interface MusicalGenresRepository extends JpaRepository<MusicalGenresModel, Integer> {
   
