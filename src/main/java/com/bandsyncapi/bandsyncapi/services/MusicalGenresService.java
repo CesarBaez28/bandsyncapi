@@ -1,6 +1,7 @@
 package com.bandsyncapi.bandsyncapi.services;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.bandsyncapi.bandsyncapi.models.MusicalGenresModel;
 
@@ -12,7 +13,7 @@ public interface MusicalGenresService {
 
   public List<MusicalGenresModel> findAll();
 
-  public MusicalGenresModel findById(Integer id);
+  public Optional<MusicalGenresModel> findById(Integer id);
 
   public MusicalGenresModel save(MusicalGenresModel musicalGenresModel);
 
