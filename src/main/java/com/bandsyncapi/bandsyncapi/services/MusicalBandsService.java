@@ -17,4 +17,11 @@ public interface MusicalBandsService {
    * @return - An Optional with the musical band if found, or an empty Optional if not found.
    */
   public Optional<MusicalBandsModel> findById(UUID id);
+
+  /**
+   * Saves a musical band to the database.
+   * @param musicalBandsModel - Musical band to be saved.
+   * @return - The saved musical band.
+   */
+  public MusicalBandsModel save(MusicalBandsModel musicalBandsModel);
 }
