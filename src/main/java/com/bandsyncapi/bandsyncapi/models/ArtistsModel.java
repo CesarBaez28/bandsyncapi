@@ -17,7 +17,7 @@ public class ArtistsModel {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private int id;
 
-  @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+  @ManyToOne
   @JoinColumn(name = "musical_band_id", nullable = false)
   private MusicalBandsModel musicalBand;
 
