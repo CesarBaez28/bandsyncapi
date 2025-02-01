@@ -1,0 +1,37 @@
+package com.bandsyncapi.bandsyncapi.api.v1.services.impl;
+
+import java.util.Optional;
+import java.util.UUID;
+
+import org.springframework.stereotype.Service;
+
+import com.bandsyncapi.bandsyncapi.api.v1.models.MusicalBandsModel;
+import com.bandsyncapi.bandsyncapi.api.v1.repositories.MusicalBandsRepository;
+import com.bandsyncapi.bandsyncapi.api.v1.services.MusicalBandsService;
+
+/**
+ * This class is a service implementation of the MusicalBandsService interface.
+ */
+@Service
+public class MusicalBandsServiceImpl implements MusicalBandsService {
+
+  private final MusicalBandsRepository musicalBandsRepository;
+
+  /**
+   * Constructor for the MusicalBandsServiceImpl class
+   * @param musicalBandsRepository - - Repository with methods for performing CRUD operations on the musical_bands table.
+   */
+  public MusicalBandsServiceImpl(MusicalBandsRepository musicalBandsRepository) {
+    this.musicalBandsRepository = musicalBandsRepository;
+  }
+
+  @Override
+  public Optional<MusicalBandsModel> findById(UUID id) {
+    return musicalBandsRepository.findById(id);
+  }
+
+  @Override
+  public MusicalBandsModel save(MusicalBandsModel musicalBandsModel) {
+    return musicalBandsRepository.save(musicalBandsModel);
+  }
+}
