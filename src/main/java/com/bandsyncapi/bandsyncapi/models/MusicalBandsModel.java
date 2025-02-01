@@ -8,13 +8,17 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /*
  * This class is a model for the musical_bands table in the database
  */
 @Entity
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "musical_bands")
 public class MusicalBandsModel {
 
@@ -28,7 +32,7 @@ public class MusicalBandsModel {
   @Column(name = "logo", nullable = false, length = 100, columnDefinition = "DEFAULT ''")
   private String logo;
 
-  @Column(name = "address",nullable = false, length = 255, columnDefinition = "DEFAULT ''")
+  @Column(name = "address", nullable = false, length = 255, columnDefinition = "DEFAULT ''")
   private String address;
 
   @Column(name = "phone", nullable = false, length = 25, columnDefinition = "DEFAULT ''")
@@ -39,4 +43,8 @@ public class MusicalBandsModel {
 
   @Column(name = "status", nullable = false, columnDefinition = "BIT DEFAULT 1")
   private Boolean status = true;
+
+  public MusicalBandsModel(UUID id) {
+    this.id = id;
+  }
 }
