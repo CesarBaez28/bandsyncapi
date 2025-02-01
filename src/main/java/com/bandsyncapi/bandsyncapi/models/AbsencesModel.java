@@ -37,7 +37,7 @@ public class AbsencesModel {
   @Column(name = "date_to", nullable = false)
   private LocalDate dateTo;
 
-  @Column(name = "description", nullable = false, columnDefinition = "TEXT DEFAULT ''")
+  @Column(name = "description", nullable = false, columnDefinition = "TEXT")
   private String description;
 
   @Column(name = "status", nullable = false, columnDefinition = "BIT DEFAULT 1")

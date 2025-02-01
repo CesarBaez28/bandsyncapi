@@ -38,5 +38,5 @@ public class MusicalBandsModel {
   private String email;
 
   @Column(name = "status", nullable = false, columnDefinition = "BIT DEFAULT 1")
-  private Boolean status;
+  private Boolean status = true;
 }

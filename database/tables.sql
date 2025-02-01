@@ -20,7 +20,7 @@ CREATE TABLE roles_permissions (
     permission_id INT NOT NULL,
     FOREIGN KEY (role_id) REFERENCES roles(id),
     FOREIGN KEY (permission_id) REFERENCES permissions(id),
-    PRIMARY KEY (role_id, permission_id)
+    PRIMARY KEY (role_id, permission_id),
     status BIT NOT NULL DEFAULT 1
 );
 
@@ -79,7 +79,7 @@ CREATE TABLE users_musical_bands (
     FOREIGN KEY (user_id) REFERENCES users(id),
     FOREIGN KEY (musical_band_id) REFERENCES musical_bands(id),
     PRIMARY KEY (user_id, musical_band_id),
-    status BIT NOT NULL DEFAULT 1,
+    status BIT NOT NULL DEFAULT 1
 );
 
 -- Table: Artists
@@ -106,7 +106,7 @@ CREATE INDEX musical_genre_name_index ON musical_genres(name);
 CREATE TABLE songs (
     id INT PRIMARY KEY AUTO_INCREMENT,
     artist_id INT NOT NULL,
-    musicak_genre_id INT NOT NULL,
+    musical_genre_id INT NOT NULL,
     musical_band_id BINARY(16) NOT NULL,
     FOREIGN KEY (artist_id) REFERENCES artists(id),
     FOREIGN KEY (musical_genre_id) REFERENCES musical_genres(id),
@@ -114,7 +114,7 @@ CREATE TABLE songs (
     tonality VARCHAR(25) NOT NULL DEFAULT '',
     link VARCHAR(255) NOT NULL DEFAULT '',
     sheet_music VARCHAR(255) NOT NULL DEFAULT '',
-    description TEXT NOT NULL DEFAULT '',
+    description TEXT,
     name VARCHAR(100) NOT NULL,
     status BIT NOT NULL DEFAULT 1
 );
@@ -126,7 +126,7 @@ CREATE TABLE repertoires (
     musical_band_id BINARY(16) NOT NULL,
     FOREIGN KEY (musical_band_id) REFERENCES musical_bands(id),
     name VARCHAR(100) NOT NULL UNIQUE,
-    description TEXT NOT NULL DEFAULT '',
+    description TEXT,
     link VARCHAR(255) NOT NULL DEFAULT '',
     status BIT NOT NULL DEFAULT 1
 );
@@ -151,7 +151,7 @@ CREATE TABLE events (
     FOREIGN KEY (musical_band_id) REFERENCES musical_bands(id),
     FOREIGN KEY (repertoire_id) REFERENCES repertoires(id),
     name VARCHAR(100) NOT NULL,
-    description TEXT NOT NULL DEFAULT '',
+    description TEXT,
     date DATETIME NOT NULL,
     place VARCHAR(255) NOT NULL,
     location VARCHAR(255) NOT NULL DEFAULT '',
@@ -167,6 +167,6 @@ CREATE TABLE absences (
     FOREIGN KEY (user_id) REFERENCES users(id),
     date_from DATETIME NOT NULL,
     date_to DATETIME NOT NULL,
-    description TEXT NOT NULL DEFAULT '',
+    description TEXT,
     status BIT NOT NULL DEFAULT 1
 );

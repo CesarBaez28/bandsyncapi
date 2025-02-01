@@ -47,7 +47,7 @@ public class SongsModel {
   @Column(name = "sheet_music", nullable = false, length = 255, columnDefinition = "DEFAULT ''")
   private String sheetMusic;
 
-  @Column(name = "description", nullable = false, length = 255, columnDefinition = "TEXT DEFAULT ''")
+  @Column(name = "description", nullable = false, length = 255, columnDefinition = "TEXT")
   private String description;
 
   @Column(name = "name", nullable = false, length = 100)

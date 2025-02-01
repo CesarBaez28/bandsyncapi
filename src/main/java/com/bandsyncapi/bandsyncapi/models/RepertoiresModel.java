@@ -32,7 +32,7 @@ public class RepertoiresModel {
   @Column(name = "name", nullable = false, length = 100)
   private String name;
 
-  @Column(name = "description", nullable = false, columnDefinition = "TEXT DEFAULT ''")
+  @Column(name = "description", nullable = false, columnDefinition = "TEXT")
   private String description;
 
   @Column(name = "link", nullable = false, length = 255)
