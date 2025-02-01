@@ -9,11 +9,18 @@ import com.bandsyncapi.bandsyncapi.models.MusicalBandsModel;
 import com.bandsyncapi.bandsyncapi.repositories.MusicalBandsRepository;
 import com.bandsyncapi.bandsyncapi.services.MusicalBandsService;
 
+/**
+ * This class is a service implementation of the MusicalBandsService interface.
+ */
 @Service
 public class MusicalBandsServiceImpl implements MusicalBandsService {
 
   private final MusicalBandsRepository musicalBandsRepository;
 
+  /**
+   * Constructor for the MusicalBandsServiceImpl class
+   * @param musicalBandsRepository - - Repository with methods for performing CRUD operations on the musical_bands table.
+   */
   public MusicalBandsServiceImpl(MusicalBandsRepository musicalBandsRepository) {
     this.musicalBandsRepository = musicalBandsRepository;
   }

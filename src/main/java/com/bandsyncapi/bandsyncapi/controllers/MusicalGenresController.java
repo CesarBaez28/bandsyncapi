@@ -9,8 +9,6 @@ import com.bandsyncapi.bandsyncapi.mappers.MusicalGenresMapper;
 import com.bandsyncapi.bandsyncapi.models.MusicalGenresModel;
 import com.bandsyncapi.bandsyncapi.services.MusicalGenresService;
 
-import io.micrometer.core.ipc.http.HttpSender.Response;
-
 import java.util.UUID;
 
 import org.springframework.http.ResponseEntity;
