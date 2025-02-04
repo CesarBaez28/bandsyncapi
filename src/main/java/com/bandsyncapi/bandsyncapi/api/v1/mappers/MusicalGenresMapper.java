@@ -22,7 +22,7 @@ public interface MusicalGenresMapper {
   @Mapping(target = "id", ignore = true)
   @Mapping(target = "musicalBand", source = "musicalBandId", qualifiedByName = "mapBandIdToEntity")
   @Mapping(target = "status", constant = "true")
-  MusicalGenresModel toEntity(MusicalGenrePostDto dto);
+  MusicalGenresModel toModel(MusicalGenrePostDto dto);
 
   @Named("mapBandIdToEntity")
   default MusicalBandsModel mapBandIdToEntity(UUID bandId) {
