@@ -10,6 +10,8 @@ import com.bandsyncapi.bandsyncapi.api.v1.models.MusicalGenresModel;
 import com.bandsyncapi.bandsyncapi.api.v1.repositories.MusicalGenresRepository;
 import com.bandsyncapi.bandsyncapi.api.v1.services.MusicalGenresService;
 
+import jakarta.persistence.EntityNotFoundException;
+
 /**
  * This class is a service implementation of the MusicalGenresService interface.
  */
@@ -44,6 +46,15 @@ public class MusicalGenresServiceImpl implements MusicalGenresService {
   @Override
   public MusicalGenresModel save(MusicalGenresModel musicalGenresModel) {
     return musicalGenresRepository.save(musicalGenresModel);
+  }
+
+  @Override
+  public void updateGenreName(Integer id, String name) {
+    int rowsUpdated = musicalGenresRepository.updateGenreName(id, name);
+
+    if (rowsUpdated == 0) {
+      throw new EntityNotFoundException("No se encontró un género musical con ese id");
+    }
   }
 
   @Override

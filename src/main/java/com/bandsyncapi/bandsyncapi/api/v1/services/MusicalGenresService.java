@@ -40,6 +40,13 @@ public interface MusicalGenresService {
   public MusicalGenresModel save(MusicalGenresModel musicalGenresModel);
 
   /**
+   * Update musical genre name
+   * @param id - musical genre id
+   * @param name - musical genre name
+   */
+  public void updateGenreName(Integer id, String name);
+
+  /**
    * Deletes a musical genre from the database by its id.
    * @param id - Id of the musical genre to be deleted.
    */

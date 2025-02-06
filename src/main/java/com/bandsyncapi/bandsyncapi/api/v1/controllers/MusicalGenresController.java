@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.bandsyncapi.bandsyncapi.api.v1.dto.musicalgenres.MusicalGenreDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.musicalgenres.MusicalGenrePostDto;
+import com.bandsyncapi.bandsyncapi.api.v1.dto.musicalgenres.MusicalGenrePutDto;
 import com.bandsyncapi.bandsyncapi.api.v1.mappers.MusicalGenresMapper;
 import com.bandsyncapi.bandsyncapi.api.v1.models.MusicalGenresModel;
 import com.bandsyncapi.bandsyncapi.api.v1.services.MusicalGenresService;
@@ -21,6 +22,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+
 
 
 /**
@@ -73,5 +76,12 @@ public class MusicalGenresController {
 
     return ResponseEntity.status(HttpStatus.OK)
         .body(new ApiResponse<>(true, "Datos encontrados correctamente", musicalGenreResponse, null));
+  }
+
+  @PutMapping("/updateMusicalGenreName/{id}")
+  public ResponseEntity<ApiResponse<Void>> updateMusicalGenreName(@PathVariable Integer id, @RequestBody MusicalGenrePutDto musicalGenrePutDto) {
+    musicalGenresService.updateGenreName(id, musicalGenrePutDto.name());
+
+    return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(true, "Género musical actualizado correctamente", null, null));
   }
 }
