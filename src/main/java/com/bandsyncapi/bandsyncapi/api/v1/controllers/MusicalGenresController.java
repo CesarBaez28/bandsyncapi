@@ -12,7 +12,6 @@ import com.bandsyncapi.bandsyncapi.response.ApiResponse;
 
 import jakarta.validation.Valid;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -62,6 +61,11 @@ public class MusicalGenresController {
         .body(new ApiResponse<>(true, "Género musical guardado exitosamente.", responseDto, null));
   }
 
+  /**
+   * Finds musical genres by musical band id
+   * @param musicalBandId - musical band id
+   * @return - A list with all musical genres
+   */
   @GetMapping("/findBymusicalBandId/{musicalBandId}")
   public ResponseEntity<ApiResponse<List<MusicalGenreDto>>> findByMusicalBandId(@PathVariable UUID musicalBandId) {
     List<MusicalGenresModel> musicalgenres = musicalGenresService.findByMusicalBandId(musicalBandId);
