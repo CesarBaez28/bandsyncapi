@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.bandsyncapi.bandsyncapi.response.ApiResponse;
 
+import jakarta.persistence.EntityNotFoundException;
+
 /**
  * Globally handle all exceptions in the API
  */
@@ -70,7 +72,18 @@ public class GlobalExceptionHandler {
   }
 
   /**
+   * Haandle EntityNotFoundException
+   * @param ex - Object EntityNotFoundException
+   * @return - An object ApiResponse with the error
+   */
+  @ExceptionHandler(EntityNotFoundException.class)
+  public ResponseEntity<ApiResponse<Void>> handlEntityNotFoundException(EntityNotFoundException ex) {
+    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse<>(false, ex.getMessage(), null, null));
+  }
+
+  /**
    * Extract the constrain name from the database
+   * 
    * @param errorMessage - The error message from the exception
    * @return - A string with the constrain name
    */
