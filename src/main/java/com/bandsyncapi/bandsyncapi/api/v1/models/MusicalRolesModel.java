@@ -9,6 +9,7 @@ import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.Data;
 
 /*
@@ -16,9 +17,15 @@ import lombok.Data;
  */
 @Entity
 @Data
-@Table(name = "musical_roles", indexes = {
+@Table(
+  name = "musical_roles", 
+  uniqueConstraints = {
+    @UniqueConstraint(columnNames = {"musical_band_id", "name"})
+  },
+  indexes = {
   @Index(name = "nusical_role_name_index", columnList = "name")
-})
+  }
+)
 public class MusicalRolesModel {
 
   @Id

@@ -41,6 +41,7 @@ CREATE TABLE musical_roles (
     musical_band_id BINARY(16) NOT NULL,
     FOREIGN KEY (musical_band_id) REFERENCES musical_bands(id),
     name VARCHAR(100) NOT NULL,
+    UNIQUE(musical_band_id, name),
     status BIT NOT NULL DEFAULT 1
 );
 CREATE INDEX nusical_role_name_index ON musical_roles(name);
@@ -98,6 +99,7 @@ CREATE TABLE musical_genres (
     musical_band_id BINARY(16) NOT NULL,
     FOREIGN KEY (musical_band_id) REFERENCES musical_bands(id),
     name VARCHAR(100) NOT NULL,
+    UNIQUE(musical_band_id, name),
     status BIT NOT NULL DEFAULT 1
 );
 CREATE INDEX musical_genre_name_index ON musical_genres(name);
