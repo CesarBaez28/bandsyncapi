@@ -2,6 +2,7 @@ package com.bandsyncapi.bandsyncapi.api.v1.services.impl;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
@@ -28,6 +29,11 @@ public class MusicalGenresServiceImpl implements MusicalGenresService {
   @Override
   public List<MusicalGenresModel> findAll() {
     return musicalGenresRepository.findAll();
+  }
+
+  @Override
+  public List<MusicalGenresModel> findByMusicalBandId(UUID id) {
+    return musicalGenresRepository.findByMusicalBandId(id);
   }
 
   @Override

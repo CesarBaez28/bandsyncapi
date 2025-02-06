@@ -2,6 +2,7 @@ package com.bandsyncapi.bandsyncapi.api.v1.services;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import com.bandsyncapi.bandsyncapi.api.v1.models.MusicalGenresModel;
 
@@ -16,6 +17,13 @@ public interface MusicalGenresService {
    * @return A list with all musical genres in the database.
    */
   public List<MusicalGenresModel> findAll();
+
+  /**
+   * Finds all musical genres by musical band id
+   * @param id - musical band id
+   * @return - A list of musical genres
+   */
+  public List<MusicalGenresModel>findByMusicalBandId(UUID id);
 
   /**
    * Finds a musical genre by its id.

@@ -1,5 +1,6 @@
 package com.bandsyncapi.bandsyncapi.api.v1.mappers;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.mapstruct.Mapper;
@@ -23,6 +24,8 @@ public interface MusicalGenresMapper {
   @Mapping(target = "musicalBand", source = "musicalBandId", qualifiedByName = "mapBandIdToEntity")
   @Mapping(target = "status", constant = "true")
   MusicalGenresModel toModel(MusicalGenrePostDto dto);
+
+  List<MusicalGenreDto> toDtoList(List<MusicalGenresModel> musicalGenresModelList);
 
   @Named("mapBandIdToEntity")
   default MusicalBandsModel mapBandIdToEntity(UUID bandId) {

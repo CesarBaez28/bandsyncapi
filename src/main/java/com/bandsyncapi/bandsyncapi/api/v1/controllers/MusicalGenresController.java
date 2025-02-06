@@ -12,10 +12,17 @@ import com.bandsyncapi.bandsyncapi.response.ApiResponse;
 
 import jakarta.validation.Valid;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+
 
 /**
  * This is the controller to handle requests for the musical_genres table.
@@ -53,5 +60,14 @@ public class MusicalGenresController {
 
     return ResponseEntity.status(HttpStatus.CREATED)
         .body(new ApiResponse<>(true, "Género musical guardado exitosamente.", responseDto, null));
+  }
+
+  @GetMapping("/findBymusicalBandId/{musicalBandId}")
+  public ResponseEntity<ApiResponse<List<MusicalGenreDto>>> findByMusicalBandId(@PathVariable UUID musicalBandId) {
+    List<MusicalGenresModel> musicalgenres = musicalGenresService.findByMusicalBandId(musicalBandId);
+    List<MusicalGenreDto> musicalGenreResponse = musicalGenresMapper.toDtoList(musicalgenres);
+
+    return ResponseEntity.status(HttpStatus.OK)
+        .body(new ApiResponse<>(true, "Datos encontrados correctamente", musicalGenreResponse, null));
   }
 }
