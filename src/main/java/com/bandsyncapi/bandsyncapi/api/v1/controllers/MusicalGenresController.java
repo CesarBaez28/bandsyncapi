@@ -20,11 +20,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
-
-
 
 /**
  * This is the controller to handle requests for the musical_genres table.
@@ -66,6 +65,7 @@ public class MusicalGenresController {
 
   /**
    * Finds musical genres by musical band id
+   * 
    * @param musicalBandId - musical band id
    * @return - A list with all musical genres
    */
@@ -80,14 +80,32 @@ public class MusicalGenresController {
 
   /**
    * Update the name of a musical genre
-   * @param id - musical genre id
+   * 
+   * @param id                 - musical genre id
    * @param musicalGenrePutDto - the request body to update the musical genre
-   * @return - An object ApiReponse indicating that the musical genre name was updated 
+   * @return - An object ApiReponse indicating that the musical genre name was
+   *         updated
    */
   @PutMapping("/updateMusicalGenreName/{id}")
-  public ResponseEntity<ApiResponse<Void>> updateMusicalGenreName(@PathVariable Integer id, @RequestBody MusicalGenrePutDto musicalGenrePutDto) {
+  public ResponseEntity<ApiResponse<Void>> updateMusicalGenreName(@PathVariable Integer id,
+      @RequestBody MusicalGenrePutDto musicalGenrePutDto) {
     musicalGenresService.updateGenreName(id, musicalGenrePutDto.name());
 
-    return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(true, "Género musical actualizado correctamente", null, null));
+    return ResponseEntity.status(HttpStatus.OK)
+        .body(new ApiResponse<>(true, "Género musical actualizado correctamente", null, null));
+  }
+
+  /**
+   * Delete a musical genre
+   * 
+   * @param id - musical genre id
+   * @return - An object ApiResponse indicating that the musical genre was deleted
+   */
+  @DeleteMapping("/delete/{id}")
+  public ResponseEntity<ApiResponse<Void>> deleteMusicalGenre(@PathVariable Integer id) {
+    musicalGenresService.deleteById(id);
+
+    return ResponseEntity.status(HttpStatus.OK)
+        .body(new ApiResponse<>(true, "Género musical eliminado", null, null));
   }
 }
