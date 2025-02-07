@@ -78,6 +78,12 @@ public class MusicalGenresController {
         .body(new ApiResponse<>(true, "Datos encontrados correctamente", musicalGenreResponse, null));
   }
 
+  /**
+   * Update the name of a musical genre
+   * @param id - musical genre id
+   * @param musicalGenrePutDto - the request body to update the musical genre
+   * @return - An object ApiReponse indicating that the musical genre name was updated 
+   */
   @PutMapping("/updateMusicalGenreName/{id}")
   public ResponseEntity<ApiResponse<Void>> updateMusicalGenreName(@PathVariable Integer id, @RequestBody MusicalGenrePutDto musicalGenrePutDto) {
     musicalGenresService.updateGenreName(id, musicalGenrePutDto.name());
