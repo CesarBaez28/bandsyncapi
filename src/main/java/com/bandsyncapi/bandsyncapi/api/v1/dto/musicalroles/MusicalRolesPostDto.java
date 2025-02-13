@@ -6,9 +6,9 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 /*
- * This record represent the body request for creating a new musical Role
+ * This record represent the body request for creating a new musical
  */
-public record MusicalRolesPostDto (
+public record MusicalRolesPostDto(
   @NotBlank(message = "El campo nombre es obligatorio.")
   @Size(min = 3, max = 100, message = "El nombre debe tener entre 3 y 100 caracteres.")
   String name, 

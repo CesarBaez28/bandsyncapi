@@ -11,6 +11,8 @@ import com.bandsyncapi.bandsyncapi.api.v1.models.MusicalRolesModel;
 import com.bandsyncapi.bandsyncapi.api.v1.services.MusicalRolesService;
 import com.bandsyncapi.bandsyncapi.response.ApiResponse;
 
+import jakarta.validation.Valid;
+
 import java.util.List;
 import java.util.UUID;
 
@@ -52,7 +54,8 @@ public class MusicalRolesController {
    * @return -An object ApiResponse with the new musical role
    */
   @PostMapping("/save")
-  public ResponseEntity<ApiResponse<MusicalRolesDto>> save(@RequestBody MusicalRolesPostDto musicalRolesPostDto) {
+  public ResponseEntity<ApiResponse<MusicalRolesDto>> save(
+      @Valid @RequestBody MusicalRolesPostDto musicalRolesPostDto) {
     MusicalRolesModel musicalRolesModel = musicalRolesMapper.toModel(musicalRolesPostDto);
     MusicalRolesModel savedMusicalRolesModel = musicalRolesService.save(musicalRolesModel);
     MusicalRolesDto musicalRolesDtoResponse = musicalRolesMapper.toDto(savedMusicalRolesModel);
