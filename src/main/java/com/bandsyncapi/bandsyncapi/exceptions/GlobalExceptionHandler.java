@@ -59,20 +59,22 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(DataIntegrityViolationException.class)
   public ResponseEntity<ApiResponse<Void>> handleIntegrityViolationException(DataIntegrityViolationException ex) {
     String errorMesage = ex.getMostSpecificCause().getMessage();
-    final Map<String, String> CONSTRAINT_MESSAGES = new HashMap<>();
+    final Map<String, String> constraintMessages = new HashMap<>();
 
-    CONSTRAINT_MESSAGES.put("musical_bands.name", "Ya existe una banda con ese nombre.");
-    CONSTRAINT_MESSAGES.put("musical_genres.musical_band_id", "El género ya está registrado para esta banda.");
+    constraintMessages.put("musical_bands.name", "Ya existe una banda con ese nombre.");
+    constraintMessages.put("musical_genres.musical_band_id", "El género ya está registrado para esta banda.");
+    constraintMessages.put("musical_roles.musical_band_id", "Ese role musical ya está registrado para esta banda.");
 
     String key = extractConstraintName(errorMesage);
 
     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
         .body(new ApiResponse<>(false,
-            CONSTRAINT_MESSAGES.getOrDefault(key, "Ya existe un registro con ese nombre"), null, null));
+            constraintMessages.getOrDefault(key, "Ya existe un registro con ese nombre"), null, null));
   }
 
   /**
    * Haandle EntityNotFoundException
+   * 
    * @param ex - Object EntityNotFoundException
    * @return - An object ApiResponse with the error
    */
