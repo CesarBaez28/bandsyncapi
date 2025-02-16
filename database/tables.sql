@@ -89,6 +89,7 @@ CREATE TABLE artists (
     musical_band_id BINARY(16) NOT NULL,
     FOREIGN KEY (musical_band_id) REFERENCES musical_bands(id),
     name VARCHAR(100) NOT NULL,
+    UNIQUE(musical_band_id, name),
     status BIT NOT NULL DEFAULT 1
 );
 CREATE INDEX artist_name_index ON artists(name);

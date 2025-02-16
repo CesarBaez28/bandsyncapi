@@ -8,14 +8,20 @@ import lombok.Data;
  */
 @Entity
 @Data
-@Table(name = "artists", indexes = {
-  @Index(name = "artist_name_index", columnList = "name")
-})
+@Table(
+  name = "artists", 
+  uniqueConstraints = {
+    @UniqueConstraint(columnNames = {"musical_band_id", "name"})
+  },
+  indexes = {
+    @Index(name = "artist_name_index", columnList = "name")
+  }
+)
 public class ArtistsModel {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private int id;
+  private Integer id;
 
   @ManyToOne
   @JoinColumn(name = "musical_band_id", nullable = false)
