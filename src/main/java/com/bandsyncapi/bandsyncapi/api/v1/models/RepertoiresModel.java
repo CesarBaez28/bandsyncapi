@@ -10,14 +10,18 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.Data;
 
 /**
- * This class is the many to many relationship between the repertoires and the songs.
+ * This class is the many to many relationship between the repertoires and the
+ * songs.
  */
 @Entity
 @Data
-@Table(name = "repertoires")
+@Table(name = "repertoires", uniqueConstraints = {
+    @UniqueConstraint(columnNames = { "musical_band_id", "name" })
+})
 public class RepertoiresModel {
 
   @Id

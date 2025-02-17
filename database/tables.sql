@@ -128,7 +128,8 @@ CREATE TABLE repertoires (
     id BINARY (16) PRIMARY KEY DEFAULT (UUID_TO_BIN(UUID())),
     musical_band_id BINARY(16) NOT NULL,
     FOREIGN KEY (musical_band_id) REFERENCES musical_bands(id),
-    name VARCHAR(100) NOT NULL UNIQUE,
+    name VARCHAR(100) NOT NULL,
+    UNIQUE(musical_band_id, name),
     description TEXT,
     link VARCHAR(255) NOT NULL DEFAULT '',
     status BIT NOT NULL DEFAULT 1

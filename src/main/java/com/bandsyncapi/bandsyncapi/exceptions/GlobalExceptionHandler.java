@@ -65,6 +65,7 @@ public class GlobalExceptionHandler {
     constraintMessages.put("musical_genres.musical_band_id", "El género ya está registrado para esta banda.");
     constraintMessages.put("musical_roles.musical_band_id", "Ese role musical ya está registrado para esta banda.");
     constraintMessages.put("artists.musical_band_id", "Ese artista ya está registrado para esta banda.");
+    constraintMessages.put("repertoires.musical_band_id", "Ese repertorio ya está registrado para esta banda.");
 
     String key = extractConstraintName(errorMesage);
 
