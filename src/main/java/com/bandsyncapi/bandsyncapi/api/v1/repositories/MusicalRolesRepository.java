@@ -23,6 +23,7 @@ public interface MusicalRolesRepository extends JpaRepository<MusicalRolesModel,
 
   /**
    * finds musical roles by musical band id
+   * 
    * @param id - musical band id
    * @return A MusicalRolesModel list
    */
@@ -33,6 +34,13 @@ public interface MusicalRolesRepository extends JpaRepository<MusicalRolesModel,
       """)
   List<MusicalRolesModel> findByMusicalBandId(@Param("musicalBandId") UUID musicalBandId);
 
+  /**
+   * update musical role name
+   * 
+   * @param id - musical role id
+   * @param musicalRoleName - new musical role name
+   * @return - The row updated 
+   */
   @Modifying
   @Transactional
   @Query("UPDATE MusicalRolesModel mr SET mr.name = :musicalRoleName WHERE mr.id = :id")
