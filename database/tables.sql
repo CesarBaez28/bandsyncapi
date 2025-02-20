@@ -117,7 +117,6 @@ CREATE TABLE songs (
     tonality VARCHAR(25) NOT NULL DEFAULT '',
     link VARCHAR(255) NOT NULL DEFAULT '',
     sheet_music VARCHAR(255) NOT NULL DEFAULT '',
-    description TEXT,
     name VARCHAR(100) NOT NULL,
     status BIT NOT NULL DEFAULT 1
 );

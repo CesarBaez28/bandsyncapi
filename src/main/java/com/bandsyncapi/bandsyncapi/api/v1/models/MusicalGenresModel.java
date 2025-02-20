@@ -10,12 +10,14 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /*
  * This class is a model for the musical_genres table in the database.
  */
 @Entity
 @Data
+@NoArgsConstructor
 @Table(
   name = "musical_genres", 
   uniqueConstraints = {
@@ -40,4 +42,8 @@ public class MusicalGenresModel {
 
   @Column(name = "status", nullable = false, columnDefinition = "BIT DEFAULT 1")
   private Boolean status;
+
+  public MusicalGenresModel (Integer id) {
+    this.id = id;
+  }
 }

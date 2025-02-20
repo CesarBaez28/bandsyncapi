@@ -2,12 +2,14 @@ package com.bandsyncapi.bandsyncapi.api.v1.models;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /*
  * This class is a model for the artists table in the database.
  */
 @Entity
 @Data
+@NoArgsConstructor
 @Table(
   name = "artists", 
   uniqueConstraints = {
@@ -32,4 +34,8 @@ public class ArtistsModel {
 
   @Column(name = "status", nullable = false, columnDefinition = "BIT DEFAULT 1")
   private Boolean status;
+
+  public ArtistsModel (Integer id) {
+    this.id = id;
+  }
 }

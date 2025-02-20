@@ -1,6 +1,5 @@
 package com.bandsyncapi.bandsyncapi.api.v1.models;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -26,15 +25,15 @@ public class SongsModel {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Integer id;
 
-  @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+  @ManyToOne
   @JoinColumn(name = "artist_id", nullable = false)
   private ArtistsModel artist;
 
-  @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-  @JoinColumn(name = "genre_id", nullable = false)
+  @ManyToOne
+  @JoinColumn(name = "musical_genre_id", nullable = false)
   private MusicalGenresModel genre;
 
-  @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+  @ManyToOne
   @JoinColumn(name = "musical_band_id", nullable = false)
   private MusicalBandsModel musicalBand;
 
@@ -46,9 +45,6 @@ public class SongsModel {
 
   @Column(name = "sheet_music", nullable = false, length = 255, columnDefinition = "DEFAULT ''")
   private String sheetMusic;
-
-  @Column(name = "description", nullable = false, length = 255, columnDefinition = "TEXT")
-  private String description;
 
   @Column(name = "name", nullable = false, length = 100)
   private String name;
