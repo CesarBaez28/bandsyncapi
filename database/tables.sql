@@ -138,11 +138,9 @@ CREATE TABLE repertoires (
 CREATE TABLE repertoires_songs (
     repertoire_id BINARY(16) NOT NULL,
     song_id INT NOT NULL,
-    user_id BINARY(16) NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES users(id),
     FOREIGN KEY (repertoire_id) REFERENCES repertoires(id),
     FOREIGN KEY (song_id) REFERENCES songs(id),
-    PRIMARY KEY (repertoire_id, song_id, user_id),
+    PRIMARY KEY (repertoire_id, song_id),
     status BIT NOT NULL DEFAULT 1
 );
 

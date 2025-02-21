@@ -22,7 +22,4 @@ public class RepertoiresSongsKey implements Serializable {
 
   @Column(name = "song_id")
   private Integer songId;
-
-  @Column(name = "user_id")
-  private UUID userId;
 }

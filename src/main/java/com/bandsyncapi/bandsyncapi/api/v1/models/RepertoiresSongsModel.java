@@ -8,12 +8,14 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MapsId;
 import jakarta.persistence.Table;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /*
  * This class is the entity for the repertoires_songs table.
  */
 @Entity
 @Data
+@NoArgsConstructor
 @Table(name = "repertoires_songs")
 public class RepertoiresSongsModel {
 
@@ -30,18 +32,13 @@ public class RepertoiresSongsModel {
   @JoinColumn(name = "song_id")
   private SongsModel song;
 
-  @ManyToOne
-  @MapsId("userId")
-  @JoinColumn(name = "user_id")
-  private UsersModel user;
-
   @Column(name = "status", nullable = false, columnDefinition = "BIT DEFAULT 1")
   private Boolean status;
 
-  public RepertoiresSongsModel(RepertoiresModel repertoire, SongsModel song, UsersModel user) {
+  public RepertoiresSongsModel(RepertoiresModel repertoire, SongsModel song, Boolean status) {
     this.repertoire = repertoire;
     this.song = song;
-    this.user = user;
-    this.id = new RepertoiresSongsKey(repertoire.getId(), song.getId(), user.getId());
+    this.status = status;
+    this.id = new RepertoiresSongsKey(repertoire.getId(), song.getId());
   }
 }

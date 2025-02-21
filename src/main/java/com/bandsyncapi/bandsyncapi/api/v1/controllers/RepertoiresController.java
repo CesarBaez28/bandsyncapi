@@ -9,6 +9,7 @@ import com.bandsyncapi.bandsyncapi.api.v1.dto.repertoires.RepertoiresPutDto;
 import com.bandsyncapi.bandsyncapi.api.v1.mappers.RepertoiresMapper;
 import com.bandsyncapi.bandsyncapi.api.v1.models.RepertoiresModel;
 import com.bandsyncapi.bandsyncapi.api.v1.services.RepertoiresService;
+import com.bandsyncapi.bandsyncapi.api.v1.services.RepertoiresSongsService;
 import com.bandsyncapi.bandsyncapi.response.ApiResponse;
 
 import jakarta.validation.Valid;
@@ -32,16 +33,22 @@ public class RepertoiresController {
 
   private final RepertoiresMapper repertoiresMapper;
 
+  private final RepertoiresSongsService repertoiresSongsService;
+
   /**
    * Constructor
    * 
-   * @param repertoiresService - Service with methods for performing CRUD
-   *                           operations on the repertoires table.
-   * @param repertoiresMapper  - - Mapper to convert between RepertoiresModel and
-   *                           RepertoiresDto.
+   * @param repertoiresService      - Service with methods for performing CRUD
+   *                                operations on the repertoires table.
+   * @param repertoiresSongsService Service with methods for performing CRUD
+   *                                operations on the repertoires_songs table.
+   * @param repertoiresMapper       - Mapper to convert between RepertoiresModel
+   *                                and RepertoiresDto.
    */
-  public RepertoiresController(RepertoiresService repertoiresService, RepertoiresMapper repertoiresMapper) {
+  public RepertoiresController(RepertoiresService repertoiresService, RepertoiresSongsService repertoiresSongsService,
+      RepertoiresMapper repertoiresMapper) {
     this.repertoiresService = repertoiresService;
+    this.repertoiresSongsService = repertoiresSongsService;
     this.repertoiresMapper = repertoiresMapper;
   }
 
@@ -49,16 +56,16 @@ public class RepertoiresController {
    * Save a repertoire
    * 
    * @param repertoiresPostDto - request to save the repertoire
-   * @return - repertoire saved
+   * @return - An ApiResponse object
    */
   @PostMapping("/save")
-  public ResponseEntity<ApiResponse<RepertoiresDto>> save(@Valid @RequestBody RepertoiresPostDto repertoiresPostDto) {
+  public ResponseEntity<ApiResponse<Void>> save(@Valid @RequestBody RepertoiresPostDto repertoiresPostDto) {
     RepertoiresModel repertoiresModel = repertoiresMapper.toModel(repertoiresPostDto);
     RepertoiresModel repertoiresModelSaved = repertoiresService.save(repertoiresModel);
-    RepertoiresDto repertoiresDto = repertoiresMapper.toDto(repertoiresModelSaved);
+    repertoiresSongsService.saveAll(repertoiresModelSaved, repertoiresPostDto.songs());
 
     return ResponseEntity.status(HttpStatus.CREATED)
-        .body(new ApiResponse<>(true, "Repertorio guardado correctamente", repertoiresDto, null));
+        .body(new ApiResponse<>(true, "Repertorio guardado correctamente", null, null));
   }
 
   /**

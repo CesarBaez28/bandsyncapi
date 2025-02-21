@@ -10,12 +10,14 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /*
  * This class is a model for the songs table in the database.
  */
 @Entity
 @Data
+@NoArgsConstructor
 @Table(name = "songs", indexes = {
   @Index(name = "song_name_index", columnList = "name")
 })
@@ -51,4 +53,8 @@ public class SongsModel {
 
   @Column(name = "status", nullable = false, columnDefinition = "BIT DEFAULT 1")
   private Boolean status;
+
+  public SongsModel (Integer id) {
+    this.id = id;
+  }
 }
