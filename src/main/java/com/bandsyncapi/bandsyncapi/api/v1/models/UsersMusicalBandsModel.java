@@ -8,12 +8,14 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MapsId;
 import jakarta.persistence.Table;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /*
  * This class is a model for the users_musical_bands table in the database.
  */
 @Entity
 @Data
+@NoArgsConstructor
 @Table(name = "users_musical_bands")  
 public class UsersMusicalBandsModel {
   
@@ -33,9 +35,10 @@ public class UsersMusicalBandsModel {
   @Column(name = "status", nullable = false, columnDefinition = "BIT DEFAULT 1")
   private Boolean status;
   
-  public UsersMusicalBandsModel(UsersModel user, MusicalBandsModel musicalBand) {
+  public UsersMusicalBandsModel(UsersModel user, MusicalBandsModel musicalBand, Boolean status) {
     this.user = user;
     this.musicalBand = musicalBand;
+    this.status = status;
     this.id = new UsersMusicalBandsKey(user.getId(), musicalBand.getId());
   }
 }

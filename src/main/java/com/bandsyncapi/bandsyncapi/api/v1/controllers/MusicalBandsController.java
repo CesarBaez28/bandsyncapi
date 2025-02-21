@@ -4,9 +4,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.bandsyncapi.bandsyncapi.api.v1.dto.musicalbands.MusicalBandsDto;
+import com.bandsyncapi.bandsyncapi.api.v1.dto.musicalbands.MusicalBandsPostDto;
 import com.bandsyncapi.bandsyncapi.api.v1.mappers.MusicalBandsMapper;
 import com.bandsyncapi.bandsyncapi.api.v1.models.MusicalBandsModel;
 import com.bandsyncapi.bandsyncapi.api.v1.services.MusicalBandsService;
+import com.bandsyncapi.bandsyncapi.api.v1.services.UsersMusicalBandsService;
 import com.bandsyncapi.bandsyncapi.response.ApiResponse;
 
 import jakarta.validation.Valid;
@@ -25,6 +27,8 @@ public class MusicalBandsController {
 
   private final MusicalBandsService musicalBandsService;
 
+  private final UsersMusicalBandsService usersMusicalBandsService;
+
   private final MusicalBandsMapper musicalBandsMapper;
 
   /**
@@ -32,24 +36,29 @@ public class MusicalBandsController {
    * 
    * @param musicalBandsService - Service with methods for performing CRUD
    *                            operations on the musical_bands table.
+   * @param usersMusicalBandsService - Service with methods for performing CRUD on users_musical_bands table
    * @param musicalBandsMapper  - Mapper to convert between MusicalBandsModel and
    *                            MusicalBandsDto.
    */
-  public MusicalBandsController(MusicalBandsService musicalBandsService, MusicalBandsMapper musicalBandsMapper) {
+  public MusicalBandsController(MusicalBandsService musicalBandsService, UsersMusicalBandsService usersMusicalBandsService, MusicalBandsMapper musicalBandsMapper) {
     this.musicalBandsService = musicalBandsService;
+    this.usersMusicalBandsService = usersMusicalBandsService;
     this.musicalBandsMapper = musicalBandsMapper;
   }
 
   /**
    * Saves a musical band to the database.
    * 
-   * @param musicalBandsDto - Musical band to be saved.
+   * @param musicalBandsPostDto - Musical band to be saved.
    * @return - The saved musical band.
    */
   @PostMapping("/save")
-  public ResponseEntity<ApiResponse<MusicalBandsDto>> saveMusicalBand(@Valid @RequestBody MusicalBandsDto musicalBandsDto) {
-    MusicalBandsModel musicalBandsModel = musicalBandsMapper.toModel(musicalBandsDto);
+  public ResponseEntity<ApiResponse<MusicalBandsDto>> saveMusicalBand(@Valid @RequestBody MusicalBandsPostDto musicalBandsPostDto) {
+    MusicalBandsModel musicalBandsModel = musicalBandsMapper.toModel(musicalBandsPostDto);
     MusicalBandsModel savedMusicalBandsModel = musicalBandsService.save(musicalBandsModel);
+
+    usersMusicalBandsService.save(musicalBandsPostDto.user(), savedMusicalBandsModel);
+
     MusicalBandsDto savedMusicalBandsModelDto = musicalBandsMapper.toDto(savedMusicalBandsModel);
 
     return ResponseEntity.status(HttpStatus.CREATED)
