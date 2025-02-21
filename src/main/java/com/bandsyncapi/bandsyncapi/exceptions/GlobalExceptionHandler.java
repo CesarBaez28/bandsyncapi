@@ -62,6 +62,7 @@ public class GlobalExceptionHandler {
     final Map<String, String> constraintMessages = new HashMap<>();
 
     constraintMessages.put("musical_bands.name", "Ya existe una banda con ese nombre.");
+    constraintMessages.put("musical_bands.email", "Ya existe una banda con ese mismo correo electrónico.");
     constraintMessages.put("musical_genres.musical_band_id", "El género ya está registrado para esta banda.");
     constraintMessages.put("musical_roles.musical_band_id", "Ese role musical ya está registrado para esta banda.");
     constraintMessages.put("artists.musical_band_id", "Ese artista ya está registrado para esta banda.");
