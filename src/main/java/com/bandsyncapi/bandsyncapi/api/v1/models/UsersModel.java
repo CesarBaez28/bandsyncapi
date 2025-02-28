@@ -2,7 +2,6 @@ package com.bandsyncapi.bandsyncapi.api.v1.models;
 
 import java.util.UUID;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -27,7 +26,7 @@ public class UsersModel {
   @GeneratedValue(strategy = GenerationType.UUID)
   private UUID id;
 
-  @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+  @ManyToOne
   @JoinColumn(name = "role_id", nullable = false)
   private RolesModel role;
 
