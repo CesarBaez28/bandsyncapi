@@ -3,6 +3,7 @@ package com.bandsyncapi.bandsyncapi.api.v1.services.impl;
 import java.util.List;
 import java.util.UUID;
 
+import java.util.NoSuchElementException;
 import org.springframework.stereotype.Service;
 
 import com.bandsyncapi.bandsyncapi.api.v1.projections.MusicalRolesUsersProjection;
@@ -28,6 +29,13 @@ public class MusicalRolesUsersServiceImpl implements MusicalRolesUsersService{
 
   @Override
   public List<MusicalRolesUsersProjection> findAllByMusicalBandId(UUID musicalBandId) {
-    return musicalRolesUsersRepository.findAllByMusicalBandId(musicalBandId);
+
+    List<MusicalRolesUsersProjection> projections = musicalRolesUsersRepository.findAllByMusicalBandId(musicalBandId);
+
+    if (projections.isEmpty()) {
+      throw new NoSuchElementException("No se encontraron datos");
+    }
+
+    return projections;
   }
 }

@@ -49,10 +49,6 @@ public class UsersController {
   public ResponseEntity<ApiResponse<List<UsersDto>>> findAllByMusicalBandId(@PathVariable UUID musicalBandId) {
     List<UsersModel> users = usersService.getAllUsersByMusicalBandId(musicalBandId);
 
-    if (users.isEmpty()) {
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse<>(false, "No se encontraron datos", null, null));
-    }
-
     List<UsersDto> usersResponse = usersMapper.toDtoList(users);
 
     return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(true, "Datos encontrados", usersResponse, null));

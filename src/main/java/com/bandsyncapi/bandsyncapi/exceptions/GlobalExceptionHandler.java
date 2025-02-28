@@ -2,6 +2,7 @@ package com.bandsyncapi.bandsyncapi.exceptions;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -76,13 +77,24 @@ public class GlobalExceptionHandler {
   }
 
   /**
-   * Haandle EntityNotFoundException
+   * Handle EntityNotFoundException
    * 
    * @param ex - Object EntityNotFoundException
    * @return - An object ApiResponse with the error
    */
   @ExceptionHandler(EntityNotFoundException.class)
   public ResponseEntity<ApiResponse<Void>> handlEntityNotFoundException(EntityNotFoundException ex) {
+    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse<>(false, ex.getMessage(), null, null));
+  }
+
+  /**
+   * Handle NoSuchElementException
+   * 
+   * @param ex - NoSuchElementException object
+   * @return - An ApiResponse object with the error
+   */
+  @ExceptionHandler(NoSuchElementException.class)
+  public ResponseEntity<ApiResponse<Void>> handleNotFoudException (NoSuchElementException ex) {
     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse<>(false, ex.getMessage(), null, null));
   }
 

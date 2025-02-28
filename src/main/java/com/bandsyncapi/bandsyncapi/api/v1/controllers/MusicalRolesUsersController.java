@@ -12,7 +12,6 @@ import com.bandsyncapi.bandsyncapi.response.ApiResponse;
 import java.util.List;
 import java.util.UUID;
 
-import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -47,11 +46,6 @@ public class MusicalRolesUsersController {
 
     List<MusicalRolesUsersProjection> musicalRolesUsersProjections = musicalRolesUsersService
         .findAllByMusicalBandId(musicalBandId);
-
-    if (musicalRolesUsersProjections.isEmpty()) {
-      return ResponseEntity.status(HttpStatus.NOT_FOUND)
-          .body(new ApiResponse<>(false, "No se encontraron datos", null, null));
-    }
 
     List<MusicalRolesUsersDto> response = musicalRolesUsersMapper.toDtoList(musicalRolesUsersProjections);
 

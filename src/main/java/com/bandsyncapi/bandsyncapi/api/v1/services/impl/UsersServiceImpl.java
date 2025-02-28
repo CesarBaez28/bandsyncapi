@@ -1,6 +1,7 @@
 package com.bandsyncapi.bandsyncapi.api.v1.services.impl;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
@@ -28,6 +29,13 @@ public class UsersServiceImpl implements UsersService{
 
   @Override
   public List<UsersModel> getAllUsersByMusicalBandId(UUID musicalBandId) {
-    return usersRepository.findAllByMusicalBandId(musicalBandId);
+
+    List<UsersModel> users = usersRepository.findAllByMusicalBandId(musicalBandId);
+
+    if (users.isEmpty()) {
+      throw new NoSuchElementException("No se encontraron datos");
+    }
+
+    return users;
   }  
 }
