@@ -8,12 +8,14 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MapsId;
 import jakarta.persistence.Table;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /*
  * This class is a model for the musical_roles_users table in the database.
  */
 @Entity
 @Data
+@NoArgsConstructor
 @Table(name = "musical_roles_users")
 public class MusicalRolesUsersModel {
 

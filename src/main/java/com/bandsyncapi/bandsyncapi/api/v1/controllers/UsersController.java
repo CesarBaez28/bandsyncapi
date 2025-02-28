@@ -5,8 +5,8 @@ import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.bandsyncapi.bandsyncapi.api.v1.dto.users.UsersDto;
 import com.bandsyncapi.bandsyncapi.api.v1.mappers.UsersMapper;
@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 /**
  * This is the controller to handle requests for the users table.
  */
-@Controller
+@RestController
 @RequestMapping(path = "api/v1/users")
 public class UsersController {
 

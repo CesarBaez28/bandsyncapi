@@ -15,6 +15,12 @@ import com.bandsyncapi.bandsyncapi.api.v1.models.UsersModel;
  */
 public interface UsersRepository extends JpaRepository<UsersModel, UUID>{
 
+  /**
+   * find all users that are part of a musical band
+   * 
+   * @param musicalBandId - Musical band id
+   * @return - A UsersModel List
+   */
   @Query("""
       SELECT u FROM UsersModel u 
       JOIN UsersMusicalBandsModel um
