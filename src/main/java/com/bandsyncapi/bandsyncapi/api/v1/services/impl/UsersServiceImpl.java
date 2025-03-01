@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
+import com.bandsyncapi.bandsyncapi.api.v1.dto.users.UsersPutDto;
 import com.bandsyncapi.bandsyncapi.api.v1.models.UsersModel;
 import com.bandsyncapi.bandsyncapi.api.v1.repositories.UsersRepository;
 import com.bandsyncapi.bandsyncapi.api.v1.services.UsersService;
@@ -45,5 +46,14 @@ public class UsersServiceImpl implements UsersService {
   public UsersModel getById(UUID userId) {
     return usersRepository.findById(userId)
         .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
+  }
+
+  @Override
+  public void updateUser(UUID userId, UsersPutDto usersPutDto) {
+    int rowUpdated = usersRepository.updateUser(userId, usersPutDto);
+
+    if (rowUpdated == 0) {
+      throw new EntityNotFoundException("Usuario no encontrado");
+    }
   }
 }

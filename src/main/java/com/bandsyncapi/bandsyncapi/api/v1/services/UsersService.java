@@ -3,6 +3,7 @@ package com.bandsyncapi.bandsyncapi.api.v1.services;
 import java.util.List;
 import java.util.UUID;
 
+import com.bandsyncapi.bandsyncapi.api.v1.dto.users.UsersPutDto;
 import com.bandsyncapi.bandsyncapi.api.v1.models.UsersModel;
 
 /**
@@ -25,4 +26,12 @@ public interface UsersService {
    * @return UsersModel object
    */
   UsersModel getById (UUID userId);
+
+  /**
+   * Update a user info
+   * 
+   * @param userId - user id
+   * @param usersPutDto - A UsersPutDto with the data to be updated
+   */
+  void updateUser (UUID userId, UsersPutDto usersPutDto);
 }
