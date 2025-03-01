@@ -6,6 +6,7 @@ import java.util.UUID;
 import java.util.NoSuchElementException;
 import org.springframework.stereotype.Service;
 
+import com.bandsyncapi.bandsyncapi.api.v1.projections.MusicalRolesSingleUserProjection;
 import com.bandsyncapi.bandsyncapi.api.v1.projections.MusicalRolesUsersProjection;
 import com.bandsyncapi.bandsyncapi.api.v1.repositories.MusicalRolesUsersRepository;
 import com.bandsyncapi.bandsyncapi.api.v1.services.MusicalRolesUsersService;
@@ -37,5 +38,16 @@ public class MusicalRolesUsersServiceImpl implements MusicalRolesUsersService{
     }
 
     return projections;
+  }
+
+  @Override
+  public List<MusicalRolesSingleUserProjection> findMusicalRolesUser(UUID musicalBandId, UUID userId) {
+    List<MusicalRolesSingleUserProjection> musicalRoles = musicalRolesUsersRepository.findMusicalRolesUser(musicalBandId, userId);
+
+    if (musicalRoles.isEmpty()) {
+      throw new NoSuchElementException("No se encontraron datoa");
+    }
+
+    return musicalRoles;
   }
 }

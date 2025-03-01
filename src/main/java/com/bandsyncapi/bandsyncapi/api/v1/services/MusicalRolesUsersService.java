@@ -3,6 +3,7 @@ package com.bandsyncapi.bandsyncapi.api.v1.services;
 import java.util.List;
 import java.util.UUID;
 
+import com.bandsyncapi.bandsyncapi.api.v1.projections.MusicalRolesSingleUserProjection;
 import com.bandsyncapi.bandsyncapi.api.v1.projections.MusicalRolesUsersProjection;
 
 /**
@@ -17,4 +18,13 @@ public interface MusicalRolesUsersService {
    * @return - A MusicalRolesUsersModel List
    */
   List<MusicalRolesUsersProjection> findAllByMusicalBandId (UUID musicalBandId);
+
+  /**
+   * Finds musical roles of a specific user
+   * 
+   * @param musicalBandId - musical band id
+   * @param userId - user id
+   * @return A MusicalRolesSingleUserProjection List
+   */
+  List<MusicalRolesSingleUserProjection> findMusicalRolesUser (UUID musicalBandId, UUID userId);
 }

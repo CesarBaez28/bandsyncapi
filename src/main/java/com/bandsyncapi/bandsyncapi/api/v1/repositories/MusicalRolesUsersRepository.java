@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 
 import com.bandsyncapi.bandsyncapi.api.v1.models.MusicalRolesUsersKey;
 import com.bandsyncapi.bandsyncapi.api.v1.models.MusicalRolesUsersModel;
+import com.bandsyncapi.bandsyncapi.api.v1.projections.MusicalRolesSingleUserProjection;
 import com.bandsyncapi.bandsyncapi.api.v1.projections.MusicalRolesUsersProjection;
 
 /*
@@ -21,7 +22,7 @@ public interface MusicalRolesUsersRepository extends JpaRepository<MusicalRolesU
    * Find all musical roles of the users of a specific musical band
    * 
    * @param musicalBandId - Musical Band id
-   * @return - A MusicalRolesUsersModel List
+   * @return - A MusicalRolesUsersProjection List
    */
   @Query("""
       SELECT
@@ -35,4 +36,24 @@ public interface MusicalRolesUsersRepository extends JpaRepository<MusicalRolesU
       WHERE mb.id = :musicalBandId
       """)
   List<MusicalRolesUsersProjection> findAllByMusicalBandId(@Param("musicalBandId") UUID musicalBandId);
+
+  /**
+   * finds musical roles of a specific user
+   * 
+   * @param musicalBandId - musical band id
+   * @param userId - user id
+   * @return A MusicalRolesSingleUserProjection List
+   */
+  @Query("""
+      SELECT
+        mru.musicalRole.id AS id,
+        mru.musicalRole.name AS name,
+        mru.musicalRole.status AS status
+      FROM MusicalRolesUsersModel mru
+      JOIN mru.user u
+      JOIN mru.musicalBand mb
+      WHERE mb.id = :musicalBandId AND u.id = :userId
+        """)
+  List<MusicalRolesSingleUserProjection> findMusicalRolesUser(@Param("musicalBandId") UUID musicalBandId,
+      @Param("userId") UUID userId);
 }
