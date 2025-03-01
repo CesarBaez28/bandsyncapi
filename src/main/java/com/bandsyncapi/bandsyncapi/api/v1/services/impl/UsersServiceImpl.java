@@ -10,20 +10,22 @@ import com.bandsyncapi.bandsyncapi.api.v1.models.UsersModel;
 import com.bandsyncapi.bandsyncapi.api.v1.repositories.UsersRepository;
 import com.bandsyncapi.bandsyncapi.api.v1.services.UsersService;
 
+import jakarta.persistence.EntityNotFoundException;
+
 /**
  * Implementation of UsersService
  */
 @Service
-public class UsersServiceImpl implements UsersService{
+public class UsersServiceImpl implements UsersService {
 
   private final UsersRepository usersRepository;
 
   /**
    * Constructor
    * 
-   * @param usersRepository - Users Repository 
+   * @param usersRepository - Users Repository
    */
-  public UsersServiceImpl (UsersRepository usersRepository) {
+  public UsersServiceImpl(UsersRepository usersRepository) {
     this.usersRepository = usersRepository;
   }
 
@@ -37,5 +39,11 @@ public class UsersServiceImpl implements UsersService{
     }
 
     return users;
-  }  
+  }
+
+  @Override
+  public UsersModel getById(UUID userId) {
+    return usersRepository.findById(userId)
+        .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
+  }
 }

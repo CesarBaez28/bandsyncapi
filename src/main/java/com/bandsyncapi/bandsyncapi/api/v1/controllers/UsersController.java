@@ -53,4 +53,18 @@ public class UsersController {
 
     return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(true, "Datos encontrados", usersResponse, null));
   }
+
+  /**
+   * Find a user by id
+   * 
+   * @param userId - User id
+   * @return - ApiResponse object with the user
+   */
+  @GetMapping("/findById/{userId}")
+  public ResponseEntity<ApiResponse<UsersDto>> findById(@PathVariable UUID userId) {
+    UsersModel usersModel = usersService.getById(userId);
+    UsersDto response = usersMapper.toDto(usersModel);
+
+    return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(true, "Usuario encontrado", response, null));
+  }
 }

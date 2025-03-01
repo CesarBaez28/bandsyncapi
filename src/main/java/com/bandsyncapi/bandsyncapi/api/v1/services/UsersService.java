@@ -17,4 +17,12 @@ public interface UsersService {
    * @return - A UsersModel List
    */
   List<UsersModel> getAllUsersByMusicalBandId(UUID musicalBandId); 
+
+  /**
+   * Get user by Id
+   * 
+   * @param userId - user id
+   * @return UsersModel object
+   */
+  UsersModel getById (UUID userId);
 }
