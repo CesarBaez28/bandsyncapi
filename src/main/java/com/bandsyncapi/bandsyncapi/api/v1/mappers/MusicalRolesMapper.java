@@ -2,6 +2,7 @@ package com.bandsyncapi.bandsyncapi.api.v1.mappers;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -25,10 +26,15 @@ public interface MusicalRolesMapper {
   @Mapping(target = "status", constant = "true")
   MusicalRolesModel toModel(MusicalRolesPostDto musicalRolesPostDto);
 
-  @Mapping(target = "musicalBand", ignore = true)
-  List<MusicalRolesModel> toModelList (List<MusicalRolesDto> musicalRolesDtoList);
+  default List<MusicalRolesModel> toModelList(List<MusicalRolesDto> musicalRolesDtoList) {
+    return musicalRolesDtoList.stream()
+        .map(this::toModelIgnoringMusicalBand).toList();
+  }
 
-  List<MusicalRolesDto> toDtoList (List<MusicalRolesModel> musicalRolesModels);
+  List<MusicalRolesDto> toDtoList(List<MusicalRolesModel> musicalRolesModels);
+
+  @Mapping(target = "musicalBand", ignore = true)
+  MusicalRolesModel toModelIgnoringMusicalBand(MusicalRolesDto musicalRolesDto);
 
   @Named("mapBandIdToEntity")
   default MusicalBandsModel mapBandIdToEntity(UUID bandId) {
