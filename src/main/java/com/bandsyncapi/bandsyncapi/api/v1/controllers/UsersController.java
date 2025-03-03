@@ -73,6 +73,13 @@ public class UsersController {
     return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(true, "Usuario encontrado", response, null));
   }
 
+  /**
+   * update user info
+   * 
+   * @param id - user id
+   * @param usersPutDto - user data to be updated
+   * @return An ApiResponse object 
+   */
   @PutMapping("updateUser/{id}")
   public ResponseEntity<ApiResponse<Void>> updateUser(@PathVariable UUID id, @Valid @RequestBody UsersPutDto usersPutDto) {
     usersService.updateUser(id, usersPutDto);

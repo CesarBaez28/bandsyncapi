@@ -25,6 +25,9 @@ public interface MusicalRolesMapper {
   @Mapping(target = "status", constant = "true")
   MusicalRolesModel toModel(MusicalRolesPostDto musicalRolesPostDto);
 
+  @Mapping(target = "musicalBand", ignore = true)
+  List<MusicalRolesModel> toModelList (List<MusicalRolesDto> musicalRolesDtoList);
+
   List<MusicalRolesDto> toDtoList (List<MusicalRolesModel> musicalRolesModels);
 
   @Named("mapBandIdToEntity")

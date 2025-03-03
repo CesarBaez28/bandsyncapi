@@ -1,9 +1,11 @@
 package com.bandsyncapi.bandsyncapi.api.v1.repositories;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -11,6 +13,8 @@ import com.bandsyncapi.bandsyncapi.api.v1.models.MusicalRolesUsersKey;
 import com.bandsyncapi.bandsyncapi.api.v1.models.MusicalRolesUsersModel;
 import com.bandsyncapi.bandsyncapi.api.v1.projections.MusicalRolesSingleUserProjection;
 import com.bandsyncapi.bandsyncapi.api.v1.projections.MusicalRolesUsersProjection;
+
+import jakarta.transaction.Transactional;
 
 /*
  * This interface is a repository for the musical_roles_users table in the database.
@@ -41,7 +45,7 @@ public interface MusicalRolesUsersRepository extends JpaRepository<MusicalRolesU
    * finds musical roles of a specific user
    * 
    * @param musicalBandId - musical band id
-   * @param userId - user id
+   * @param userId        - user id
    * @return A MusicalRolesSingleUserProjection List
    */
   @Query("""
@@ -56,4 +60,17 @@ public interface MusicalRolesUsersRepository extends JpaRepository<MusicalRolesU
         """)
   List<MusicalRolesSingleUserProjection> findMusicalRolesUser(@Param("musicalBandId") UUID musicalBandId,
       @Param("userId") UUID userId);
+
+  @Modifying
+  @Transactional
+  @Query("""
+      DELETE FROM MusicalRolesUsersModel mru 
+      WHERE mru.user.id = :userId 
+      AND mru.musicalBand.id = :musicalBandId 
+      AND mru.musicalRole.id
+      IN :roleIds
+      """)
+  void deleteByUserIdAndBandIdAndRoleIds(@Param("userId") UUID userId,
+      @Param("musicalBandId") UUID musicalBandId,
+      @Param("roleIds") Set<Integer> roleIds);
 }

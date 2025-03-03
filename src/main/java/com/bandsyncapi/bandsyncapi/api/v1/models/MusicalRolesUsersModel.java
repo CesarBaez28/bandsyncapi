@@ -40,10 +40,11 @@ public class MusicalRolesUsersModel {
   @Column(name = "status", nullable = false, columnDefinition = "BIT DEFAULT 1")
   private Boolean status;
 
-  public MusicalRolesUsersModel(MusicalRolesModel musicalRole, MusicalBandsModel musicalBand, UsersModel user) {
+  public MusicalRolesUsersModel(MusicalRolesModel musicalRole, MusicalBandsModel musicalBand, UsersModel user, Boolean status) {
     this.musicalRole = musicalRole;
     this.musicalBand = musicalBand;
     this.user = user;
+    this.status = status;
     this.id = new MusicalRolesUsersKey(musicalRole.getId(), user.getId(), musicalBand.getId());
   }
 }
