@@ -1,6 +1,6 @@
 package com.bandsyncapi.bandsyncapi.api.v1.models;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import jakarta.persistence.Column;
@@ -34,7 +34,7 @@ public class EventsModel {
   private RepertoiresModel repertoire;
 
   @Column(name = "date", nullable = false)
-  private LocalDate date;
+  private LocalDateTime date;
 
   @Column(name = "name", nullable = false, length = 100)
   private String name;

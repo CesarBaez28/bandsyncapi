@@ -29,7 +29,7 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(Exception.class)
   public ResponseEntity<ApiResponse<Void>> handleGeneralException() {
     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-        .body(new ApiResponse<>(false, "An unexpected error occurs", null, null));
+        .body(new ApiResponse<>(false, "An unexpected error occurred", null, null));
   }
 
   /**

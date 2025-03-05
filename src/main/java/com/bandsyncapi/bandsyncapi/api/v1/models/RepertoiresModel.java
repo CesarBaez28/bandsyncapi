@@ -12,6 +12,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * This class is the many to many relationship between the repertoires and the
@@ -19,6 +20,7 @@ import lombok.Data;
  */
 @Entity
 @Data
+@NoArgsConstructor
 @Table(name = "repertoires", uniqueConstraints = {
     @UniqueConstraint(columnNames = { "musical_band_id", "name" })
 })
@@ -43,4 +45,8 @@ public class RepertoiresModel {
 
   @Column(name = "status", nullable = false, columnDefinition = "BIT DEFAULT 1")
   private Boolean status;
+
+  public RepertoiresModel(UUID id) {
+    this.id = id;
+  }
 }
