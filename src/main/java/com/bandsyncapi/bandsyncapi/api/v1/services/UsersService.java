@@ -13,12 +13,12 @@ public interface UsersService {
 
 
   /**
-   * Save a user
+   * register a user
    * 
    * @param usersModel - A UsersModel object
    * @return - The new user
    */
-  UsersModel save (UsersModel usersModel);
+  UsersModel register (UsersModel usersModel);
 
   /**
    * Get all users that are part of a musical band

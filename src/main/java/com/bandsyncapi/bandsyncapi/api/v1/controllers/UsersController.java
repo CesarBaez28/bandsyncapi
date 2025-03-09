@@ -61,7 +61,7 @@ public class UsersController {
     }
     
     UsersModel usersModel = usersMapper.toModelFromRegisterDto(userRegisterPostDto);
-    usersService.save(usersModel);
+    usersService.register(usersModel);
       
     return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse<>(true, "Usuario registrado.", null, null));
   }

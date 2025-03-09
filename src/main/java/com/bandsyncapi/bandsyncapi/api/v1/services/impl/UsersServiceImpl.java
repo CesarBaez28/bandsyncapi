@@ -39,7 +39,7 @@ public class UsersServiceImpl implements UsersService {
   }
 
   @Override
-  public UsersModel save(UsersModel usersModel) {
+  public UsersModel register(UsersModel usersModel) {
     String encryptedPassword = encrypt.encryptPassword(usersModel.getPassword());    
     usersModel.setPassword(encryptedPassword);
 
