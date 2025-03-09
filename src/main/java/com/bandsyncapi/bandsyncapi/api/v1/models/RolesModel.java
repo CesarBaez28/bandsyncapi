@@ -8,6 +8,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * In this class are defined all the roles that the users can have.
@@ -15,6 +16,7 @@ import lombok.Data;
 @Entity
 @Data
 @Table(name = "roles")
+@NoArgsConstructor
 public class RolesModel {
 
   @Id
@@ -26,4 +28,8 @@ public class RolesModel {
 
   @Column(name = "status", nullable = false, columnDefinition = "BIT DEFAULT 1")
   private Boolean status;
+
+  public RolesModel(Integer id) {
+    this.id = id;
+  }
 }

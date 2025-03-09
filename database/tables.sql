@@ -52,7 +52,7 @@ CREATE TABLE users (
     role_id INT NOT NULL,
     FOREIGN KEY (role_id) REFERENCES roles(id),
     username VARCHAR(100) NOT NULL UNIQUE,
-    password VARCHAR(50) NOT NULL,
+    password VARCHAR(255) NOT NULL,
     firstname VARCHAR(100) NOT NULL DEFAULT '',
     lastname VARCHAR(100) NOT NULL DEFAULT '',
     phone VARCHAR(25) NOT NULL DEFAULT '',

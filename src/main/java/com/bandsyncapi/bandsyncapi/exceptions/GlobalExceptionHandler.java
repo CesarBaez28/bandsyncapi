@@ -75,7 +75,9 @@ public class GlobalExceptionHandler {
 
     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
         .body(new ApiResponse<>(false,
-            constraintMessages.getOrDefault(key, "Ya existe un registro con ese nombre"), null, null));
+            constraintMessages.getOrDefault(key,
+                "Ha ocurrido un error al violar una restricción de integridad de la base de datos."),
+            null, null));
   }
 
   /**
@@ -96,7 +98,7 @@ public class GlobalExceptionHandler {
    * @return - An ApiResponse object with the error
    */
   @ExceptionHandler(NoSuchElementException.class)
-  public ResponseEntity<ApiResponse<Void>> handleNotFoudException (NoSuchElementException ex) {
+  public ResponseEntity<ApiResponse<Void>> handleNotFoudException(NoSuchElementException ex) {
     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse<>(false, ex.getMessage(), null, null));
   }
 

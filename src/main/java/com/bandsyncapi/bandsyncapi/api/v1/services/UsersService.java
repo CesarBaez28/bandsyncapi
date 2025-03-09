@@ -11,6 +11,15 @@ import com.bandsyncapi.bandsyncapi.api.v1.models.UsersModel;
  */
 public interface UsersService {
 
+
+  /**
+   * Save a user
+   * 
+   * @param usersModel - A UsersModel object
+   * @return - The new user
+   */
+  UsersModel save (UsersModel usersModel);
+
   /**
    * Get all users that are part of a musical band
    * 
