@@ -22,9 +22,7 @@ import jakarta.persistence.EntityNotFoundException;
 @Service
 public class UsersServiceImpl implements UsersService {
 
-
   private final UsersRepository usersRepository;
-
 
   private final Encrypt encrypt;
 
