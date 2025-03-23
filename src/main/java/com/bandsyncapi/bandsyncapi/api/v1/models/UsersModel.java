@@ -7,8 +7,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -25,10 +23,6 @@ public class UsersModel {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
   private UUID id;
-
-  @ManyToOne
-  @JoinColumn(name = "role_id", nullable = false)
-  private RolesModel role;
 
   @Column(name = "username", nullable = false, length = 100, unique = true)
   private String username;

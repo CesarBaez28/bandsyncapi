@@ -4,6 +4,9 @@
 CREATE TABLE roles (
     id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(100) NOT NULL UNIQUE,
+    musical_band_id BINARY(16) NOT NULL,
+    FOREIGN KEY (musical_band_id) REFERENCES musical_bands(id),
+    UNIQUE(musical_band_id, name),
     status BIT NOT NULL DEFAULT 1
 );
 
@@ -44,13 +47,10 @@ CREATE TABLE musical_roles (
     UNIQUE(musical_band_id, name),
     status BIT NOT NULL DEFAULT 1
 );
-CREATE INDEX nusical_role_name_index ON musical_roles(name);
 
 -- Table: users
 CREATE TABLE users (
     id BINARY (16) PRIMARY KEY DEFAULT (UUID_TO_BIN(UUID())),
-    role_id INT NOT NULL,
-    FOREIGN KEY (role_id) REFERENCES roles(id),
     username VARCHAR(100) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
     firstname VARCHAR(100) NOT NULL DEFAULT '',
@@ -58,6 +58,18 @@ CREATE TABLE users (
     phone VARCHAR(25) NOT NULL DEFAULT '',
     photo VARCHAR(255) NOT NULL DEFAULT '',
     email VARCHAR(50) NOT NULL UNIQUE,
+    status BIT NOT NULL DEFAULT 1
+);
+
+-- Table: users_roles
+CREATE TABLE users_roles (
+    user_id BINARY(16) NOT NULL,
+    role_id INT NOT NULL,
+    musical_band_id BINARY(16) NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (role_id) REFERENCES roles(id),
+    FOREIGN KEY (musical_band_id) REFERENCES musical_bands(id),
+    PRIMARY KEY (user_id, role_id, musical_band_id),
     status BIT NOT NULL DEFAULT 1
 );
 

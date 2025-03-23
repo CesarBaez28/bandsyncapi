@@ -15,7 +15,6 @@ public interface UsersMapper {
   UsersDto toDto (UsersModel usersModel);
 
   @Mapping(target = "id", ignore = true)
-  @Mapping(target = "role", ignore = true)
   @Mapping(target = "firstName", constant = "")
   @Mapping(target = "lastName", constant = "")
   @Mapping(target = "phone", constant = "")
