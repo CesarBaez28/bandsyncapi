@@ -20,6 +20,14 @@ public interface UsersService {
   UsersModel register (UsersModel usersModel);
 
   /**
+   * Join a user to a musical band
+   * 
+   * @param userId - User id
+   * @param musicalBandId - Musical Band id
+   */
+  void joinUserToMusicalBand(UUID userId, UUID musicalBandId);
+
+  /**
    * Get all users that are part of a musical band
    * 
    * @param musicalBandId - Musical Band id

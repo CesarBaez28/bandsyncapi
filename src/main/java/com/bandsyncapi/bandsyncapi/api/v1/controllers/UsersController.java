@@ -68,6 +68,21 @@ public class UsersController {
   }
 
   /**
+   * join user to a musical band
+   * 
+   * @param userId - user id
+   * @param musicalBandId - musical band id
+   * @return - ApiResponse object
+   */
+  @PostMapping("/joinUserToMusicalBand/{userId}/{musicalBandId}")
+  public ResponseEntity<ApiResponse<Void>> joinUserToMusicalBand(@PathVariable UUID userId,
+      @PathVariable UUID musicalBandId) {
+    usersService.joinUserToMusicalBand(userId, musicalBandId);
+
+    return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(true, "Usuario unido a la banda.", null, null));
+  }
+
+  /**
    * finds All users that are part of a musical band
    * 
    * @param musicalBandId - musical band id
