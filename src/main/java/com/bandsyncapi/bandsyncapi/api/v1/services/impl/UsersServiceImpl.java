@@ -7,8 +7,12 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 
 import com.bandsyncapi.bandsyncapi.api.v1.dto.users.UsersPutDto;
+import com.bandsyncapi.bandsyncapi.api.v1.models.MusicalBandsModel;
 import com.bandsyncapi.bandsyncapi.api.v1.models.RolesModel;
 import com.bandsyncapi.bandsyncapi.api.v1.models.UsersModel;
+import com.bandsyncapi.bandsyncapi.api.v1.models.UsersMusicalBandsModel;
+import com.bandsyncapi.bandsyncapi.api.v1.repositories.MusicalBandsRepository;
+import com.bandsyncapi.bandsyncapi.api.v1.repositories.UsersMusicalBandsRepository;
 import com.bandsyncapi.bandsyncapi.api.v1.repositories.UsersRepository;
 import com.bandsyncapi.bandsyncapi.api.v1.services.UsersService;
 import com.bandsyncapi.bandsyncapi.utils.Encrypt;
@@ -21,7 +25,11 @@ import jakarta.persistence.EntityNotFoundException;
 @Service
 public class UsersServiceImpl implements UsersService {
 
+    private final MusicalBandsRepository musicalBandsRepository;
+
   private final UsersRepository usersRepository;
+
+  private final UsersMusicalBandsRepository usersMusicalBandsRepository;
 
   private final Encrypt encrypt;
 
@@ -33,9 +41,11 @@ public class UsersServiceImpl implements UsersService {
    * @param usersRepository - Users Repository
    * @param encrypt - Class to encrypt passwords
    */
-  public UsersServiceImpl(UsersRepository usersRepository, Encrypt encrypt) {
+  public UsersServiceImpl(UsersRepository usersRepository, UsersMusicalBandsRepository usersMusicalBandsRepository, Encrypt encrypt, MusicalBandsRepository musicalBandsRepository) {
     this.usersRepository = usersRepository;
+    this.usersMusicalBandsRepository = usersMusicalBandsRepository;
     this.encrypt = encrypt;
+    this.musicalBandsRepository = musicalBandsRepository;
   }
 
   @Override
@@ -46,6 +56,11 @@ public class UsersServiceImpl implements UsersService {
     usersModel.setRole(new RolesModel(DEFAULT_ROLE)); 
 
     return usersRepository.save(usersModel);
+  }
+
+  @Override
+  public boolean existsByEmail(String email) {
+    return usersRepository.existsByEmail(email);
   }
 
   @Override

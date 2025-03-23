@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PostMapping;
-
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * This is the controller to handle requests for the users table.
@@ -54,18 +54,18 @@ public class UsersController {
    * @return - An ApiResponse object
    */
   @PostMapping("/register")
-  public ResponseEntity<ApiResponse<Void>> register (@Valid @RequestBody UserRegisterPostDto userRegisterPostDto) {
+  public ResponseEntity<ApiResponse<Void>> register(@Valid @RequestBody UserRegisterPostDto userRegisterPostDto) {
 
     if (!userRegisterPostDto.password().equals(userRegisterPostDto.repeatedPassword())) {
-      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse<>(false, "Las contraseñas no coinciden.", null, null));
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+          .body(new ApiResponse<>(false, "Las contraseñas no coinciden.", null, null));
     }
-    
+
     UsersModel usersModel = usersMapper.toModelFromRegisterDto(userRegisterPostDto);
     usersService.register(usersModel);
-      
+
     return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse<>(true, "Usuario registrado.", null, null));
   }
-  
 
   /**
    * finds All users that are part of a musical band
@@ -99,14 +99,32 @@ public class UsersController {
   /**
    * update user info
    * 
-   * @param id - user id
+   * @param id          - user id
    * @param usersPutDto - user data to be updated
-   * @return An ApiResponse object 
+   * @return An ApiResponse object
    */
-  @PutMapping("updateUser/{id}")
-  public ResponseEntity<ApiResponse<Void>> updateUser(@PathVariable UUID id, @Valid @RequestBody UsersPutDto usersPutDto) {
+  @PutMapping("/updateUser/{id}")
+  public ResponseEntity<ApiResponse<Void>> updateUser(@PathVariable UUID id,
+      @Valid @RequestBody UsersPutDto usersPutDto) {
     usersService.updateUser(id, usersPutDto);
 
     return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(true, "Datos actualizados", null, null));
+  }
+
+  /**
+   * Check if the user exists by email
+   * 
+   * @param email - email
+   * @return An ApiResponse object
+   */
+  @GetMapping("/existsByEmail")
+  public ResponseEntity<ApiResponse<Boolean>> existsByEmail(@RequestParam String email) {
+    boolean exists = usersService.existsByEmail(email);
+
+    if (exists) {
+      return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(true, "Usuario encontrado", exists, null));
+    }
+
+    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse<>(false, "Usuario no encontrado", exists, null));
   }
 }

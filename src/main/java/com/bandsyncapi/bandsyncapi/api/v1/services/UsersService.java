@@ -11,7 +11,6 @@ import com.bandsyncapi.bandsyncapi.api.v1.models.UsersModel;
  */
 public interface UsersService {
 
-
   /**
    * register a user
    * 
@@ -35,6 +34,14 @@ public interface UsersService {
    * @return UsersModel object
    */
   UsersModel getById (UUID userId);
+  
+  /**
+   * Check if the user exists by email
+   * 
+   * @param email - email
+   * @return boolean
+   */
+  boolean existsByEmail(String email);
 
   /**
    * Update a user info
