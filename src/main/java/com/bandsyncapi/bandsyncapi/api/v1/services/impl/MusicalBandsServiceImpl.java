@@ -37,11 +37,17 @@ public class MusicalBandsServiceImpl implements MusicalBandsService {
   private static final String ADMIN_ROLE_NAME = "Administrador";
 
   /**
-   * Constructor for the MusicalBandsServiceImpl class
-   * @param musicalBandsRepository - Repository with methods for performing CRUD operations on the musical_bands table.
-   * @param musicalBandsMapper - Mapper to convert between MusicalBandsModel and MusicalBandsDto.
+   * Constructor
+   * 
+   * @param musicalBandsRepository   - Repository for MusicalBandsModel
+   * @param usersMusicalBandsService - Service for UsersMusicalBandsModel
+   * @param rolesService             - Service for RolesModel
+   * @param usersRolesService        - Service for UsersRolesModel
+   * @param musicalBandsMapper       - Mapper for MusicalBandsModel
    */
-  public MusicalBandsServiceImpl(MusicalBandsRepository musicalBandsRepository, UsersMusicalBandsService usersMusicalBandsService, RolesService rolesService, UsersRolesService usersRolesService, MusicalBandsMapper musicalBandsMapper) {
+  public MusicalBandsServiceImpl(MusicalBandsRepository musicalBandsRepository,
+      UsersMusicalBandsService usersMusicalBandsService, RolesService rolesService, UsersRolesService usersRolesService,
+      MusicalBandsMapper musicalBandsMapper) {
     this.musicalBandsRepository = musicalBandsRepository;
     this.usersMusicalBandsService = usersMusicalBandsService;
     this.rolesService = rolesService;
@@ -64,7 +70,7 @@ public class MusicalBandsServiceImpl implements MusicalBandsService {
   public MusicalBandsDto registerMusicalBand(MusicalBandsPostDto musicalBandsPostDto) {
 
     MusicalBandsModel musicalBandsModel = musicalBandsMapper.toModel(musicalBandsPostDto);
-    
+
     // Save the new musical band
     MusicalBandsModel savedMusicalBandsModel = save(musicalBandsModel);
 
