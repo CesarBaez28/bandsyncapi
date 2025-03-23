@@ -5,10 +5,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.bandsyncapi.bandsyncapi.api.v1.dto.musicalbands.MusicalBandsDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.musicalbands.MusicalBandsPostDto;
-import com.bandsyncapi.bandsyncapi.api.v1.mappers.MusicalBandsMapper;
-import com.bandsyncapi.bandsyncapi.api.v1.models.MusicalBandsModel;
 import com.bandsyncapi.bandsyncapi.api.v1.services.MusicalBandsService;
-import com.bandsyncapi.bandsyncapi.api.v1.services.UsersMusicalBandsService;
 import com.bandsyncapi.bandsyncapi.response.ApiResponse;
 
 import jakarta.validation.Valid;
@@ -27,23 +24,14 @@ public class MusicalBandsController {
 
   private final MusicalBandsService musicalBandsService;
 
-  private final UsersMusicalBandsService usersMusicalBandsService;
-
-  private final MusicalBandsMapper musicalBandsMapper;
-
   /**
    * Constructor for the MusicalBandsController class.
    * 
-   * @param musicalBandsService - Service with methods for performing CRUD
-   *                            operations on the musical_bands table.
-   * @param usersMusicalBandsService - Service with methods for performing CRUD on users_musical_bands table
-   * @param musicalBandsMapper  - Mapper to convert between MusicalBandsModel and
-   *                            MusicalBandsDto.
+   * @param musicalBandsService      - Service with methods for performing CRUD
+   *                                 operations on the musical_bands table.
    */
-  public MusicalBandsController(MusicalBandsService musicalBandsService, UsersMusicalBandsService usersMusicalBandsService, MusicalBandsMapper musicalBandsMapper) {
+  public MusicalBandsController(MusicalBandsService musicalBandsService) {
     this.musicalBandsService = musicalBandsService;
-    this.usersMusicalBandsService = usersMusicalBandsService;
-    this.musicalBandsMapper = musicalBandsMapper;
   }
 
   /**
@@ -53,13 +41,10 @@ public class MusicalBandsController {
    * @return - The saved musical band.
    */
   @PostMapping("/save")
-  public ResponseEntity<ApiResponse<MusicalBandsDto>> saveMusicalBand(@Valid @RequestBody MusicalBandsPostDto musicalBandsPostDto) {
-    MusicalBandsModel musicalBandsModel = musicalBandsMapper.toModel(musicalBandsPostDto);
-    MusicalBandsModel savedMusicalBandsModel = musicalBandsService.save(musicalBandsModel);
+  public ResponseEntity<ApiResponse<MusicalBandsDto>> saveMusicalBand(
+      @Valid @RequestBody MusicalBandsPostDto musicalBandsPostDto) {
 
-    usersMusicalBandsService.save(musicalBandsPostDto.user(), savedMusicalBandsModel);
-
-    MusicalBandsDto savedMusicalBandsModelDto = musicalBandsMapper.toDto(savedMusicalBandsModel);
+    MusicalBandsDto savedMusicalBandsModelDto = musicalBandsService.registerMusicalBand(musicalBandsPostDto);
 
     return ResponseEntity.status(HttpStatus.CREATED)
         .body(new ApiResponse<>(true, "Banda musical registrada correctamente", savedMusicalBandsModelDto, null));

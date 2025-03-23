@@ -10,6 +10,14 @@ import com.bandsyncapi.bandsyncapi.api.v1.models.RolesModel;
 public interface RolesService {
 
   /**
+   * Sava a new role
+   * 
+   * @param rolesModel - RolesModel
+   * @return - the saved RolesModel
+   */
+  RolesModel save (RolesModel rolesModel);
+
+  /**
    * finds All roles
    * 
    * @return A RolesModel List

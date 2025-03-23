@@ -15,13 +15,13 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "users_roles")
 @NoArgsConstructor
-public class UsersRoles {
+public class UsersRolesModel {
 
   @EmbeddedId
-  private MusicalRolesUsersKey id;
+  private UsersRolesKey id;
 
   @ManyToOne
-  @MapsId("musicalRoleId")
+  @MapsId("roleId")
   @JoinColumn(name = "role_id")
   private RolesModel role;
 
@@ -38,11 +38,11 @@ public class UsersRoles {
   @Column(name = "status", nullable = false, columnDefinition = "BIT DEFAULT 1")
   private Boolean status;
 
-  public UsersRoles(RolesModel role, MusicalBandsModel musicalBand, UsersModel user, Boolean status) {
+  public UsersRolesModel(RolesModel role, MusicalBandsModel musicalBand, UsersModel user, Boolean status) {
     this.role = role;
     this.musicalBand = musicalBand;
     this.user = user;
     this.status = status;
-    this.id = new MusicalRolesUsersKey(role.getId(), user.getId(), musicalBand.getId());
+    this.id = new UsersRolesKey(role.getId(), user.getId(), musicalBand.getId());
   }
 }
