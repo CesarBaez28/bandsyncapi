@@ -33,9 +33,10 @@ public class RolesPermissionsModel {
   @Column(name = "status", nullable = false, columnDefinition = "BIT DEFAULT 1")
   private Boolean status;
 
-  public RolesPermissionsModel(RolesModel role, PermissionsModel permission) {
+  public RolesPermissionsModel(RolesModel role, PermissionsModel permission, Boolean status) {
     this.role = role;
     this.permission = permission;
+    this.status = status;
     this.id = new RolesPermissionsKey(role.getId(), permission.getId());
   }
 }
