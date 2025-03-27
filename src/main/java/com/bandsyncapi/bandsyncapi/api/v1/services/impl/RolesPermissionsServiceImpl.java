@@ -30,4 +30,14 @@ public class RolesPermissionsServiceImpl implements RolesPermissionsService {
   public List<RolesPermissionsModel> findAllByRole(RolesModel role) {
     return rolesPermissionsRepository.findAllByRole(role);
   }
+
+  @Override
+  public RolesPermissionsModel save(RolesPermissionsModel rolesPermissionsModel) {
+    return rolesPermissionsRepository.save(rolesPermissionsModel);
+  }
+
+  @Override
+  public List<RolesPermissionsModel> saveAll(List<RolesPermissionsModel> rolesPermissionsModel) {
+    return rolesPermissionsRepository.saveAll(rolesPermissionsModel);
+  }
 }

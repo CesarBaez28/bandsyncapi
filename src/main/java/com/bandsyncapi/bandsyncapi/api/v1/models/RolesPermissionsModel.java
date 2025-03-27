@@ -8,6 +8,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MapsId;
 import jakarta.persistence.Table;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * This class is the many to many relationship between the roles and the permissions.
@@ -15,6 +16,7 @@ import lombok.Data;
 @Entity
 @Data
 @Table(name = "roles_permissions")
+@NoArgsConstructor
 public class RolesPermissionsModel {
 
   @EmbeddedId

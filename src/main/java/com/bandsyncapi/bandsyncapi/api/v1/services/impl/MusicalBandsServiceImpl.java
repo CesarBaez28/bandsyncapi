@@ -1,5 +1,6 @@
 package com.bandsyncapi.bandsyncapi.api.v1.services.impl;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -11,9 +12,12 @@ import com.bandsyncapi.bandsyncapi.api.v1.dto.musicalbands.MusicalBandsPostDto;
 import com.bandsyncapi.bandsyncapi.api.v1.mappers.MusicalBandsMapper;
 import com.bandsyncapi.bandsyncapi.api.v1.models.MusicalBandsModel;
 import com.bandsyncapi.bandsyncapi.api.v1.models.RolesModel;
+import com.bandsyncapi.bandsyncapi.api.v1.models.RolesPermissionsModel;
 import com.bandsyncapi.bandsyncapi.api.v1.models.UsersRolesModel;
 import com.bandsyncapi.bandsyncapi.api.v1.repositories.MusicalBandsRepository;
 import com.bandsyncapi.bandsyncapi.api.v1.services.MusicalBandsService;
+import com.bandsyncapi.bandsyncapi.api.v1.services.PermissionsService;
+import com.bandsyncapi.bandsyncapi.api.v1.services.RolesPermissionsService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.RolesService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.UsersMusicalBandsService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.UsersRolesService;
@@ -34,6 +38,10 @@ public class MusicalBandsServiceImpl implements MusicalBandsService {
 
   private final MusicalBandsMapper musicalBandsMapper;
 
+  private final PermissionsService permissionsService;
+
+  private final RolesPermissionsService rolesPermissionsService;
+
   private static final String ADMIN_ROLE_NAME = "Administrador";
 
   /**
@@ -47,11 +55,14 @@ public class MusicalBandsServiceImpl implements MusicalBandsService {
    */
   public MusicalBandsServiceImpl(MusicalBandsRepository musicalBandsRepository,
       UsersMusicalBandsService usersMusicalBandsService, RolesService rolesService, UsersRolesService usersRolesService,
+      PermissionsService permissionsService, RolesPermissionsService rolesPermissionsService,
       MusicalBandsMapper musicalBandsMapper) {
     this.musicalBandsRepository = musicalBandsRepository;
     this.usersMusicalBandsService = usersMusicalBandsService;
     this.rolesService = rolesService;
     this.usersRolesService = usersRolesService;
+    this.permissionsService = permissionsService;
+    this.rolesPermissionsService = rolesPermissionsService;
     this.musicalBandsMapper = musicalBandsMapper;
   }
 
@@ -85,6 +96,13 @@ public class MusicalBandsServiceImpl implements MusicalBandsService {
 
     // Save relationship betheen the user and the role
     usersRolesService.save(new UsersRolesModel(role, savedMusicalBandsModel, musicalBandsPostDto.user(), true));
+
+    // Get All permissions to be added to the role
+    List<RolesPermissionsModel> rolesPermissions = permissionsService.findAll().stream()
+        .map(permission -> new RolesPermissionsModel(role, permission, true)).toList();
+
+    // Save all permissions to the role
+    rolesPermissionsService.saveAll(rolesPermissions);
 
     return musicalBandsMapper.toDto(savedMusicalBandsModel);
   }

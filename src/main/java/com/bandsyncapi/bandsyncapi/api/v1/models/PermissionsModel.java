@@ -7,6 +7,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /*
  * In this class are defined all the permissions that each role can have.
@@ -14,6 +15,7 @@ import lombok.Data;
 @Entity
 @Data
 @Table(name = "permissions")
+@NoArgsConstructor
 public class PermissionsModel {
 
   @Id
@@ -25,4 +27,8 @@ public class PermissionsModel {
 
   @Column(name = "status", nullable = false, columnDefinition = "BIT DEFAULT 1")
   private Boolean status;
+
+  public PermissionsModel(Integer id) {
+    this.id = id;
+  }
 }

@@ -8,11 +8,8 @@ import org.springframework.stereotype.Service;
 
 import com.bandsyncapi.bandsyncapi.api.v1.dto.users.UsersPutDto;
 import com.bandsyncapi.bandsyncapi.api.v1.models.MusicalBandsModel;
-import com.bandsyncapi.bandsyncapi.api.v1.models.RolesModel;
 import com.bandsyncapi.bandsyncapi.api.v1.models.UsersModel;
-
 import com.bandsyncapi.bandsyncapi.api.v1.repositories.UsersRepository;
-import com.bandsyncapi.bandsyncapi.api.v1.services.RolesService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.UsersMusicalBandsService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.UsersService;
 import com.bandsyncapi.bandsyncapi.utils.Encrypt;
@@ -28,27 +25,21 @@ public class UsersServiceImpl implements UsersService {
 
   private final UsersRepository usersRepository;
 
-  private final RolesService rolesService;
-
   private final UsersMusicalBandsService usersMusicalBandsService;
 
   private final Encrypt encrypt;
 
-  private static final String DEFAULT_ROLE_NAME = "Integrante";
-
   /**
    * Constructor
    * 
-   * @param usersRepository          - Users Repository
-   * @param usersMusicalBandsService - UsersMusicalBands Service
-   * @param rolesService             - Roles Service
-   * @param encrypt                  - Class to encrypt passwords
+   * @param usersRepository            - Repository for UsersModel
+   * @param usersMusicalBandsService   - Service for UsersMusicalBandsModel
+   * @param encrypt                    - Encrypt utility
    */
   public UsersServiceImpl(UsersRepository usersRepository, UsersMusicalBandsService usersMusicalBandsService,
-      RolesService rolesService, Encrypt encrypt) {
+      Encrypt encrypt) {
     this.usersRepository = usersRepository;
     this.usersMusicalBandsService = usersMusicalBandsService;
-    this.rolesService = rolesService;
     this.encrypt = encrypt;
   }
 
@@ -63,14 +54,11 @@ public class UsersServiceImpl implements UsersService {
   @Transactional
   @Override
   public void joinUserToMusicalBand(UUID userId, UUID musicalBandId) {
+    var user = new UsersModel(userId);
+    var musicalBand = new MusicalBandsModel(musicalBandId);
 
-    usersMusicalBandsService.save(new UsersModel(userId), new MusicalBandsModel(musicalBandId));
-    
-    // Save the role of the user in the musical band
-    rolesService.save(RolesModel.builder()
-        .name(DEFAULT_ROLE_NAME)
-        .musicalBand(new MusicalBandsModel(musicalBandId))
-        .status(true).build());
+    // Save relationship between the user and the musical band
+    usersMusicalBandsService.save(user, musicalBand);
   }
 
   @Override
