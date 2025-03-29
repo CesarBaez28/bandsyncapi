@@ -2,6 +2,8 @@ package com.bandsyncapi.bandsyncapi.api.v1.services;
 
 import java.util.List;
 
+import com.bandsyncapi.bandsyncapi.api.v1.dto.roles.RolesPermissionsDto;
+import com.bandsyncapi.bandsyncapi.api.v1.dto.roles.RolesPostDto;
 import com.bandsyncapi.bandsyncapi.api.v1.models.RolesModel;
 
 /**
@@ -12,10 +14,18 @@ public interface RolesService {
   /**
    * Sava a new role
    * 
-   * @param rolesModel - RolesModel
-   * @return - the saved RolesModel
+   * @param rolesModel - RolesModel object
+   * @return - the new role
    */
   RolesModel save (RolesModel rolesModel);
+
+  /**
+   * Save a new roles with permissions
+   * 
+   * @param rolesPostDto - RolesPostDto Object
+   * @return - RolesPermissionsDto Object
+   */
+  RolesPermissionsDto saveRoleAndPermissions (RolesPostDto rolesPostDto);
 
   /**
    * finds All roles
