@@ -1,6 +1,7 @@
 package com.bandsyncapi.bandsyncapi.api.v1.services;
 
 import java.util.List;
+import java.util.Set;
 
 import com.bandsyncapi.bandsyncapi.api.v1.models.RolesModel;
 import com.bandsyncapi.bandsyncapi.api.v1.models.RolesPermissionsModel;
@@ -33,4 +34,12 @@ public interface RolesPermissionsService {
    * @return - A list of RolesPermissionsModel
    */
   List<RolesPermissionsModel> saveAll(List<RolesPermissionsModel> rolesPermissionsModel);
+
+  /**
+   * Delete all permissions of a role
+   * 
+   * @param id - Role id
+   * @param permissionsToDelete - List of permission ids to delete
+   */
+  void deleteByRoleIdAndPermissionIds(Integer id, Set<Integer> permissionsToDelete);
 }

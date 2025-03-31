@@ -1,6 +1,7 @@
 package com.bandsyncapi.bandsyncapi.api.v1.services.impl;
 
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.stereotype.Service;
 
@@ -39,5 +40,10 @@ public class RolesPermissionsServiceImpl implements RolesPermissionsService {
   @Override
   public List<RolesPermissionsModel> saveAll(List<RolesPermissionsModel> rolesPermissionsModel) {
     return rolesPermissionsRepository.saveAll(rolesPermissionsModel);
+  }
+
+  @Override
+  public void deleteByRoleIdAndPermissionIds(Integer id, Set<Integer> permissionsToDelete) {
+    rolesPermissionsRepository.deleteByRoleIdAndPermissionIdIn(id, permissionsToDelete);
   }
 }

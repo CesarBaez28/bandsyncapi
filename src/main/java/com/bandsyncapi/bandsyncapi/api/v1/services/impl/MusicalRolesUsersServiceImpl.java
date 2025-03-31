@@ -8,6 +8,7 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.bandsyncapi.bandsyncapi.api.v1.models.MusicalBandsModel;
 import com.bandsyncapi.bandsyncapi.api.v1.models.MusicalRolesModel;
@@ -53,6 +54,7 @@ public class MusicalRolesUsersServiceImpl implements MusicalRolesUsersService {
   }
 
   @Override
+  @Transactional
   public void assignMusicalRolesUser(UUID userId, UUID musicalBandId, List<MusicalRolesModel> musicalRoles) {
     List<MusicalRolesSingleUserProjection> actualRoles = findMusicalRolesUser(musicalBandId, userId);
 

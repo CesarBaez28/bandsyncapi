@@ -3,6 +3,7 @@ package com.bandsyncapi.bandsyncapi.api.v1.services;
 import java.util.List;
 
 import com.bandsyncapi.bandsyncapi.api.v1.dto.roles.RolesPermissionsDto;
+import com.bandsyncapi.bandsyncapi.api.v1.dto.roles.RolesPermissionsPutDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.roles.RolesPostDto;
 import com.bandsyncapi.bandsyncapi.api.v1.models.RolesModel;
 
@@ -18,6 +19,13 @@ public interface RolesService {
    * @return - the new role
    */
   RolesModel save (RolesModel rolesModel);
+
+  /**
+   * Update a role and its permissions
+   * 
+   * @param rolesPermissionsPutDto - RolesPermissionsPutDto Object
+   */
+  void updateRolesPermissions (RolesPermissionsPutDto rolesPermissionsPutDto);
 
   /**
    * Save a new roles with permissions

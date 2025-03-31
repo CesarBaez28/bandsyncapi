@@ -17,6 +17,9 @@ public interface RolesMapper {
   @Mapping(target = "id", ignore = true)
   RolesModel toModel (RolesPostDto rolesPostDto);
 
+  @Mapping(target = "musicalBand", ignore = true)
+  RolesModel toModel(RolesDto rolesDto);
+
   RolesDto toDto (RolesModel rolesModel);
 
   RolesPermissionsDto toRolesPermissionsDto (RolesDto role, List<RolesPermissionsModel> permissions);

@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.bandsyncapi.bandsyncapi.api.v1.dto.roles.RolesDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.roles.RolesPermissionsDto;
+import com.bandsyncapi.bandsyncapi.api.v1.dto.roles.RolesPermissionsPutDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.roles.RolesPostDto;
 import com.bandsyncapi.bandsyncapi.api.v1.mappers.RolesMapper;
 import com.bandsyncapi.bandsyncapi.api.v1.models.RolesModel;
@@ -20,6 +21,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PutMapping;
+
 
 /**
  * Controller to handle request for roles data
@@ -73,4 +76,17 @@ public class RolesController {
     return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(true, "Datos encontrados", response, null));
   }
 
+  /**
+   * Update a role and its permissions
+   * 
+   * @param rolesPermissionsPutDto - RolesPermissionsPutDto Object
+   * @return ApiResponse Object
+   */
+  @PutMapping("/update")
+  public ResponseEntity<ApiResponse<Void>> update (@Valid @RequestBody RolesPermissionsPutDto rolesPermissionsPutDto) {
+    rolesService.updateRolesPermissions(rolesPermissionsPutDto);
+
+    return ResponseEntity.status(HttpStatus.OK)
+        .body(new ApiResponse<>(true, "Rol actualizado correctamente", null, null));
+  }
 }
