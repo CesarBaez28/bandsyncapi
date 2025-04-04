@@ -1,5 +1,7 @@
 package com.bandsyncapi.bandsyncapi.config;
 
+import java.util.Arrays;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -14,6 +16,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.bandsyncapi.bandsyncapi.api.v1.filter.JWTAuthorizationFilter;
 import com.bandsyncapi.bandsyncapi.api.v1.services.CustomUserDetailsService;
@@ -33,10 +38,13 @@ public class SecurityConfig {
   /**
    * Constructor for SecurityConfig.
    *
-   * @param customUserDetailsService the CustomUserDetailsService to use for authentication
-   * @param jwtAuthorizationFilter the JWTAuthorizationFilter to use for authorization
+   * @param customUserDetailsService the CustomUserDetailsService to use for
+   *                                 authentication
+   * @param jwtAuthorizationFilter   the JWTAuthorizationFilter to use for
+   *                                 authorization
    */
-  public SecurityConfig(CustomUserDetailsService customUserDetailsService, JWTAuthorizationFilter jwtAuthorizationFilter) {
+  public SecurityConfig(CustomUserDetailsService customUserDetailsService,
+      JWTAuthorizationFilter jwtAuthorizationFilter) {
     this.customUserDetailsService = customUserDetailsService;
     this.jwtAuthorizationFilter = jwtAuthorizationFilter;
   }
@@ -49,10 +57,11 @@ public class SecurityConfig {
    * @throws Exception if an error occurs during configuration
    */
   @Bean
-  public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+  SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
     return http
         .csrf(AbstractHttpConfigurer::disable)
+        .cors(cors -> cors.configurationSource(corsConfigurationSource()))
         .authorizeHttpRequests(request -> request
             .requestMatchers("/api/v1/users/auth/**").permitAll()
             .anyRequest().authenticated())
@@ -61,13 +70,24 @@ public class SecurityConfig {
         .build();
   }
 
+  @Bean
+  CorsConfigurationSource corsConfigurationSource() {
+    CorsConfiguration configuration = new CorsConfiguration();
+    configuration.setAllowedOrigins(Arrays.asList("*"));
+    configuration.setAllowedMethods(Arrays.asList("POST", "PUT", "GET", "OPTIONS", "DELETE", "PATCH", "OPTIONS"));
+    configuration.setAllowedHeaders(Arrays.asList("*"));
+    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+    source.registerCorsConfiguration("/**", configuration);
+    return source;
+  }
+
   /**
    * Configures the authentication provider for the application.
    *
    * @return the configured AuthenticationProvider
    */
   @Bean
-  public AuthenticationProvider authenticationProvider() {
+  AuthenticationProvider authenticationProvider() {
     DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
     authenticationProvider.setUserDetailsService(customUserDetailsService);
     authenticationProvider.setPasswordEncoder(passwordEncoder());
@@ -77,12 +97,14 @@ public class SecurityConfig {
   /**
    * Configures the authentication manager for the application.
    *
-   * @param authenticationConfiguration the AuthenticationConfiguration object to use
+   * @param authenticationConfiguration the AuthenticationConfiguration object to
+   *                                    use
    * @return the configured AuthenticationManager
    * @throws Exception if an error occurs during configuration
    */
   @Bean
-  public AuthenticationManager authenticationManager (AuthenticationConfiguration authenticationConfiguration) throws Exception {
+  AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
+      throws Exception {
     return authenticationConfiguration.getAuthenticationManager();
   }
 
@@ -92,7 +114,7 @@ public class SecurityConfig {
    * @return the configured PasswordEncoder
    */
   @Bean
-  public PasswordEncoder passwordEncoder() {
+  PasswordEncoder passwordEncoder() {
     return new BCryptPasswordEncoder();
   }
 }
