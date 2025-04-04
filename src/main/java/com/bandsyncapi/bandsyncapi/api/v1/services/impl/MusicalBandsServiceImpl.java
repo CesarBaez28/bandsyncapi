@@ -106,4 +106,9 @@ public class MusicalBandsServiceImpl implements MusicalBandsService {
 
     return musicalBandsMapper.toDto(savedMusicalBandsModel);
   }
+
+  @Override
+  public boolean existsById(UUID id) {
+    return musicalBandsRepository.existsById(id);
+  }
 }

@@ -1,6 +1,7 @@
 package com.bandsyncapi.bandsyncapi.api.v1.repositories;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -60,4 +61,12 @@ public interface UsersRepository extends JpaRepository<UsersModel, UUID> {
    * @return boolean
    */
   boolean existsByEmail(String email);
+
+  /**
+   * get user by username
+   * 
+   * @param username - username
+   * @return - UsersModel object
+   */
+  Optional<UsersModel> findByUsername(String username);
 }

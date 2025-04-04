@@ -105,6 +105,31 @@
       <artifactId>spring-security-crypto</artifactId>
       <version>6.4.3</version>
 		</dependency>
+		
+		<dependency>
+      <groupId>io.jsonwebtoken</groupId>
+      <artifactId>jjwt-api</artifactId>
+      <version>0.12.6</version>
+    </dependency>
+
+		<dependency>
+      <groupId>io.jsonwebtoken</groupId>
+      <artifactId>jjwt-impl</artifactId>
+      <version>0.12.6</version>
+    </dependency>
+
+		<dependency>
+      <groupId>io.jsonwebtoken</groupId>
+      <artifactId>jjwt-jackson</artifactId>
+      <version>0.12.6</version>
+   </dependency>
+
+	 	<dependency>
+      <groupId>io.jsonwebtoken</groupId>
+      <artifactId>jjwt-root</artifactId>
+      <version>0.12.6</version>
+		  <type>pom</type>
+    </dependency>
 
 	</dependencies>
 
@@ -152,7 +177,7 @@
               </annotationProcessorPaths>
             </configuration>
         </plugin>
-				
+
 		</plugins>
 	</build>
 

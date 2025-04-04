@@ -34,4 +34,12 @@ public interface MusicalBandsService {
    * @return - The new musical band
    */
   public MusicalBandsDto registerMusicalBand (MusicalBandsPostDto musicalBandsPostDto);
+
+  /**
+   * Check if the musical band exists by id
+   * 
+   * @param id - Musical band id
+   * @return - true if exists, false otherwise
+   */
+  boolean existsById(UUID id);
 }

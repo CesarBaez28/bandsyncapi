@@ -3,6 +3,7 @@ package com.bandsyncapi.bandsyncapi.api.v1.services;
 import java.util.List;
 import java.util.UUID;
 
+import com.bandsyncapi.bandsyncapi.api.v1.dto.users.UserLoginPostDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.users.UsersPutDto;
 import com.bandsyncapi.bandsyncapi.api.v1.models.UsersModel;
 
@@ -10,6 +11,14 @@ import com.bandsyncapi.bandsyncapi.api.v1.models.UsersModel;
  * Interface that defines methods for UsersModel
  */
 public interface UsersService {
+
+  /**
+   * Authenticate a user
+   * 
+   * @param userLoginPostDto - A UserLoginPostDto object
+   * @return - true if the user is authenticated, false otherwise
+   */
+  boolean verify (UserLoginPostDto userLoginPostDto);
 
   /**
    * register a user

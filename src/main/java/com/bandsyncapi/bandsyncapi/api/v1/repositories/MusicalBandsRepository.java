@@ -3,6 +3,7 @@ package com.bandsyncapi.bandsyncapi.api.v1.repositories;
 import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
 
 import com.bandsyncapi.bandsyncapi.api.v1.models.MusicalBandsModel;
@@ -13,5 +14,12 @@ import com.bandsyncapi.bandsyncapi.api.v1.models.MusicalBandsModel;
  */
 @Repository
 public interface MusicalBandsRepository extends JpaRepository<MusicalBandsModel, UUID> {
-  
+
+  /**
+   * Check if the musical band exists by id
+   * 
+   * @param id - Musical band id
+   * @return - true if exists, false otherwise
+   */
+  boolean existsById(@NonNull UUID id);
 }

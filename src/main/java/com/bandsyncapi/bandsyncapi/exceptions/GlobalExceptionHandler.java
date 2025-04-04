@@ -7,6 +7,8 @@ import java.util.NoSuchElementException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -100,6 +102,28 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(NoSuchElementException.class)
   public ResponseEntity<ApiResponse<Void>> handleNotFoudException(NoSuchElementException ex) {
     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse<>(false, ex.getMessage(), null, null));
+  }
+
+  /**
+   * Handle UsernameNotFoundException
+   * 
+   * @param ex - Object UsernameNotFoundException
+   * @return - An ApiResponse object with the error
+   */
+  @ExceptionHandler(UsernameNotFoundException.class)
+  public ResponseEntity<ApiResponse<Void>> handleUserNotFoundException(UsernameNotFoundException ex) {
+    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse<>(false, ex.getMessage(), null, null));
+  }
+
+  /**
+   * Handkle BadCredentialsException
+   * 
+   * @param ex - Object BadCredentialsException
+   * @return - An ApiResponse object with the error
+   */
+  @ExceptionHandler(BadCredentialsException.class)
+  public ResponseEntity<ApiResponse<Void>> handleBadCredentialsException(BadCredentialsException ex) {
+    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse<>(false, "Credenciales incorrectas.", null, null));
   }
 
   /**

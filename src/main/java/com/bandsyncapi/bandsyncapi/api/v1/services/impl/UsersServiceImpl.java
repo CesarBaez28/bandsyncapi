@@ -4,8 +4,12 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+import com.bandsyncapi.bandsyncapi.api.v1.dto.users.UserLoginPostDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.users.UsersPutDto;
 import com.bandsyncapi.bandsyncapi.api.v1.models.MusicalBandsModel;
 import com.bandsyncapi.bandsyncapi.api.v1.models.UsersModel;
@@ -27,20 +31,32 @@ public class UsersServiceImpl implements UsersService {
 
   private final UsersMusicalBandsService usersMusicalBandsService;
 
+  private final AuthenticationManager authenticationManager;
+
   private final Encrypt encrypt;
 
   /**
    * Constructor
    * 
-   * @param usersRepository            - Repository for UsersModel
-   * @param usersMusicalBandsService   - Service for UsersMusicalBandsModel
-   * @param encrypt                    - Encrypt utility
+   * @param usersRepository          - Repository for UsersModel
+   * @param usersMusicalBandsService - Service for UsersMusicalBandsModel
+   * @param encrypt                  - Encrypt utility
    */
   public UsersServiceImpl(UsersRepository usersRepository, UsersMusicalBandsService usersMusicalBandsService,
-      Encrypt encrypt) {
+      Encrypt encrypt, AuthenticationManager authenticationManager) {
     this.usersRepository = usersRepository;
     this.usersMusicalBandsService = usersMusicalBandsService;
+    this.authenticationManager = authenticationManager;
     this.encrypt = encrypt;
+  }
+
+  @Override
+  public boolean verify(UserLoginPostDto userLoginPostDto) {
+
+    Authentication authentication = authenticationManager.authenticate(
+        new UsernamePasswordAuthenticationToken(userLoginPostDto.username(), userLoginPostDto.password()));
+
+    return authentication.isAuthenticated();
   }
 
   @Override

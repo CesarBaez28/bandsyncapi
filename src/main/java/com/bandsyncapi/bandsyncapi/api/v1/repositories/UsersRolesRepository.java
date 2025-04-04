@@ -1,5 +1,8 @@
 package com.bandsyncapi.bandsyncapi.api.v1.repositories;
 
+import java.util.Optional;
+import java.util.UUID;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -13,4 +16,12 @@ import com.bandsyncapi.bandsyncapi.api.v1.models.UsersRolesKey;
 @Repository
 public interface UsersRolesRepository extends JpaRepository<UsersRolesModel, UsersRolesKey> {
   
+  /**
+   * Finds a UsersRolesModel by userId and musicalBandId.
+   * 
+   * @param userId - the ID of the user
+   * @param musicalBandId - the ID of the musical band
+   * @return
+   */
+  Optional<UsersRolesModel> findByUserIdAndMusicalBandId(UUID userId, UUID musicalBandId);
 }

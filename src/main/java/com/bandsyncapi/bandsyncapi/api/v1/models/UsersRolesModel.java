@@ -7,12 +7,14 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MapsId;
 import jakarta.persistence.Table;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
  * This class is a model for the users_roles table in the database.
  */
 @Entity
+@Data
 @Table(name = "users_roles")
 @NoArgsConstructor
 public class UsersRolesModel {

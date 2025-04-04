@@ -8,11 +8,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.bandsyncapi.bandsyncapi.api.v1.dto.users.UserLoginPostDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.users.UserRegisterPostDto;
+import com.bandsyncapi.bandsyncapi.api.v1.dto.users.UserTokenDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.users.UsersDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.users.UsersPutDto;
 import com.bandsyncapi.bandsyncapi.api.v1.mappers.UsersMapper;
 import com.bandsyncapi.bandsyncapi.api.v1.models.UsersModel;
+import com.bandsyncapi.bandsyncapi.api.v1.services.JWTService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.UsersService;
 import com.bandsyncapi.bandsyncapi.response.ApiResponse;
 
@@ -34,6 +37,8 @@ public class UsersController {
 
   private final UsersService usersService;
 
+  private final JWTService jwtService;
+
   private UsersMapper usersMapper;
 
   /**
@@ -42,9 +47,28 @@ public class UsersController {
    * @param usersService - Users Service
    * @param usersMapper  - Users mapper
    */
-  public UsersController(UsersService usersService, UsersMapper usersMapper) {
+  public UsersController(UsersService usersService, UsersMapper usersMapper, JWTService jwtService) {
     this.usersService = usersService;
+    this.jwtService = jwtService;
     this.usersMapper = usersMapper;
+  }
+
+  /**
+   * Authenticate a user
+   * 
+   * @param userLoginPostDto - Request body with the user data
+   * @return - An ApiResponse object
+   */
+  @PostMapping("/auth/login")
+  public ResponseEntity<ApiResponse<UserTokenDto>> login(@RequestBody UserLoginPostDto userLoginPostDto) {
+    usersService.verify(userLoginPostDto);
+
+    String token = jwtService.generateToken(userLoginPostDto.username());
+
+    var userTokenDto = new UserTokenDto(token);
+
+    return ResponseEntity.status(HttpStatus.OK)
+        .body(new ApiResponse<>(true, "Usuario autenticado", userTokenDto, null));
   }
 
   /**
@@ -70,11 +94,11 @@ public class UsersController {
   /**
    * join user to a musical band
    * 
-   * @param userId - user id
+   * @param userId        - user id
    * @param musicalBandId - musical band id
    * @return - ApiResponse object
    */
-  @PostMapping("/joinUserToMusicalBand/{userId}/{musicalBandId}")
+  @PostMapping("/joinUserToMusicalBand/{musicalBandId}/{userId}")
   public ResponseEntity<ApiResponse<Void>> joinUserToMusicalBand(@PathVariable UUID userId,
       @PathVariable UUID musicalBandId) {
     usersService.joinUserToMusicalBand(userId, musicalBandId);
@@ -140,6 +164,7 @@ public class UsersController {
       return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(true, "Usuario encontrado", exists, null));
     }
 
-    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse<>(false, "Usuario no encontrado", exists, null));
+    return ResponseEntity.status(HttpStatus.NOT_FOUND)
+        .body(new ApiResponse<>(false, "Usuario no encontrado", exists, null));
   }
 }
