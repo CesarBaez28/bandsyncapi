@@ -42,7 +42,7 @@ public class UsersController {
   private UsersMapper usersMapper;
 
   /**
-   * Contructor
+   * Constructor of the class
    * 
    * @param usersService - Users Service
    * @param usersMapper  - Users mapper

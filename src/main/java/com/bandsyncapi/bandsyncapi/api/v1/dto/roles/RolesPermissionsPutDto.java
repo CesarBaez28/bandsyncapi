@@ -8,7 +8,7 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 
 /**
- * This recors represents the put request to update a Role and its permissions
+ * This record represents the put request to update a Role and its permissions
  */
 public record RolesPermissionsPutDto(
   Integer roleId,  

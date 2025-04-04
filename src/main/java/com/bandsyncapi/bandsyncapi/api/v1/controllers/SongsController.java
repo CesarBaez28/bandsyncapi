@@ -31,7 +31,7 @@ public class SongsController {
   private final SongsMapper songsMapper;
 
   /**
-   * Constructos
+   * Constructor of the class
    * 
    * @param songsService - Songs service with all business logic
    * @param songsMapper  - Mapper to convert between SongsModel and

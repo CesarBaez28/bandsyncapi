@@ -84,7 +84,7 @@ public class MusicalRolesController {
    * 
    * @param id                 - musical role id
    * @param musicalRolesPutDto - the request body to update the musical role
-   * @return - An object ApiReponse indicating that the musical genre name was
+   * @return - An object ApiResponse indicating that the musical genre name was
    *         updated
    */
   @PutMapping("/updateMusicalRoleName/{id}")

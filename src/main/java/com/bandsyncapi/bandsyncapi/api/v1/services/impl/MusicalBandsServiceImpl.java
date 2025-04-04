@@ -94,7 +94,7 @@ public class MusicalBandsServiceImpl implements MusicalBandsService {
         .musicalBand(savedMusicalBandsModel)
         .status(true).build());
 
-    // Save relationship betheen the user and the role
+    // Save relationship between the user and the role
     usersRolesService.save(new UsersRolesModel(role, savedMusicalBandsModel, musicalBandsPostDto.user(), true));
 
     // Get All permissions to be added to the role

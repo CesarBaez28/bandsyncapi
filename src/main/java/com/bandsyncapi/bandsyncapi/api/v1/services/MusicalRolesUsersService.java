@@ -30,7 +30,7 @@ public interface MusicalRolesUsersService {
   List<MusicalRolesSingleUserProjection> findMusicalRolesUser (UUID musicalBandId, UUID userId);
 
   /**
-   * Assing musical roles of a specific user in a band music
+   * Assign musical roles of a specific user in a band music
    * 
    * @param userId - user id
    * @param musicalBandId - musical band id

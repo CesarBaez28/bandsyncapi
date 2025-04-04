@@ -88,7 +88,7 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
   /**
    * Gets the musical band ID from the request URI.
    * 
-   * If a request contatains a musical band ID, it means that the user is making a
+   * If a request contains a musical band ID, it means that the user is making a
    * request
    * from a specific musical band.
    * 

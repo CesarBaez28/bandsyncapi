@@ -12,7 +12,7 @@ import jakarta.validation.constraints.Size;
 /**
  * This record represents the POST request for creating an event.
  */
-public record EventsaPostDto(
+public record EventsPostDto(
   MusicalBandsModel musicalBand, 
 
   @NotNull(message = "Seleccione un repertorio.")

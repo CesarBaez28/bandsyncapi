@@ -34,7 +34,7 @@ public interface RepertoiresRepository extends JpaRepository<RepertoiresModel, U
   List<RepertoiresModel> findByMusicalBandId(@Param("musicalBandId") UUID musicalBandId);
 
   /**
-   * update repertoire infor
+   * update repertoire info
    * 
    * @param id          - repertoire id
    * @param name        - repertoire name

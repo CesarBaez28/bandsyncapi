@@ -87,7 +87,7 @@ public class RepertoiresController {
    * Update repertoire
    * 
    * @param id                - repertoire id
-   * @param repertoiresPutDto - Data to be updatated
+   * @param repertoiresPutDto - Data to be updated
    * @return - An ApiResponse object
    */
   @PutMapping("/updateRepertoire/{id}")

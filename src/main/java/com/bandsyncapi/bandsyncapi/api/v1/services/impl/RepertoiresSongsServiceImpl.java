@@ -21,9 +21,9 @@ public class RepertoiresSongsServiceImpl implements RepertoiresSongsService{
   private final RepertoiresSongsRepository repertoiresSongsRepository;
 
   /**
-   * Constructos
+   * Constructor of the class
    * 
-   * @param repertoiresSongsRepository - Repository to perfom crud opeations on RepertoiresSongsModel
+   * @param repertoiresSongsRepository - Repository to perform crud operations on RepertoiresSongsModel
    */
   public RepertoiresSongsServiceImpl (RepertoiresSongsRepository repertoiresSongsRepository) {
     this.repertoiresSongsRepository = repertoiresSongsRepository;

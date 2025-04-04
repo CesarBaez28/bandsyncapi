@@ -69,7 +69,7 @@ public class ArtistsController {
    * finds artists by musical band id
    * 
    * @param id - musical band id
-   * @return An ApiReponse Object with a List of artists
+   * @return An ApiResponse Object with a List of artists
    */
   @GetMapping("/findByMusicalBandId/{id}")
   public ResponseEntity<ApiResponse<List<ArtistsDto>>> findByMusicalRoleId(@PathVariable UUID id) {
@@ -85,7 +85,7 @@ public class ArtistsController {
    * 
    * @param id            - Artist id
    * @param artistsPutDto - the request body to update the artist
-   * @return - An ApiReponse object indicating that the artist name was
+   * @return - An ApiResponse object indicating that the artist name was
    *         updated
    */
   @PutMapping("/updateArtistName/{id}")

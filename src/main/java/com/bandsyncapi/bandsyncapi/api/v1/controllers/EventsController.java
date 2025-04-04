@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.bandsyncapi.bandsyncapi.api.v1.dto.events.EventsDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.events.EventsPutDto;
-import com.bandsyncapi.bandsyncapi.api.v1.dto.events.EventsaPostDto;
+import com.bandsyncapi.bandsyncapi.api.v1.dto.events.EventsPostDto;
 import com.bandsyncapi.bandsyncapi.api.v1.mappers.EventsMapper;
 import com.bandsyncapi.bandsyncapi.api.v1.models.EventsModel;
 import com.bandsyncapi.bandsyncapi.api.v1.services.EventsService;
@@ -50,12 +50,12 @@ public class EventsController {
   /**
    * Save a new event.
    * 
-   * @param eventsaPostDto - Event info to save @see EventsaPostDto
+   * @param eventsPostDto - Event info to save @see EventsPostDto
    * @return - The new event @see EventsDto
    */
   @PostMapping("/save")
-  public ResponseEntity<ApiResponse<EventsDto>> save(@Valid @RequestBody EventsaPostDto eventsaPostDto) {
-    EventsModel eventsModel = eventsMapper.toModel(eventsaPostDto);
+  public ResponseEntity<ApiResponse<EventsDto>> save(@Valid @RequestBody EventsPostDto eventsPostDto) {
+    EventsModel eventsModel = eventsMapper.toModel(eventsPostDto);
     EventsModel savedEvent = eventsService.save(eventsModel);
     EventsDto response = eventsMapper.toDto(savedEvent);
 

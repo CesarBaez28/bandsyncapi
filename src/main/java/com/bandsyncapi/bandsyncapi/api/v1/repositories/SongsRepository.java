@@ -41,7 +41,7 @@ public interface SongsRepository extends JpaRepository<SongsModel, Integer> {
    * @param genre    - genre id
    * @param tonality   - tonality song
    * @param link       - link to share song
-   * @param sheetMusic - sheetMusicl
+   * @param sheetMusic - sheetMusic
    * @return - number of rows updated
    */
   @Transactional

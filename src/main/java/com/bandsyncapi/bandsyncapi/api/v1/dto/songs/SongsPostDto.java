@@ -9,7 +9,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 /**
- * This recod represents the post request to save a song
+ * This record represents the post request to save a song
  */
 public record SongsPostDto(
 

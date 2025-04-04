@@ -29,7 +29,7 @@ import lombok.NoArgsConstructor;
     @UniqueConstraint(columnNames = {"musical_band_id", "name"})
   },
   indexes = {
-  @Index(name = "nusical_role_name_index", columnList = "name")
+  @Index(name = "musical_role_name_index", columnList = "name")
   }
 )
 public class MusicalRolesModel {

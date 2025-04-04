@@ -69,10 +69,10 @@ public class MusicalGenresController {
    * @param musicalBandId - musical band id
    * @return - A list with all musical genres
    */
-  @GetMapping("/findBymusicalBandId/{musicalBandId}")
+  @GetMapping("/findByMusicalBandId/{musicalBandId}")
   public ResponseEntity<ApiResponse<List<MusicalGenreDto>>> findByMusicalBandId(@PathVariable UUID musicalBandId) {
-    List<MusicalGenresModel> musicalgenres = musicalGenresService.findByMusicalBandId(musicalBandId);
-    List<MusicalGenreDto> musicalGenreResponse = musicalGenresMapper.toDtoList(musicalgenres);
+    List<MusicalGenresModel> musicalGenres = musicalGenresService.findByMusicalBandId(musicalBandId);
+    List<MusicalGenreDto> musicalGenreResponse = musicalGenresMapper.toDtoList(musicalGenres);
 
     return ResponseEntity.status(HttpStatus.OK)
         .body(new ApiResponse<>(true, "Datos encontrados correctamente", musicalGenreResponse, null));
@@ -83,7 +83,7 @@ public class MusicalGenresController {
    * 
    * @param id                 - musical genre id
    * @param musicalGenrePutDto - the request body to update the musical genre
-   * @return - An object ApiReponse indicating that the musical genre name was
+   * @return - An object ApiResponse indicating that the musical genre name was
    *         updated
    */
   @PutMapping("/updateMusicalGenreName/{id}")

@@ -91,15 +91,15 @@ public class MusicalRolesUsersController {
   }
 
   /**
-   * Assing musical roles to a user in a specific musical band
+   * Assign musical roles to a user in a specific musical band
    * 
    * @param musicalBandId - musical band id
    * @param userId - user id
    * @param musicalRoles - MusicalRolesDto List
    * @return An ApiResponse object
    */
-  @PostMapping("/assingMusicalRoles/{musicalBandId}/{userId}")
-  public ResponseEntity<ApiResponse<Void>> assingMusicalRoles(@PathVariable UUID musicalBandId,
+  @PostMapping("/assignMusicalRoles/{musicalBandId}/{userId}")
+  public ResponseEntity<ApiResponse<Void>> assignMusicalRoles(@PathVariable UUID musicalBandId,
       @PathVariable UUID userId, @RequestBody List<MusicalRolesDto> musicalRoles) {
 
     List<MusicalRolesModel> musicalRolesModelList = musicalRolesMapper.toModelList(musicalRoles);

@@ -19,7 +19,7 @@ public interface RepertoiresService {
   /**
    * Finds repertoires by musicalBandId
    * 
-   * @param musicalBandid - musical band id
+   * @param musicalBandId - musical band id
    * @return - A repertoires list
    */
   public List<RepertoiresModel> findByMusicalBandId(UUID musicalBandId);

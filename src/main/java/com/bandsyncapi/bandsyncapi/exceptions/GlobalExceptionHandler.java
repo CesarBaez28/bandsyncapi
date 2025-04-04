@@ -61,7 +61,7 @@ public class GlobalExceptionHandler {
    */
   @ExceptionHandler(DataIntegrityViolationException.class)
   public ResponseEntity<ApiResponse<Void>> handleIntegrityViolationException(DataIntegrityViolationException ex) {
-    String errorMesage = ex.getMostSpecificCause().getMessage();
+    String errorMessage = ex.getMostSpecificCause().getMessage();
     final Map<String, String> constraintMessages = new HashMap<>();
 
     constraintMessages.put("musical_bands.name", "Ya existe una banda con ese nombre.");
@@ -73,7 +73,7 @@ public class GlobalExceptionHandler {
     constraintMessages.put("users.email", "Ya existe un usuario con ese mismo correo electrónico.");
     constraintMessages.put("users.username", "Ya existe un usuario con ese nombre de usuario");
 
-    String key = extractConstraintName(errorMesage);
+    String key = extractConstraintName(errorMessage);
 
     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
         .body(new ApiResponse<>(false,
@@ -89,7 +89,7 @@ public class GlobalExceptionHandler {
    * @return - An object ApiResponse with the error
    */
   @ExceptionHandler(EntityNotFoundException.class)
-  public ResponseEntity<ApiResponse<Void>> handlEntityNotFoundException(EntityNotFoundException ex) {
+  public ResponseEntity<ApiResponse<Void>> handleEntityNotFoundException(EntityNotFoundException ex) {
     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse<>(false, ex.getMessage(), null, null));
   }
 
@@ -100,7 +100,7 @@ public class GlobalExceptionHandler {
    * @return - An ApiResponse object with the error
    */
   @ExceptionHandler(NoSuchElementException.class)
-  public ResponseEntity<ApiResponse<Void>> handleNotFoudException(NoSuchElementException ex) {
+  public ResponseEntity<ApiResponse<Void>> handleNotFoundException(NoSuchElementException ex) {
     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse<>(false, ex.getMessage(), null, null));
   }
 
@@ -116,7 +116,7 @@ public class GlobalExceptionHandler {
   }
 
   /**
-   * Handkle BadCredentialsException
+   * Handle BadCredentialsException
    * 
    * @param ex - Object BadCredentialsException
    * @return - An ApiResponse object with the error
