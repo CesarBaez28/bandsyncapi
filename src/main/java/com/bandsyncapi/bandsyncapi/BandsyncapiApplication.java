@@ -11,11 +11,3 @@ public class BandsyncapiApplication {
 	}
 
 }
-
-/**
- * TODO: 
- * 
- * - Implement Cors configuration
- * - Log application 
- * - Make tests 	
- */
