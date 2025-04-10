@@ -22,10 +22,13 @@ import com.bandsyncapi.bandsyncapi.api.v1.services.RolesService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.UsersMusicalBandsService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.UsersRolesService;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * This class is a service implementation of the MusicalBandsService interface.
  */
 @Service
+@Slf4j
 public class MusicalBandsServiceImpl implements MusicalBandsService {
 
   private final MusicalBandsRepository musicalBandsRepository;
@@ -68,25 +71,35 @@ public class MusicalBandsServiceImpl implements MusicalBandsService {
 
   @Override
   public Optional<MusicalBandsModel> findById(UUID id) {
+    log.info("Finding musical band by id: {}", id);
+
     return musicalBandsRepository.findById(id);
   }
 
   @Override
   public MusicalBandsModel save(MusicalBandsModel musicalBandsModel) {
+    log.info("Saving musical band: {}", musicalBandsModel);
+
     return musicalBandsRepository.save(musicalBandsModel);
   }
 
   @Transactional
   @Override
   public MusicalBandsDto registerMusicalBand(MusicalBandsPostDto musicalBandsPostDto) {
+    log.info("Registering musical band...", musicalBandsPostDto);
 
     MusicalBandsModel musicalBandsModel = musicalBandsMapper.toModel(musicalBandsPostDto);
 
     // Save the new musical band
     MusicalBandsModel savedMusicalBandsModel = save(musicalBandsModel);
 
+    log.info("Saved musical band: {}", savedMusicalBandsModel);
+
     // Save relationship between the user and the musical band
     usersMusicalBandsService.save(musicalBandsPostDto.user(), savedMusicalBandsModel);
+
+    log.info("Saved relationship between user and musical band: {}", musicalBandsPostDto.user(),
+        savedMusicalBandsModel);
 
     // Save the role of the user in the musical band
     RolesModel role = rolesService.save(RolesModel.builder()
@@ -94,15 +107,23 @@ public class MusicalBandsServiceImpl implements MusicalBandsService {
         .musicalBand(savedMusicalBandsModel)
         .status(true).build());
 
+    log.info("Saved role of the user in the musical band: {}", role);
+
     // Save relationship between the user and the role
     usersRolesService.save(new UsersRolesModel(role, savedMusicalBandsModel, musicalBandsPostDto.user(), true));
+
+    log.info("Saved relationship between user and role: {}", musicalBandsPostDto.user(), role);
 
     // Get All permissions to be added to the role
     List<RolesPermissionsModel> rolesPermissions = permissionsService.findAll().stream()
         .map(permission -> new RolesPermissionsModel(role, permission, true)).toList();
 
+    log.info("Getting all permissions to be added to the role: {}", rolesPermissions);
+
     // Save all permissions to the role
     rolesPermissionsService.saveAll(rolesPermissions);
+
+    log.info("Saved all permissions to the role: {}", rolesPermissions);
 
     return musicalBandsMapper.toDto(savedMusicalBandsModel);
   }

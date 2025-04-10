@@ -12,6 +12,7 @@ import com.bandsyncapi.bandsyncapi.api.v1.services.MusicalGenresService;
 import com.bandsyncapi.bandsyncapi.response.ApiResponse;
 
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 import java.util.UUID;
@@ -30,6 +31,7 @@ import org.springframework.web.bind.annotation.PutMapping;
  */
 @RestController
 @RequestMapping(path = "api/v1/musical-genres")
+@Slf4j
 public class MusicalGenresController {
 
   private final MusicalGenresService musicalGenresService;
@@ -59,6 +61,8 @@ public class MusicalGenresController {
     MusicalGenresModel savedEntity = musicalGenresService.save(musicalGenre);
     MusicalGenreDto responseDto = musicalGenresMapper.toDto(savedEntity);
 
+    log.info("Musical genre saved successfully: {}", responseDto);
+
     return ResponseEntity.status(HttpStatus.CREATED)
         .body(new ApiResponse<>(true, "Género musical guardado exitosamente.", responseDto, null));
   }
@@ -73,6 +77,8 @@ public class MusicalGenresController {
   public ResponseEntity<ApiResponse<List<MusicalGenreDto>>> findByMusicalBandId(@PathVariable UUID musicalBandId) {
     List<MusicalGenresModel> musicalGenres = musicalGenresService.findByMusicalBandId(musicalBandId);
     List<MusicalGenreDto> musicalGenreResponse = musicalGenresMapper.toDtoList(musicalGenres);
+
+    log.info("Musical genres found successfully: {}", musicalGenreResponse);
 
     return ResponseEntity.status(HttpStatus.OK)
         .body(new ApiResponse<>(true, "Datos encontrados correctamente", musicalGenreResponse, null));
@@ -91,6 +97,8 @@ public class MusicalGenresController {
       @RequestBody MusicalGenrePutDto musicalGenrePutDto) {
     musicalGenresService.updateGenreName(id, musicalGenrePutDto.name());
 
+    log.info("Musical genre name updated successfully: {}", musicalGenrePutDto.name());
+
     return ResponseEntity.status(HttpStatus.OK)
         .body(new ApiResponse<>(true, "Género musical actualizado correctamente", null, null));
   }
@@ -104,6 +112,8 @@ public class MusicalGenresController {
   @DeleteMapping("/delete/{id}")
   public ResponseEntity<ApiResponse<Void>> deleteMusicalGenre(@PathVariable Integer id) {
     musicalGenresService.deleteById(id);
+
+    log.info("Musical genre deleted successfully: {}", id);
 
     return ResponseEntity.status(HttpStatus.OK)
         .body(new ApiResponse<>(true, "Género musical eliminado", null, null));

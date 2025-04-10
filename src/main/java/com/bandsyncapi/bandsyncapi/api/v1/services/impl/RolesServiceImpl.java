@@ -21,10 +21,13 @@ import com.bandsyncapi.bandsyncapi.api.v1.repositories.RolesRepository;
 import com.bandsyncapi.bandsyncapi.api.v1.services.RolesPermissionsService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.RolesService;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * Implementation of RolesService
  */
 @Service
+@Slf4j  
 public class RolesServiceImpl implements RolesService {
 
   private final RolesRepository rolesRepository;
@@ -49,21 +52,26 @@ public class RolesServiceImpl implements RolesService {
 
   @Override
   public List<RolesModel> findAll() {
+    log.info("Finding all roles");
     return rolesRepository.findAll();
   }
 
   @Override
   @Transactional
   public RolesModel save(RolesModel rolesModel) {
+    log.info("Saving role {}", rolesModel);
     return rolesRepository.save(rolesModel);
   }
 
   @Override
   @Transactional
   public RolesPermissionsDto saveRoleAndPermissions(RolesPostDto rolesPostDto) {
+    log.info("Saving role and permissions of the role {}", rolesPostDto);
+
     RolesModel rolesModel = rolesMapper.toModel(rolesPostDto);
 
-    // Save the new role
+    log.info("Saving role {}", rolesModel);
+
     RolesModel roleSaved = rolesRepository.save(rolesModel);
 
     RolesDto rolesDto = rolesMapper.toDto(roleSaved);
@@ -71,7 +79,8 @@ public class RolesServiceImpl implements RolesService {
     List<RolesPermissionsModel> rolesPermissions = rolesPostDto.permissions().stream()
         .map(permission -> new RolesPermissionsModel(roleSaved, permission, true)).toList();
 
-    // Save permissions role
+    log.info("Saving permissions of the role {}", rolesPermissions);
+
     List<RolesPermissionsModel> rolesPermissionsSaved = rolesPermissionsService.saveAll(rolesPermissions);
 
     return rolesMapper.toRolesPermissionsDto(rolesDto, rolesPermissionsSaved);
@@ -80,6 +89,7 @@ public class RolesServiceImpl implements RolesService {
   @Override
   @Transactional
   public void updateRolesPermissions(RolesPermissionsPutDto rolesPermissionsPutDto) {
+    log.info("Updating role and permissions of the role {}", rolesPermissionsPutDto);
 
     // Get the role by ID
     RolesModel rolesModel = rolesRepository.findById(rolesPermissionsPutDto.roleId())
@@ -112,11 +122,15 @@ public class RolesServiceImpl implements RolesService {
 
     // Delete permissions that are not presents in the new list
     if (!permissionsToDelete.isEmpty()) {
+      log.info("Deleting permissions of the role {}", permissionsToDelete);
+
       rolesPermissionsService.deleteByRoleIdAndPermissionIds(updatedRole.getId(), permissionsToDelete);
     }
 
     // Add new permissions
     if (!permissionsToAdd.isEmpty()) {
+      log.info("Adding permissions of the role {}", permissionsToAdd);
+      
       List<RolesPermissionsModel> newPermissions = permissionsToAdd.stream()
           .map(id -> new RolesPermissionsModel(updatedRole, new PermissionsModel(id), true)).toList();
       rolesPermissionsService.saveAll(newPermissions);

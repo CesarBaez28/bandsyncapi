@@ -13,6 +13,7 @@ import com.bandsyncapi.bandsyncapi.api.v1.services.RepertoiresSongsService;
 import com.bandsyncapi.bandsyncapi.response.ApiResponse;
 
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 import java.util.UUID;
@@ -27,6 +28,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 
 @RestController
 @RequestMapping(path = "api/v1/repertoires")
+@Slf4j
 public class RepertoiresController {
 
   private final RepertoiresService repertoiresService;
@@ -64,6 +66,8 @@ public class RepertoiresController {
     RepertoiresModel repertoiresModelSaved = repertoiresService.save(repertoiresModel);
     repertoiresSongsService.saveAll(repertoiresModelSaved, repertoiresPostDto.songs());
 
+    log.info("Repertoire saved sucedfully with id: {}", repertoiresModelSaved.getId());
+
     return ResponseEntity.status(HttpStatus.CREATED)
         .body(new ApiResponse<>(true, "Repertorio guardado correctamente", null, null));
   }
@@ -78,6 +82,8 @@ public class RepertoiresController {
   public ResponseEntity<ApiResponse<List<RepertoiresDto>>> findByMusicalBandId(@PathVariable UUID id) {
     List<RepertoiresModel> repertoiresModelList = repertoiresService.findByMusicalBandId(id);
     List<RepertoiresDto> repertoiresDtoList = repertoiresMapper.toDtoList(repertoiresModelList);
+
+    log.info("Repertoires found by musical band id: {}", id);
 
     return ResponseEntity.status(HttpStatus.OK)
         .body(new ApiResponse<>(true, "Datos encontrados", repertoiresDtoList, null));
@@ -94,6 +100,8 @@ public class RepertoiresController {
   public ResponseEntity<ApiResponse<Void>> updateRepertoire(@PathVariable UUID id,
       @RequestBody RepertoiresPutDto repertoiresPutDto) {
     repertoiresService.updateRepertoire(id, repertoiresPutDto);
+
+    log.info("Repertoire updated successfully with id: {}", id);
 
     return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(true, "Repertorio actualizado.", null, null));
   }

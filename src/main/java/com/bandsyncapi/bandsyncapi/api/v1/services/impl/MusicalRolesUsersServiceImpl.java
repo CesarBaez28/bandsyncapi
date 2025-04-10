@@ -19,10 +19,13 @@ import com.bandsyncapi.bandsyncapi.api.v1.projections.MusicalRolesUsersProjectio
 import com.bandsyncapi.bandsyncapi.api.v1.repositories.MusicalRolesUsersRepository;
 import com.bandsyncapi.bandsyncapi.api.v1.services.MusicalRolesUsersService;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * Implementation of MusicalRolesUsersService
  */
 @Service
+@Slf4j
 public class MusicalRolesUsersServiceImpl implements MusicalRolesUsersService {
 
   private final MusicalRolesUsersRepository musicalRolesUsersRepository;
@@ -38,6 +41,7 @@ public class MusicalRolesUsersServiceImpl implements MusicalRolesUsersService {
 
   @Override
   public List<MusicalRolesUsersProjection> findAllByMusicalBandId(UUID musicalBandId) {
+    log.info("Finding all musical roles users by musical band id: {}", musicalBandId);
 
     List<MusicalRolesUsersProjection> projections = musicalRolesUsersRepository.findAllByMusicalBandId(musicalBandId);
 
@@ -50,12 +54,15 @@ public class MusicalRolesUsersServiceImpl implements MusicalRolesUsersService {
 
   @Override
   public List<MusicalRolesSingleUserProjection> findMusicalRolesUser(UUID musicalBandId, UUID userId) {
+    log.info("Finding all musical roles users by musical band id: {} and user id: {}", musicalBandId, userId);
     return musicalRolesUsersRepository.findMusicalRolesUser(musicalBandId, userId);
   }
 
   @Override
   @Transactional
   public void assignMusicalRolesUser(UUID userId, UUID musicalBandId, List<MusicalRolesModel> musicalRoles) {
+    log.info("Assigning musical roles to user: {} in band: {}", userId, musicalBandId);
+
     List<MusicalRolesSingleUserProjection> actualRoles = findMusicalRolesUser(musicalBandId, userId);
 
     Set<Integer> actualRolesSet = actualRoles.stream().map(MusicalRolesSingleUserProjection::getId)
@@ -73,11 +80,15 @@ public class MusicalRolesUsersServiceImpl implements MusicalRolesUsersService {
 
     // Deletes roles that are not presents in the new list
     if (!rolesToDelete.isEmpty()) {
+      log.info("Deleting roles: {} for user: {} in band: {}", rolesToDelete, userId, musicalBandId);
+      
       musicalRolesUsersRepository.deleteByUserIdAndBandIdAndRoleIds(userId, musicalBandId, rolesToDelete);
     }
 
     // Add new roles
     if (!rolesToAdd.isEmpty()) {
+      log.info("Adding roles: {} for user: {} in band: {}", rolesToAdd, userId, musicalBandId);
+
       List<MusicalRolesUsersModel> newRoles = rolesToAdd.stream()
           .map(id -> new MusicalRolesUsersModel(new MusicalRolesModel(id), new MusicalBandsModel(musicalBandId),
               new UsersModel(userId), true))

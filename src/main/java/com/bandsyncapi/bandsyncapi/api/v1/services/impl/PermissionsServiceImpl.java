@@ -9,11 +9,13 @@ import com.bandsyncapi.bandsyncapi.api.v1.repositories.PermissionsRepository;
 import com.bandsyncapi.bandsyncapi.api.v1.services.PermissionsService;
 
 import jakarta.persistence.EntityNotFoundException;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * This class implements the PermissionsService interface
  */
 @Service
+@Slf4j
 public class PermissionsServiceImpl implements PermissionsService {
 
   private final PermissionsRepository permissionsRepository;
@@ -29,11 +31,13 @@ public class PermissionsServiceImpl implements PermissionsService {
 
   @Override
   public List<PermissionsModel> findAll() {
+    log.info("Fetching all permissions");
     return permissionsRepository.findAll();
   }
 
   @Override
   public PermissionsModel findById(Integer id) {
+    log.info("Fetching permission with id {}", id);
     return permissionsRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Permission not found"));
   }
 }

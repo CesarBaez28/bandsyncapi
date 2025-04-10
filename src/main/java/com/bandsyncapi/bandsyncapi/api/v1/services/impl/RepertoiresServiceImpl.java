@@ -11,11 +11,13 @@ import com.bandsyncapi.bandsyncapi.api.v1.repositories.RepertoiresRepository;
 import com.bandsyncapi.bandsyncapi.api.v1.services.RepertoiresService;
 
 import jakarta.persistence.EntityNotFoundException;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Implementation of RepertoiresService
  */
 @Service
+@Slf4j
 public class RepertoiresServiceImpl implements RepertoiresService {
 
   private final RepertoiresRepository repertoiresRepository;
@@ -32,16 +34,20 @@ public class RepertoiresServiceImpl implements RepertoiresService {
 
   @Override
   public RepertoiresModel save(RepertoiresModel repertoiresModel) {
+    log.info("Saving repertoire with name {}", repertoiresModel.getName());
     return repertoiresRepository.save(repertoiresModel);
   }
 
   @Override
   public List<RepertoiresModel> findByMusicalBandId(UUID musicalBandId) {
+    log.info("Fetching repertoires with musical band id {}", musicalBandId);
     return repertoiresRepository.findByMusicalBandId(musicalBandId);
   }
 
   @Override
   public void updateRepertoire(UUID id, RepertoiresPutDto repertoiresPutDto) {
+    log.info("Updating repertoire with id {}", id);
+
     int rowUpdated = repertoiresRepository.updateRepertoire(
         id,
         repertoiresPutDto.name(),
@@ -56,6 +62,7 @@ public class RepertoiresServiceImpl implements RepertoiresService {
 
   @Override
   public void deleteById(UUID id) {
+    log.info("Deleting repertoire with id {}", id);
     repertoiresRepository.deleteById(id);
   }
 }

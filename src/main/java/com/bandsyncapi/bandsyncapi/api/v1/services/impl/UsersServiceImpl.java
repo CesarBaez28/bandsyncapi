@@ -20,11 +20,13 @@ import com.bandsyncapi.bandsyncapi.utils.Encrypt;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Implementation of UsersService
  */
 @Service
+@Slf4j
 public class UsersServiceImpl implements UsersService {
 
   private final UsersRepository usersRepository;
@@ -52,15 +54,18 @@ public class UsersServiceImpl implements UsersService {
 
   @Override
   public boolean verify(UserLoginPostDto userLoginPostDto) {
+    log.info("Authenticating user: {}", userLoginPostDto.username());
 
     Authentication authentication = authenticationManager.authenticate(
         new UsernamePasswordAuthenticationToken(userLoginPostDto.username(), userLoginPostDto.password()));
-
+      
     return authentication.isAuthenticated();
   }
 
   @Override
   public UsersModel register(UsersModel usersModel) {
+    log.info("Registering user: {}", usersModel.getUsername());
+
     String encryptedPassword = encrypt.encryptPassword(usersModel.getPassword());
     usersModel.setPassword(encryptedPassword);
 
@@ -70,6 +75,8 @@ public class UsersServiceImpl implements UsersService {
   @Transactional
   @Override
   public void joinUserToMusicalBand(UUID userId, UUID musicalBandId) {
+    log.info("Joining user {} to musical band {}", userId, musicalBandId);
+
     var user = new UsersModel(userId);
     var musicalBand = new MusicalBandsModel(musicalBandId);
 
@@ -79,11 +86,13 @@ public class UsersServiceImpl implements UsersService {
 
   @Override
   public boolean existsByEmail(String email) {
+    log.info("Checking if email {} exists", email);
     return usersRepository.existsByEmail(email);
   }
 
   @Override
   public List<UsersModel> getAllUsersByMusicalBandId(UUID musicalBandId) {
+    log.info("Getting all users by musical band id {}", musicalBandId);
 
     List<UsersModel> users = usersRepository.findAllByMusicalBandId(musicalBandId);
 
@@ -96,12 +105,16 @@ public class UsersServiceImpl implements UsersService {
 
   @Override
   public UsersModel getById(UUID userId) {
+    log.info("Getting user by id {}", userId);
+    
     return usersRepository.findById(userId)
         .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
   }
 
   @Override
   public void updateUser(UUID userId, UsersPutDto usersPutDto) {
+    log.info("Updating user with id {}", userId);
+    
     int rowUpdated = usersRepository.updateUser(userId, usersPutDto);
 
     if (rowUpdated == 0) {

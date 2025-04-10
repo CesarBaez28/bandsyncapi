@@ -20,6 +20,7 @@ import com.bandsyncapi.bandsyncapi.api.v1.services.UsersService;
 import com.bandsyncapi.bandsyncapi.response.ApiResponse;
 
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,6 +34,7 @@ import org.springframework.web.bind.annotation.RequestParam;
  */
 @RestController
 @RequestMapping(path = "api/v1/users")
+@Slf4j
 public class UsersController {
 
   private final UsersService usersService;
@@ -67,6 +69,8 @@ public class UsersController {
 
     var userTokenDto = new UserTokenDto(token);
 
+    log.info("User authenticated successfully: {}", userLoginPostDto.username());  
+
     return ResponseEntity.status(HttpStatus.OK)
         .body(new ApiResponse<>(true, "Usuario autenticado", userTokenDto, null));
   }
@@ -81,12 +85,15 @@ public class UsersController {
   public ResponseEntity<ApiResponse<Void>> register(@Valid @RequestBody UserRegisterPostDto userRegisterPostDto) {
 
     if (!userRegisterPostDto.password().equals(userRegisterPostDto.repeatedPassword())) {
+      log.warn("Passwords do not match for user: {}", userRegisterPostDto.username());
       return ResponseEntity.status(HttpStatus.BAD_REQUEST)
           .body(new ApiResponse<>(false, "Las contraseñas no coinciden.", null, null));
     }
 
     UsersModel usersModel = usersMapper.toModelFromRegisterDto(userRegisterPostDto);
     usersService.register(usersModel);
+
+    log.info("User registered successfully: {}", userRegisterPostDto.username());
 
     return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse<>(true, "Usuario registrado.", null, null));
   }
@@ -103,6 +110,8 @@ public class UsersController {
       @PathVariable UUID musicalBandId) {
     usersService.joinUserToMusicalBand(userId, musicalBandId);
 
+    log.info("User {} joined to musical band {}", userId, musicalBandId);
+
     return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(true, "Usuario unido a la banda.", null, null));
   }
 
@@ -118,6 +127,8 @@ public class UsersController {
 
     List<UsersDto> usersResponse = usersMapper.toDtoList(users);
 
+    log.info("Users found: {}", usersResponse);
+
     return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(true, "Datos encontrados", usersResponse, null));
   }
 
@@ -131,6 +142,8 @@ public class UsersController {
   public ResponseEntity<ApiResponse<UsersDto>> findById(@PathVariable UUID userId) {
     UsersModel usersModel = usersService.getById(userId);
     UsersDto response = usersMapper.toDto(usersModel);
+
+    log.info("User found: {}", response);
 
     return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(true, "Usuario encontrado", response, null));
   }
@@ -147,6 +160,8 @@ public class UsersController {
       @Valid @RequestBody UsersPutDto usersPutDto) {
     usersService.updateUser(id, usersPutDto);
 
+    log.info("User updated successfully: {}", usersPutDto);
+
     return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(true, "Datos actualizados", null, null));
   }
 
@@ -161,9 +176,12 @@ public class UsersController {
     boolean exists = usersService.existsByEmail(email);
 
     if (exists) {
+      log.info("User found by email: {}", email);
       return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(true, "Usuario encontrado", exists, null));
     }
 
+    log.warn("User not found by email: {}", email);
+    
     return ResponseEntity.status(HttpStatus.NOT_FOUND)
         .body(new ApiResponse<>(false, "Usuario no encontrado", exists, null));
   }

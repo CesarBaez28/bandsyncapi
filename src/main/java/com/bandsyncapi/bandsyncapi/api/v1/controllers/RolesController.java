@@ -13,6 +13,7 @@ import com.bandsyncapi.bandsyncapi.api.v1.services.RolesService;
 import com.bandsyncapi.bandsyncapi.response.ApiResponse;
 
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 
@@ -29,6 +30,7 @@ import org.springframework.web.bind.annotation.PutMapping;
  */
 @RestController
 @RequestMapping(path = "api/v1/roles")
+@Slf4j
 public class RolesController {
 
   private final RolesService rolesService;
@@ -59,6 +61,8 @@ public class RolesController {
 
     RolesPermissionsDto response = rolesService.saveRoleAndPermissions(rolesPostDto);
 
+    log.info("Role saved successfully: {}", response);
+
     return ResponseEntity.status(HttpStatus.CREATED)
         .body(new ApiResponse<>(true, "Role guardado correctamente.", response, null));
   }
@@ -73,6 +77,8 @@ public class RolesController {
     List<RolesModel> rolesModelList = rolesService.findAll();
     List<RolesDto> response = rolesMapper.toDtoList(rolesModelList);
 
+    log.info("Roles found: {}", response);
+
     return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(true, "Datos encontrados", response, null));
   }
 
@@ -85,6 +91,8 @@ public class RolesController {
   @PutMapping("/update")
   public ResponseEntity<ApiResponse<Void>> update (@Valid @RequestBody RolesPermissionsPutDto rolesPermissionsPutDto) {
     rolesService.updateRolesPermissions(rolesPermissionsPutDto);
+
+    log.info("role updated successfully: {}", rolesPermissionsPutDto);
 
     return ResponseEntity.status(HttpStatus.OK)
         .body(new ApiResponse<>(true, "Rol actualizado correctamente", null, null));

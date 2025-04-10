@@ -10,11 +10,13 @@ import com.bandsyncapi.bandsyncapi.api.v1.repositories.ArtistsRepository;
 import com.bandsyncapi.bandsyncapi.api.v1.services.ArtistsService;
 
 import jakarta.persistence.EntityNotFoundException;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Implementation of the ArtistsService interface
  */
 @Service
+@Slf4j
 public class ArtistsServiceImpl implements ArtistsService {
 
   private final ArtistsRepository artistsRepository;
@@ -25,25 +27,31 @@ public class ArtistsServiceImpl implements ArtistsService {
 
   @Override
   public ArtistsModel save(ArtistsModel artistsModel) {
-    return artistsRepository.save(artistsModel);
+    log.info("Saving artist: {}", artistsModel);
+    return artistsRepository.save(artistsModel); 
   }
 
   @Override
   public List<ArtistsModel> findByMusicalBandId(UUID id) {
+    log.info("Finding artists by musical band id: {}", id);
     return artistsRepository.findByMusicalBandId(id);
   }
 
   @Override
   public void updateArtist(Integer id, String name) {
+    log.info("Updating artist with id: {} and name: {}", id, name);
+    
     int rowsUpdated =  artistsRepository.updateArtistName(id, name);
 
     if (rowsUpdated == 0) {
+      log.error("No se encontró un Artista con ese id: {}", id);
       throw new EntityNotFoundException("No se encontró un Artista con ese id"); 
     }
   }
 
   @Override
   public void deleteById(Integer id) {
+    log.info("Deleting artist with id: {}", id);
     artistsRepository.deleteById(id);
   } 
 }

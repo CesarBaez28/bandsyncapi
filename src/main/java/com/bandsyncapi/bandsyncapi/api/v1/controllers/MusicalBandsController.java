@@ -9,6 +9,7 @@ import com.bandsyncapi.bandsyncapi.api.v1.services.MusicalBandsService;
 import com.bandsyncapi.bandsyncapi.response.ApiResponse;
 
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestBody;
  */
 @RestController
 @RequestMapping(path = "api/v1/musical-bands")
+@Slf4j
 public class MusicalBandsController {
 
   private final MusicalBandsService musicalBandsService;
@@ -45,6 +47,8 @@ public class MusicalBandsController {
       @Valid @RequestBody MusicalBandsPostDto musicalBandsPostDto) {
 
     MusicalBandsDto savedMusicalBandsModelDto = musicalBandsService.registerMusicalBand(musicalBandsPostDto);
+
+    log.info("Musical band registered successfully: {}", savedMusicalBandsModelDto);
 
     return ResponseEntity.status(HttpStatus.CREATED)
         .body(new ApiResponse<>(true, "Banda musical registrada correctamente", savedMusicalBandsModelDto, null));

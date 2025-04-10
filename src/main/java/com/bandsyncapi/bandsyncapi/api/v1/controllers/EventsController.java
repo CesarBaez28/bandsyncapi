@@ -12,6 +12,7 @@ import com.bandsyncapi.bandsyncapi.api.v1.services.EventsService;
 import com.bandsyncapi.bandsyncapi.response.ApiResponse;
 
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 import java.util.UUID;
@@ -30,6 +31,7 @@ import org.springframework.web.bind.annotation.PathVariable;
  */
 @RestController
 @RequestMapping(path = "/api/v1/events")
+@Slf4j
 public class EventsController {
 
   private final EventsService eventsService;
@@ -59,6 +61,8 @@ public class EventsController {
     EventsModel savedEvent = eventsService.save(eventsModel);
     EventsDto response = eventsMapper.toDto(savedEvent);
 
+    log.info("Event successfully created: {}", savedEvent);
+
     return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse<>(true, "Evento creado", response, null));
   }
 
@@ -74,9 +78,13 @@ public class EventsController {
     List<EventsDto> response = eventsMapper.toDtoList(eventsModelList);
 
     if (response.isEmpty()) {
+      log.warn("No events found for musical band ID: {}", musicalBandId);
+
       return ResponseEntity.status(HttpStatus.NO_CONTENT)
           .body(new ApiResponse<>(false, "No se encontraron eventos", null, null));
     }
+
+    log.info("Events found for musical band ID: {}: {}", musicalBandId, response);
 
     return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(true, "Eventos encontrados", response, null));
   }
@@ -92,6 +100,8 @@ public class EventsController {
   public ResponseEntity<ApiResponse<Void>> updateEvent(@Valid @PathVariable UUID id, @Valid @RequestBody EventsPutDto eventsPutDto) {
     eventsService.updateEvent(id, eventsPutDto);
 
+    log.info("Event with ID: {} updated successfully", id);
+
     return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(true, "Evento actualizado", null, null));
   }
 
@@ -104,6 +114,8 @@ public class EventsController {
   @DeleteMapping("/delete/{id}")
   public ResponseEntity<ApiResponse<Void>> deleteEvent(@PathVariable UUID id) {
     eventsService.deleteEvent(id);
+
+    log.info("Event with ID: {} deleted successfully", id);
 
     return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(true, "Evento eliminado", null, null));
   }

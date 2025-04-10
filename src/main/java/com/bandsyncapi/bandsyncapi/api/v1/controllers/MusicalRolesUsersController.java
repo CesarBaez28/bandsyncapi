@@ -13,6 +13,8 @@ import com.bandsyncapi.bandsyncapi.api.v1.projections.MusicalRolesUsersProjectio
 import com.bandsyncapi.bandsyncapi.api.v1.services.MusicalRolesUsersService;
 import com.bandsyncapi.bandsyncapi.response.ApiResponse;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.List;
 import java.util.UUID;
 
@@ -28,6 +30,7 @@ import org.springframework.web.bind.annotation.RequestBody;
  */
 @RestController
 @RequestMapping(path = "api/v1/musical-roles-users")
+@Slf4j
 public class MusicalRolesUsersController {
 
   private final MusicalRolesUsersService musicalRolesUsersService;
@@ -65,6 +68,8 @@ public class MusicalRolesUsersController {
 
     List<MusicalRolesUsersDto> response = musicalRolesUsersMapper.toDtoList(musicalRolesUsersProjections);
 
+    log.info("Users musical roles found: {}", response);
+
     return ResponseEntity.status(HttpStatus.OK)
         .body(new ApiResponse<>(true, "Datos encontrados", response, null));
   }
@@ -84,9 +89,11 @@ public class MusicalRolesUsersController {
         userId);
 
     if (response.isEmpty()) {
+      log.warn("Musical roles not found for user: {}", userId);
       return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(false, "No se encontraron datos", response, null));
     }
 
+    log.info("Musical roles found for user: {}", response);
     return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(true, "Datos encontrados", response, null));
   }
 
@@ -105,6 +112,8 @@ public class MusicalRolesUsersController {
     List<MusicalRolesModel> musicalRolesModelList = musicalRolesMapper.toModelList(musicalRoles);
     
     musicalRolesUsersService.assignMusicalRolesUser(userId, musicalBandId, musicalRolesModelList);
+
+    log.info("Musical roles assigned to user: {}", userId); 
 
     return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(true, "Roles musicales asignados", null, null));
   }

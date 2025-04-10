@@ -12,6 +12,7 @@ import com.bandsyncapi.bandsyncapi.api.v1.services.MusicalRolesService;
 import com.bandsyncapi.bandsyncapi.response.ApiResponse;
 
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 import java.util.UUID;
@@ -30,6 +31,7 @@ import org.springframework.web.bind.annotation.PutMapping;
  */
 @RestController
 @RequestMapping(path = "api/v1/musical-roles")
+@Slf4j
 public class MusicalRolesController {
 
   private final MusicalRolesService musicalRolesService;
@@ -60,6 +62,8 @@ public class MusicalRolesController {
     MusicalRolesModel savedMusicalRolesModel = musicalRolesService.save(musicalRolesModel);
     MusicalRolesDto musicalRolesDtoResponse = musicalRolesMapper.toDto(savedMusicalRolesModel);
 
+    log.info("Musical role saved successfully: {}", musicalRolesDtoResponse);
+
     return ResponseEntity.status(HttpStatus.CREATED)
         .body(new ApiResponse<>(true, "Nuevo role musical creado exitosamente", musicalRolesDtoResponse, null));
   }
@@ -74,6 +78,8 @@ public class MusicalRolesController {
   public ResponseEntity<ApiResponse<List<MusicalRolesDto>>> findByMusicalBandId(@PathVariable UUID musicalBandId) {
     List<MusicalRolesModel> musicalRolesModels = musicalRolesService.findByMusicalBandId(musicalBandId);
     List<MusicalRolesDto> musicalRolesDtosResponse = musicalRolesMapper.toDtoList(musicalRolesModels);
+
+    log.info("Musical roles found successfully: {}", musicalRolesDtosResponse);
 
     return ResponseEntity.status(HttpStatus.CREATED)
         .body(new ApiResponse<>(true, "Datos encontrados correctamente", musicalRolesDtosResponse, null));
@@ -92,6 +98,8 @@ public class MusicalRolesController {
       @RequestBody MusicalRolesPutDto musicalRolesPutDto) {
     musicalRolesService.updateMusicalRoleName(id, musicalRolesPutDto.name());
 
+    log.info("Musical role name updated successfully: {}", musicalRolesPutDto.name());
+
     return ResponseEntity.status(HttpStatus.OK)
         .body(new ApiResponse<>(true, "Nombre del role musical actualizado correctamente", null, null));
   }
@@ -105,6 +113,8 @@ public class MusicalRolesController {
   @DeleteMapping("/delete/{id}")
   public ResponseEntity<ApiResponse<Void>> deleteMusicalRole(@PathVariable Integer id) {
     musicalRolesService.deleteById(id);
+
+    log.info("Musical role deleted successfully: {}", id);
 
     return ResponseEntity.status(HttpStatus.OK)
         .body(new ApiResponse<>(true, "Role musical eliminado correctamente", null, null));

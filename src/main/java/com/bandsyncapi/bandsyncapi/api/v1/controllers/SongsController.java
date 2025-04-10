@@ -11,6 +11,8 @@ import com.bandsyncapi.bandsyncapi.api.v1.models.SongsModel;
 import com.bandsyncapi.bandsyncapi.api.v1.services.SongsService;
 import com.bandsyncapi.bandsyncapi.response.ApiResponse;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.List;
 import java.util.UUID;
 
@@ -24,6 +26,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 
 @RestController
 @RequestMapping(path = "api/v1/songs")
+@Slf4j
 public class SongsController {
 
   private final SongsService songsService;
@@ -54,6 +57,8 @@ public class SongsController {
     SongsModel songsModelSaved = songsService.save(songsModel);
     SongsDto songsDtoResponse = songsMapper.toDto(songsModelSaved);
 
+    log.info("Song saved: {}", songsDtoResponse);
+
     return ResponseEntity.status(HttpStatus.CREATED)
         .body(new ApiResponse<>(true, "Datos guardados", songsDtoResponse, null));
   }
@@ -68,6 +73,8 @@ public class SongsController {
   public ResponseEntity<ApiResponse<List<SongsDto>>> findByMusicalBandId(@PathVariable UUID id) {
     List<SongsModel> songsModelList = songsService.findByMusicalBandId(id);
     List<SongsDto> songsDtoResponse = songsMapper.toDtoList(songsModelList);
+
+    log.info("Songs found: {}", songsDtoResponse);
 
     return ResponseEntity.status(HttpStatus.OK)
         .body(new ApiResponse<>(true, "Datos encontrados", songsDtoResponse, null));
@@ -84,6 +91,8 @@ public class SongsController {
   public ResponseEntity<ApiResponse<Void>> update(@PathVariable Integer id, @RequestBody SongsPutDto songsPutDto) {
     songsService.updateSong(id, songsPutDto.name(), songsPutDto.artist(), songsPutDto.genre(),
         songsPutDto.tonality(), songsPutDto.link(), songsPutDto.sheetMusic());
+
+    log.info("Song updated successfully: {}", songsPutDto);
 
     return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(true, "Datos actualizados", null, null));
   }

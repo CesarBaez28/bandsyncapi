@@ -11,11 +11,14 @@ import com.bandsyncapi.bandsyncapi.api.v1.models.SongsModel;
 import com.bandsyncapi.bandsyncapi.api.v1.repositories.RepertoiresSongsRepository;
 import com.bandsyncapi.bandsyncapi.api.v1.services.RepertoiresSongsService;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * Implementation of RepertoiresSongsService
  * 
  */
 @Service
+@Slf4j
 public class RepertoiresSongsServiceImpl implements RepertoiresSongsService{
 
   private final RepertoiresSongsRepository repertoiresSongsRepository;
@@ -31,6 +34,7 @@ public class RepertoiresSongsServiceImpl implements RepertoiresSongsService{
 
   @Override
   public List<RepertoiresSongsModel> saveAll(RepertoiresModel repertoiresModel, List<SongsModel> songsModels) {
+    log.info("Saving all songs in repertoire {}", repertoiresModel.getId());
 
     List<RepertoiresSongsModel> repertoiresSongsModels = new ArrayList<>();
 

@@ -12,6 +12,7 @@ import com.bandsyncapi.bandsyncapi.api.v1.services.ArtistsService;
 import com.bandsyncapi.bandsyncapi.response.ApiResponse;
 
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 import java.util.UUID;
@@ -30,6 +31,7 @@ import org.springframework.web.bind.annotation.PutMapping;
  */
 @RestController
 @RequestMapping(path = "api/v1/artists")
+@Slf4j
 public class ArtistsController {
 
   private final ArtistsService artistsService;
@@ -61,6 +63,8 @@ public class ArtistsController {
     ArtistsModel artistsModelSaved = artistsService.save(artistsModel);
     ArtistsDto artistsDto = artistsMapper.toDto(artistsModelSaved);
 
+    log.info("Artist successfully saved: {}", artistsModelSaved);
+
     return ResponseEntity.status(HttpStatus.CREATED)
         .body(new ApiResponse<>(true, "Artista registrado correctamente", artistsDto, null));
   }
@@ -75,6 +79,8 @@ public class ArtistsController {
   public ResponseEntity<ApiResponse<List<ArtistsDto>>> findByMusicalRoleId(@PathVariable UUID id) {
     List<ArtistsModel> artistsModelList = artistsService.findByMusicalBandId(id);
     List<ArtistsDto> artistsDtoList = artistsMapper.toDtoList(artistsModelList);
+
+    log.info("Artists found by musical band id: {}", id);
 
     return ResponseEntity.status(HttpStatus.OK)
         .body(new ApiResponse<>(true, "Datos encontrados", artistsDtoList, null));
@@ -93,6 +99,8 @@ public class ArtistsController {
       @RequestBody ArtistsPutDto artistsPutDto) {
     artistsService.updateArtist(id, artistsPutDto.name());
 
+    log.info("Artist name updated successfully: {}", artistsPutDto.name());
+
     return ResponseEntity.status(HttpStatus.OK)
         .body(new ApiResponse<>(true, "Nombre de artista actualizado correctamente.", null, null));
   }
@@ -106,6 +114,8 @@ public class ArtistsController {
   @DeleteMapping("/delete/{id}")
   public ResponseEntity<ApiResponse<Void>> deleteById(@PathVariable Integer id) {
     artistsService.deleteById(id);
+
+    log.info("Artist deleted successfully: {}", id);  
 
     return ResponseEntity.status(HttpStatus.OK)
         .body(new ApiResponse<>(true, "Artista eliminado correctamente", null, null));
