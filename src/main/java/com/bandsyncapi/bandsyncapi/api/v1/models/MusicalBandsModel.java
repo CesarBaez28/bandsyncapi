@@ -9,6 +9,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -19,6 +20,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @Table(name = "musical_bands")
 public class MusicalBandsModel {
 
@@ -29,20 +31,20 @@ public class MusicalBandsModel {
   @Column(name = "name", nullable = false, unique = true, length = 100)
   private String name;
 
-  @Column(name = "logo", nullable = false, length = 100, columnDefinition = "DEFAULT ''")
+  @Column(name = "logo", nullable = false, length = 100)
   private String logo;
 
-  @Column(name = "address", nullable = false, length = 255, columnDefinition = "DEFAULT ''")
+  @Column(name = "address", nullable = false, length = 255)
   private String address;
 
-  @Column(name = "phone", nullable = false, length = 25, columnDefinition = "DEFAULT ''")
+  @Column(name = "phone", nullable = false, length = 25)
   private String phone;
 
   @Column(name = "email", nullable = false, unique = true, length = 50)
   private String email;
 
-  @Column(name = "status", nullable = false, columnDefinition = "BIT DEFAULT 1")
-  private Boolean status = true;
+  @Column(name = "status", nullable = false)
+  private Boolean status;
 
   public MusicalBandsModel(UUID id) {
     this.id = id;

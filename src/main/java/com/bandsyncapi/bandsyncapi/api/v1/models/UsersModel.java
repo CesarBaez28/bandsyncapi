@@ -33,16 +33,16 @@ public class UsersModel {
   @Column(name = "email", nullable = false, length = 100, unique = true)
   private String email;
 
-  @Column(name = "firstname", nullable = false, length = 100, columnDefinition = "DEFAULT ''")
+  @Column(name = "firstname", nullable = false, length = 100)
   private String firstName;
 
-  @Column(name = "lastname", nullable = false, length = 100, columnDefinition = "DEFAULT ''")
+  @Column(name = "lastname", nullable = false, length = 100)
   private String lastName;
 
-  @Column(name = "phone", nullable = false, length = 20, columnDefinition = "DEFAULT ''")
+  @Column(name = "phone", nullable = false, length = 20)
   private String phone;
 
-  @Column(name = "photo", nullable = false, length = 100, columnDefinition = "DEFAULT ''")
+  @Column(name = "photo", nullable = false, length = 100)
   private String photo;
 
   @Column(name = "status", nullable = false, columnDefinition = "BIT DEFAULT 1")

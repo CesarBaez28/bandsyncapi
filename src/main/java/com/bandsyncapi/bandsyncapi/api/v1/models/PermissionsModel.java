@@ -22,7 +22,7 @@ public class PermissionsModel {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Integer id;
 
-  @Column(name = "name", nullable = false, unique = true, columnDefinition = "VARCHAR(100) default ''")
+  @Column(name = "name", nullable = false, unique = true)
   private String name;
 
   @Column(name = "status", nullable = false, columnDefinition = "BIT DEFAULT 1")

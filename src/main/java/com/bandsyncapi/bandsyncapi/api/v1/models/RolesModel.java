@@ -35,7 +35,7 @@ public class RolesModel {
   @JoinColumn(name = "musical_band_id", nullable = false)
   private MusicalBandsModel musicalBand;
 
-  @Column(name = "name", nullable = false, unique = true, columnDefinition = "VARCHAR(100) default ''")
+  @Column(name = "name", nullable = false, unique = true)
   private String name;
 
   @Column(name = "status", nullable = false, columnDefinition = "BIT DEFAULT 1")

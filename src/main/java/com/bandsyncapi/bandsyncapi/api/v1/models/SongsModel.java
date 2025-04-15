@@ -39,13 +39,13 @@ public class SongsModel {
   @JoinColumn(name = "musical_band_id", nullable = false)
   private MusicalBandsModel musicalBand;
 
-  @Column(name = "tonality", nullable = false, length = 25, columnDefinition = "DEFAULT ''")
+  @Column(name = "tonality", nullable = false, length = 25)
   private String tonality;
 
-  @Column(name = "link", nullable = false, length = 255, columnDefinition = "DEFAULT ''")
+  @Column(name = "link", nullable = false, length = 255)
   private String link;
 
-  @Column(name = "sheet_music", nullable = false, length = 255, columnDefinition = "DEFAULT ''")
+  @Column(name = "sheet_music", nullable = false, length = 255)
   private String sheetMusic;
 
   @Column(name = "name", nullable = false, length = 100)
