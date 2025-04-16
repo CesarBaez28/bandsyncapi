@@ -34,9 +34,9 @@ public interface UsersRepository extends JpaRepository<UsersModel, UUID> {
   List<UsersModel> findAllByMusicalBandId(@Param("musicalBandId") UUID musicalBandId);
 
   /**
-   * Update user infor
+   * Update user info
    * 
-   * @param updateUserDTO - user infor to be updated
+   * @param updateUserDTO - user info to be updated
    * @return
    */
   @Transactional
