@@ -42,7 +42,7 @@ public interface EventsRepository extends JpaRepository<EventsModel, UUID> {
           e.date = :#{#EventsPutDto.date},
           e.name = :#{#EventsPutDto.name},
           e.description = :#{#EventsPutDto.description}, 
-          e.date = :#{#EventsPutDto.date}, 
+          e.place = :#{#EventsPutDto.place}, 
           e.location = :#{#EventsPutDto.location},
           e.status = :#{#EventsPutDto.status} 
       WHERE e.id = :id
