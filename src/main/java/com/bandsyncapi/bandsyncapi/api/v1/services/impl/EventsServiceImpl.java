@@ -53,7 +53,7 @@ public class EventsServiceImpl implements EventsService {
 
     if (rowUpdated == 0) {
       log.error("Event with following id not found: {}", id);
-      throw new EntityNotFoundException("No se pudo encontrar el evento a actualizar.");
+      throw new EntityNotFoundException("Event with the following id not found: " + id);
     }    
   }
 
