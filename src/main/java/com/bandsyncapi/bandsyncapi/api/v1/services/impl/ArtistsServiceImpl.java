@@ -44,8 +44,8 @@ public class ArtistsServiceImpl implements ArtistsService {
     int rowsUpdated =  artistsRepository.updateArtistName(id, name);
 
     if (rowsUpdated == 0) {
-      log.error("No se encontró un Artista con ese id: {}", id);
-      throw new EntityNotFoundException("No se encontró un Artista con ese id"); 
+      log.error("Artist not found with id: {}", id);
+      throw new EntityNotFoundException("Artist not found with id: " + id); 
     }
   }
 
