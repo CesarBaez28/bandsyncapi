@@ -47,7 +47,7 @@ public class MusicalRolesServiceImpl implements MusicalRolesService {
     int rowsUpdated = musicalRolesRepository.updateMusicalRoleName(id, name);
 
     if (rowsUpdated == 0) {
-      throw new EntityNotFoundException("No se encontró un role musical con ese id");
+      throw new EntityNotFoundException("Musical Role not found with id: " + id);
     }
   }
 
