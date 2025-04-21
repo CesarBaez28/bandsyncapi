@@ -60,7 +60,7 @@ public class MusicalGenresServiceImpl implements MusicalGenresService {
     int rowsUpdated = musicalGenresRepository.updateGenreName(id, name);
 
     if (rowsUpdated == 0) {
-      throw new EntityNotFoundException("No se encontró un género musical con ese id");
+      throw new EntityNotFoundException("Musical Genre not found with id: " + id);
     }
   }
 
