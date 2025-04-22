@@ -46,7 +46,7 @@ public class MusicalRolesUsersServiceImpl implements MusicalRolesUsersService {
     List<MusicalRolesUsersProjection> projections = musicalRolesUsersRepository.findAllByMusicalBandId(musicalBandId);
 
     if (projections.isEmpty()) {
-      throw new NoSuchElementException("No se encontraron datos");
+      throw new NoSuchElementException("There are no result");
     }
 
     return projections;
