@@ -56,7 +56,7 @@ public class RepertoiresServiceImpl implements RepertoiresService {
         repertoiresPutDto.status());
 
     if (rowUpdated == 0) {
-      throw new EntityNotFoundException("No se encontró un repertorio con ese id");
+      throw new EntityNotFoundException("Repertoire not found with id: " + id);
     }
   }
 
