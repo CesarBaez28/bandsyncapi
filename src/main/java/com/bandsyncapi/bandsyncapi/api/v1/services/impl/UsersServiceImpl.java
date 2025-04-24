@@ -97,7 +97,7 @@ public class UsersServiceImpl implements UsersService {
     List<UsersModel> users = usersRepository.findAllByMusicalBandId(musicalBandId);
 
     if (users.isEmpty()) {
-      throw new NoSuchElementException("No se encontraron datos");
+      throw new NoSuchElementException("There are no users in this musical band");
     }
 
     return users;
@@ -108,7 +108,7 @@ public class UsersServiceImpl implements UsersService {
     log.info("Getting user by id {}", userId);
     
     return usersRepository.findById(userId)
-        .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
+        .orElseThrow(() -> new EntityNotFoundException("User not found"));
   }
 
   @Override
@@ -118,7 +118,7 @@ public class UsersServiceImpl implements UsersService {
     int rowUpdated = usersRepository.updateUser(userId, usersPutDto);
 
     if (rowUpdated == 0) {
-      throw new EntityNotFoundException("Usuario no encontrado");
+      throw new EntityNotFoundException("User not found");
     }
   }
 }
