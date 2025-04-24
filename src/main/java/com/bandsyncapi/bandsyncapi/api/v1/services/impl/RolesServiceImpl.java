@@ -93,7 +93,7 @@ public class RolesServiceImpl implements RolesService {
 
     // Get the role by ID
     RolesModel rolesModel = rolesRepository.findById(rolesPermissionsPutDto.roleId())
-        .orElseThrow(() -> new NoSuchElementException("Role no encontrado."));
+        .orElseThrow(() -> new NoSuchElementException("Role not found with id: " + rolesPermissionsPutDto.roleId()));
 
     // Change the name of the role
     rolesModel.setName(rolesPermissionsPutDto.newName());
