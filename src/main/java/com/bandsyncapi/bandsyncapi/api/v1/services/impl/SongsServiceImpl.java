@@ -45,15 +45,16 @@ public class SongsServiceImpl implements SongsService {
   }
 
   @Override
-  public void updateSong(Integer id, String name, ArtistsModel artist, MusicalGenresModel genre, String tonality, String link,
+  public void updateSong(Integer id, String name, ArtistsModel artist, MusicalGenresModel genre, String tonality,
+      String link,
       String sheetMusic) {
-        
+
     log.info("Updating song with id: {}", id);
 
     int rowsUpdated = songsRepository.updateSong(id, name, artist, genre, tonality, link, sheetMusic);
 
     if (rowsUpdated == 0) {
-      throw new EntityNotFoundException("No se encontró una canción con ese id");
+      throw new EntityNotFoundException("Song not found with id: " + id);
     }
   }
 
