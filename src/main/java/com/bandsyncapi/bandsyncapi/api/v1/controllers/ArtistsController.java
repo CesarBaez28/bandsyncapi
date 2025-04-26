@@ -66,7 +66,7 @@ public class ArtistsController {
     log.info("Artist successfully saved: {}", artistsModelSaved);
 
     return ResponseEntity.status(HttpStatus.CREATED)
-        .body(new ApiResponse<>(true, "Artista registrado correctamente", artistsDto, null));
+        .body(new ApiResponse<>(true, "Artist successfully register.", artistsDto, null));
   }
 
   /**
@@ -83,7 +83,7 @@ public class ArtistsController {
     log.info("Artists found by musical band id: {}", id);
 
     return ResponseEntity.status(HttpStatus.OK)
-        .body(new ApiResponse<>(true, "Datos encontrados", artistsDtoList, null));
+        .body(new ApiResponse<>(true, "Data not found.", artistsDtoList, null));
   }
 
   /**
@@ -96,13 +96,13 @@ public class ArtistsController {
    */
   @PutMapping("/updateArtistName/{id}")
   public ResponseEntity<ApiResponse<Void>> updateArtistName(@PathVariable Integer id,
-      @RequestBody ArtistsPutDto artistsPutDto) {
+      @Valid @RequestBody ArtistsPutDto artistsPutDto) {
     artistsService.updateArtist(id, artistsPutDto.name());
 
     log.info("Artist name updated successfully: {}", artistsPutDto.name());
 
     return ResponseEntity.status(HttpStatus.OK)
-        .body(new ApiResponse<>(true, "Nombre de artista actualizado correctamente.", null, null));
+        .body(new ApiResponse<>(true, "Artist name updated successfully.", null, null));
   }
 
   /**
@@ -115,9 +115,9 @@ public class ArtistsController {
   public ResponseEntity<ApiResponse<Void>> deleteById(@PathVariable Integer id) {
     artistsService.deleteById(id);
 
-    log.info("Artist deleted successfully: {}", id);  
+    log.info("Artist deleted successfully: {}", id);
 
     return ResponseEntity.status(HttpStatus.OK)
-        .body(new ApiResponse<>(true, "Artista eliminado correctamente", null, null));
+        .body(new ApiResponse<>(true, "Artist deleted successfully.", null, null));
   }
 }
