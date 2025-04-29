@@ -63,7 +63,7 @@ public class EventsController {
 
     log.info("Event successfully created: {}", savedEvent);
 
-    return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse<>(true, "Evento creado", response, null));
+    return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse<>(true, "Event successfully created.", response, null));
   }
 
   /**
@@ -81,12 +81,12 @@ public class EventsController {
       log.warn("No events found for musical band ID: {}", musicalBandId);
 
       return ResponseEntity.status(HttpStatus.NO_CONTENT)
-          .body(new ApiResponse<>(false, "No se encontraron eventos", null, null));
+          .body(new ApiResponse<>(false, "Events Not Found.", null, null));
     }
 
     log.info("Events found for musical band ID: {}: {}", musicalBandId, response);
 
-    return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(true, "Eventos encontrados", response, null));
+    return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(true, "Events Not Found.", response, null));
   }
 
   /**
@@ -94,7 +94,7 @@ public class EventsController {
    * 
    * @param id            - Event id
    * @param eventsPutDto - Event info to update @see EventsPutDto
-   * @return - An ApiResponse object with the message "Evento actualizado"
+   * @return - An ApiResponse object
    */
   @PutMapping("/updateEvent/{id}")
   public ResponseEntity<ApiResponse<Void>> updateEvent(@Valid @PathVariable UUID id, @Valid @RequestBody EventsPutDto eventsPutDto) {
@@ -102,21 +102,21 @@ public class EventsController {
 
     log.info("Event with ID: {} updated successfully", id);
 
-    return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(true, "Evento actualizado", null, null));
+    return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(true, "Event successfully updated.", null, null));
   }
 
   /**
    * Delete an event.
    * 
    * @param id - Event id
-   * @return - An ApiResponse object with the message "Evento eliminado"
+   * @return - An ApiResponse object 
    */
   @DeleteMapping("/delete/{id}")
   public ResponseEntity<ApiResponse<Void>> deleteEvent(@PathVariable UUID id) {
     eventsService.deleteEvent(id);
 
     log.info("Event with ID: {} deleted successfully", id);
-
-    return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(true, "Evento eliminado", null, null));
+    
+    return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(true, "Event deleted successfully.", null, null));
   }
 }

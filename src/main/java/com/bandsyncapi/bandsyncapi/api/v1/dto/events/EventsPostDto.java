@@ -18,7 +18,6 @@ public record EventsPostDto(
   @NotNull(message = "Seleccione un repertorio.")
   RepertoiresModel repertoire, 
 
-  @NotBlank(message = "La fecha no puede estar vacía.")
   @Size(min = 3, max = 100, message = "El nombre debe tener entre 3 y 100 caracteres.")
   String name, 
 
@@ -27,7 +26,6 @@ public record EventsPostDto(
 
   String description, 
 
-  @NotBlank(message = "El lugar no puede estar vacío.")
   @Size(min = 3, max = 100, message = "El lugar debe tener entre 3 y 100 caracteres.")
   String place, 
 

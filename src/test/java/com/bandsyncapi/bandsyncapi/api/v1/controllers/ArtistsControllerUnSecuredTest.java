@@ -89,7 +89,7 @@ class ArtistsControllerUnSecuredTest {
         .content(objectMapper.writeValueAsString(artistsPostDto)))
         .andExpect(MockMvcResultMatchers.status().isBadRequest())
         .andExpect(MockMvcResultMatchers.jsonPath("$.success").value(false))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.errors.name").value("El campo nombre es obligatorio."));
+        .andExpect(MockMvcResultMatchers.jsonPath("$.errors.name").value("El nombre debe tener entre 3 y 100 caracteres."));
   }
 
   @Test
@@ -169,7 +169,7 @@ class ArtistsControllerUnSecuredTest {
         .content(objectMapper.writeValueAsString(putRequest)))
         .andExpect(MockMvcResultMatchers.status().isBadRequest())
         .andExpect(MockMvcResultMatchers.jsonPath("$.success").value(false))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.errors.name").value("El campo nombre es obligatorio."));
+        .andExpect(MockMvcResultMatchers.jsonPath("$.errors.name").value("El nombre debe tener entre 3 y 100 caracteres."));
   }
 
   @Test
