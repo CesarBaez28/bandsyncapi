@@ -64,7 +64,7 @@ public class MusicalGenresController {
     log.info("Musical genre saved successfully: {}", responseDto);
 
     return ResponseEntity.status(HttpStatus.CREATED)
-        .body(new ApiResponse<>(true, "Género musical guardado exitosamente.", responseDto, null));
+        .body(new ApiResponse<>(true, "Musical genre successfully created.", responseDto, null));
   }
 
   /**
@@ -81,7 +81,7 @@ public class MusicalGenresController {
     log.info("Musical genres found successfully: {}", musicalGenreResponse);
 
     return ResponseEntity.status(HttpStatus.OK)
-        .body(new ApiResponse<>(true, "Datos encontrados correctamente", musicalGenreResponse, null));
+        .body(new ApiResponse<>(true, "Musical genres found successfully.", musicalGenreResponse, null));
   }
 
   /**
@@ -94,13 +94,13 @@ public class MusicalGenresController {
    */
   @PutMapping("/updateMusicalGenreName/{id}")
   public ResponseEntity<ApiResponse<Void>> updateMusicalGenreName(@PathVariable Integer id,
-      @RequestBody MusicalGenrePutDto musicalGenrePutDto) {
+     @Valid @RequestBody MusicalGenrePutDto musicalGenrePutDto) {
     musicalGenresService.updateGenreName(id, musicalGenrePutDto.name());
 
     log.info("Musical genre name updated successfully: {}", musicalGenrePutDto.name());
 
     return ResponseEntity.status(HttpStatus.OK)
-        .body(new ApiResponse<>(true, "Género musical actualizado correctamente", null, null));
+        .body(new ApiResponse<>(true, "Musical genre name updated successfully.", null, null));
   }
 
   /**
@@ -116,6 +116,6 @@ public class MusicalGenresController {
     log.info("Musical genre deleted successfully: {}", id);
 
     return ResponseEntity.status(HttpStatus.OK)
-        .body(new ApiResponse<>(true, "Género musical eliminado", null, null));
+        .body(new ApiResponse<>(true, "Musical genre deleted successfully.", null, null));
   }
 }
