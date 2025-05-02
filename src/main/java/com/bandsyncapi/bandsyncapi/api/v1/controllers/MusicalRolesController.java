@@ -65,7 +65,7 @@ public class MusicalRolesController {
     log.info("Musical role saved successfully: {}", musicalRolesDtoResponse);
 
     return ResponseEntity.status(HttpStatus.CREATED)
-        .body(new ApiResponse<>(true, "Nuevo role musical creado exitosamente", musicalRolesDtoResponse, null));
+        .body(new ApiResponse<>(true, "New role saved successfully", musicalRolesDtoResponse, null));
   }
 
   /**
@@ -77,12 +77,17 @@ public class MusicalRolesController {
   @GetMapping("/findByMusicalBandId/{musicalBandId}")
   public ResponseEntity<ApiResponse<List<MusicalRolesDto>>> findByMusicalBandId(@PathVariable UUID musicalBandId) {
     List<MusicalRolesModel> musicalRolesModels = musicalRolesService.findByMusicalBandId(musicalBandId);
-    List<MusicalRolesDto> musicalRolesDtosResponse = musicalRolesMapper.toDtoList(musicalRolesModels);
+    List<MusicalRolesDto> musicalRolesDtoListResponse = musicalRolesMapper.toDtoList(musicalRolesModels);
 
-    log.info("Musical roles found successfully: {}", musicalRolesDtosResponse);
+    if (musicalRolesDtoListResponse.isEmpty()) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND)
+          .body(new ApiResponse<>(false, "No musical roles found", null, null));
+    }
 
-    return ResponseEntity.status(HttpStatus.CREATED)
-        .body(new ApiResponse<>(true, "Datos encontrados correctamente", musicalRolesDtosResponse, null));
+    log.info("Musical roles found successfully: {}", musicalRolesDtoListResponse);
+
+    return ResponseEntity.status(HttpStatus.OK)
+        .body(new ApiResponse<>(true, "Musical roles found successfully", musicalRolesDtoListResponse, null));
   }
 
   /**
@@ -95,13 +100,13 @@ public class MusicalRolesController {
    */
   @PutMapping("/updateMusicalRoleName/{id}")
   public ResponseEntity<ApiResponse<Void>> updateMusicalRoleName(@PathVariable Integer id,
-      @RequestBody MusicalRolesPutDto musicalRolesPutDto) {
+      @Valid @RequestBody MusicalRolesPutDto musicalRolesPutDto) {
     musicalRolesService.updateMusicalRoleName(id, musicalRolesPutDto.name());
 
     log.info("Musical role name updated successfully: {}", musicalRolesPutDto.name());
 
     return ResponseEntity.status(HttpStatus.OK)
-        .body(new ApiResponse<>(true, "Nombre del role musical actualizado correctamente", null, null));
+        .body(new ApiResponse<>(true, "Musical role name updated successfully", null, null));
   }
 
   /**
@@ -117,6 +122,6 @@ public class MusicalRolesController {
     log.info("Musical role deleted successfully: {}", id);
 
     return ResponseEntity.status(HttpStatus.OK)
-        .body(new ApiResponse<>(true, "Role musical eliminado correctamente", null, null));
+        .body(new ApiResponse<>(true, "Musical role deleted successfully", null, null));
   }
 }
