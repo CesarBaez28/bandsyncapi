@@ -66,10 +66,10 @@ public class RepertoiresController {
     RepertoiresModel repertoiresModelSaved = repertoiresService.save(repertoiresModel);
     repertoiresSongsService.saveAll(repertoiresModelSaved, repertoiresPostDto.songs());
 
-    log.info("Repertoire saved sucedfully with id: {}", repertoiresModelSaved.getId());
+    log.info("Repertoire saved successfully with id: {}", repertoiresModelSaved.getId());
 
     return ResponseEntity.status(HttpStatus.CREATED)
-        .body(new ApiResponse<>(true, "Repertorio guardado correctamente", null, null));
+        .body(new ApiResponse<>(true, "Repertoire saved successfully", null, null));
   }
 
   /**
@@ -83,10 +83,16 @@ public class RepertoiresController {
     List<RepertoiresModel> repertoiresModelList = repertoiresService.findByMusicalBandId(id);
     List<RepertoiresDto> repertoiresDtoList = repertoiresMapper.toDtoList(repertoiresModelList);
 
+    if (repertoiresModelList.isEmpty()) {
+      log.info("Repertoires not found by id: {}" + id);
+      return ResponseEntity.status(HttpStatus.OK)
+          .body(new ApiResponse<>(true, "Repertoires not found", null, null));
+    }
+
     log.info("Repertoires found by musical band id: {}", id);
 
     return ResponseEntity.status(HttpStatus.OK)
-        .body(new ApiResponse<>(true, "Datos encontrados", repertoiresDtoList, null));
+        .body(new ApiResponse<>(true, "Repertoires found successfully", repertoiresDtoList, null));
   }
 
   /**
@@ -98,12 +104,12 @@ public class RepertoiresController {
    */
   @PutMapping("/updateRepertoire/{id}")
   public ResponseEntity<ApiResponse<Void>> updateRepertoire(@PathVariable UUID id,
-      @RequestBody RepertoiresPutDto repertoiresPutDto) {
+      @Valid @RequestBody RepertoiresPutDto repertoiresPutDto) {
     repertoiresService.updateRepertoire(id, repertoiresPutDto);
 
     log.info("Repertoire updated successfully with id: {}", id);
-
-    return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(true, "Repertorio actualizado.", null, null));
+    
+    return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(true, "Repertoire updated successfully", null, null));
   }
 
 }
