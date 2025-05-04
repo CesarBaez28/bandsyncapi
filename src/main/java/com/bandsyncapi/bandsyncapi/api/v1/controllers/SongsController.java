@@ -11,6 +11,7 @@ import com.bandsyncapi.bandsyncapi.api.v1.models.SongsModel;
 import com.bandsyncapi.bandsyncapi.api.v1.services.SongsService;
 import com.bandsyncapi.bandsyncapi.response.ApiResponse;
 
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
@@ -52,7 +53,7 @@ public class SongsController {
    * @return - SongsDto @see SongsDto
    */
   @PostMapping("/save")
-  public ResponseEntity<ApiResponse<SongsDto>> save(@RequestBody SongsPostDto songsPostDto) {
+  public ResponseEntity<ApiResponse<SongsDto>> save(@Valid @RequestBody SongsPostDto songsPostDto) {
     SongsModel songsModel = songsMapper.toModel(songsPostDto);
     SongsModel songsModelSaved = songsService.save(songsModel);
     SongsDto songsDtoResponse = songsMapper.toDto(songsModelSaved);
@@ -60,7 +61,7 @@ public class SongsController {
     log.info("Song saved: {}", songsDtoResponse);
 
     return ResponseEntity.status(HttpStatus.CREATED)
-        .body(new ApiResponse<>(true, "Datos guardados", songsDtoResponse, null));
+        .body(new ApiResponse<>(true, "Song saved", songsDtoResponse, null));
   }
 
   /**
@@ -77,7 +78,7 @@ public class SongsController {
     log.info("Songs found: {}", songsDtoResponse);
 
     return ResponseEntity.status(HttpStatus.OK)
-        .body(new ApiResponse<>(true, "Datos encontrados", songsDtoResponse, null));
+        .body(new ApiResponse<>(true, "Songs found", songsDtoResponse, null));
   }
 
   /**
@@ -88,12 +89,12 @@ public class SongsController {
    * @return
    */
   @PutMapping("updateSong/{id}")
-  public ResponseEntity<ApiResponse<Void>> update(@PathVariable Integer id, @RequestBody SongsPutDto songsPutDto) {
+  public ResponseEntity<ApiResponse<Void>> update(@PathVariable Integer id, @Valid @RequestBody SongsPutDto songsPutDto) {
     songsService.updateSong(id, songsPutDto.name(), songsPutDto.artist(), songsPutDto.genre(),
         songsPutDto.tonality(), songsPutDto.link(), songsPutDto.sheetMusic());
 
     log.info("Song updated successfully: {}", songsPutDto);
 
-    return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(true, "Datos actualizados", null, null));
+    return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(true, "Song updated successfully", null, null));
   }
 }

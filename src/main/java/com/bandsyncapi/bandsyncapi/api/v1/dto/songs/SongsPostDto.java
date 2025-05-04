@@ -4,7 +4,6 @@ import com.bandsyncapi.bandsyncapi.api.v1.models.ArtistsModel;
 import com.bandsyncapi.bandsyncapi.api.v1.models.MusicalBandsModel;
 import com.bandsyncapi.bandsyncapi.api.v1.models.MusicalGenresModel;
 
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
@@ -13,7 +12,6 @@ import jakarta.validation.constraints.Size;
  */
 public record SongsPostDto(
 
-  @NotBlank
   @Size(min = 3, message = "El nombre debe tener al menos 3 caracteres.")
   String name, 
 
