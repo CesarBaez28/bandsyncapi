@@ -64,7 +64,7 @@ public class RolesController {
     log.info("Role saved successfully: {}", response);
 
     return ResponseEntity.status(HttpStatus.CREATED)
-        .body(new ApiResponse<>(true, "Role guardado correctamente.", response, null));
+    .body(new ApiResponse<>(true, "Role saved successfully.", response, null));
   }
 
   /**
@@ -79,7 +79,7 @@ public class RolesController {
 
     log.info("Roles found: {}", response);
 
-    return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(true, "Datos encontrados", response, null));
+    return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(true, "Roles found", response, null));
   }
 
   /**
@@ -95,6 +95,6 @@ public class RolesController {
     log.info("role updated successfully: {}", rolesPermissionsPutDto);
 
     return ResponseEntity.status(HttpStatus.OK)
-        .body(new ApiResponse<>(true, "Rol actualizado correctamente", null, null));
+        .body(new ApiResponse<>(true, "Role updated successfully", null, null));
   }
 }
