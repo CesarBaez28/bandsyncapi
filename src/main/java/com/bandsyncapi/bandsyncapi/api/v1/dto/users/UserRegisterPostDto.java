@@ -10,7 +10,6 @@ import jakarta.validation.constraints.Size;
  */
 public record UserRegisterPostDto(
 
-  @NotBlank(message = "El nombre de usuario no puede estar vacío")
   @Size(min = 3, message = "El nombre de usuario debe tener al menos 3 caracteres")
   String username,
 

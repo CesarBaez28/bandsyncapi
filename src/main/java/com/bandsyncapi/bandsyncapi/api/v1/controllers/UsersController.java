@@ -62,7 +62,7 @@ public class UsersController {
    * @return - An ApiResponse object
    */
   @PostMapping("/auth/login")
-  public ResponseEntity<ApiResponse<UserTokenDto>> login(@RequestBody UserLoginPostDto userLoginPostDto) {
+  public ResponseEntity<ApiResponse<UserTokenDto>> login(@RequestBody UserLoginPostDto  userLoginPostDto) {
     usersService.verify(userLoginPostDto);
 
     String token = jwtService.generateToken(userLoginPostDto.username());
@@ -72,7 +72,7 @@ public class UsersController {
     log.info("User authenticated successfully: {}", userLoginPostDto.username());  
 
     return ResponseEntity.status(HttpStatus.OK)
-        .body(new ApiResponse<>(true, "Usuario autenticado", userTokenDto, null));
+        .body(new ApiResponse<>(true, "User authenticated successfully", userTokenDto, null));
   }
 
   /**
@@ -85,9 +85,9 @@ public class UsersController {
   public ResponseEntity<ApiResponse<Void>> register(@Valid @RequestBody UserRegisterPostDto userRegisterPostDto) {
 
     if (!userRegisterPostDto.password().equals(userRegisterPostDto.repeatedPassword())) {
-      log.warn("Passwords do not match for user: {}", userRegisterPostDto.username());
+      log.info("Passwords do not match for user: {}", userRegisterPostDto.username());
       return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-          .body(new ApiResponse<>(false, "Las contraseñas no coinciden.", null, null));
+      .body(new ApiResponse<>(false, "Passwords do not match", null, null));
     }
 
     UsersModel usersModel = usersMapper.toModelFromRegisterDto(userRegisterPostDto);
@@ -95,7 +95,7 @@ public class UsersController {
 
     log.info("User registered successfully: {}", userRegisterPostDto.username());
 
-    return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse<>(true, "Usuario registrado.", null, null));
+    return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse<>(true, "User registered successfully", null, null));
   }
 
   /**
@@ -112,7 +112,7 @@ public class UsersController {
 
     log.info("User {} joined to musical band {}", userId, musicalBandId);
 
-    return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(true, "Usuario unido a la banda.", null, null));
+    return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(true, "User joined to musical band", null, null));
   }
 
   /**
@@ -129,7 +129,7 @@ public class UsersController {
 
     log.info("Users found: {}", usersResponse);
 
-    return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(true, "Datos encontrados", usersResponse, null));
+    return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(true, "Users found", usersResponse, null));
   }
 
   /**
@@ -145,7 +145,7 @@ public class UsersController {
 
     log.info("User found: {}", response);
 
-    return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(true, "Usuario encontrado", response, null));
+    return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(true, "User found", response, null));
   }
 
   /**
@@ -162,7 +162,7 @@ public class UsersController {
 
     log.info("User updated successfully: {}", usersPutDto);
 
-    return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(true, "Datos actualizados", null, null));
+    return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(true, "User updated successfully", null, null));
   }
 
   /**
@@ -177,12 +177,12 @@ public class UsersController {
 
     if (exists) {
       log.info("User found by email: {}", email);
-      return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(true, "Usuario encontrado", exists, null));
+      return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(true, "User found by email", exists, null));
     }
 
-    log.warn("User not found by email: {}", email);
+    log.info("User not found by email: {}", email);
     
     return ResponseEntity.status(HttpStatus.NOT_FOUND)
-        .body(new ApiResponse<>(false, "Usuario no encontrado", exists, null));
+        .body(new ApiResponse<>(false, "User not found by email", exists, null));
   }
 }

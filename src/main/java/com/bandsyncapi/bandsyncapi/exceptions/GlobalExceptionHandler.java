@@ -123,7 +123,7 @@ public class GlobalExceptionHandler {
    */
   @ExceptionHandler(BadCredentialsException.class)
   public ResponseEntity<ApiResponse<Void>> handleBadCredentialsException(BadCredentialsException ex) {
-    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse<>(false, "Credenciales incorrectas.", null, null));
+    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse<>(false, "Bad credentials.", null, null));
   }
 
   /**
