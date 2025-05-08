@@ -31,6 +31,7 @@ CREATE TABLE roles_permissions (
 CREATE TABLE musical_bands (
     id BINARY (16) PRIMARY KEY DEFAULT (UUID_TO_BIN(UUID())),
     name VARCHAR(100) NOT NULL UNIQUE,
+    hyphenated-name VARCHAR(100) NOT NULL UNIQUE,
     logo VARCHAR(255) NOT NULL DEFAULT '',
     address VARCHAR(255) NOT NULL DEFAULT '',
     phone VARCHAR(25) NOT NULL DEFAULT '',

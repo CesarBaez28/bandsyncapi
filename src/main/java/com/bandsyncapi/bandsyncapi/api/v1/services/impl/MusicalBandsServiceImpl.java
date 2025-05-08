@@ -78,6 +78,9 @@ public class MusicalBandsServiceImpl implements MusicalBandsService {
 
   @Override
   public MusicalBandsModel save(MusicalBandsModel musicalBandsModel) {
+
+    musicalBandsModel.setHyphenatedName(hyphenateName(musicalBandsModel.getName()));
+
     log.info("Saving musical band: {}", musicalBandsModel);
 
     return musicalBandsRepository.save(musicalBandsModel);
@@ -94,8 +97,8 @@ public class MusicalBandsServiceImpl implements MusicalBandsService {
     MusicalBandsModel savedMusicalBandsModel = save(musicalBandsModel);
 
     log.info("Saved musical band: {}", savedMusicalBandsModel);
-
     // Save relationship between the user and the musical band
+
     usersMusicalBandsService.save(musicalBandsPostDto.user(), savedMusicalBandsModel);
 
     log.info("Saved relationship between user and musical band: {}", musicalBandsPostDto.user(),
@@ -131,5 +134,25 @@ public class MusicalBandsServiceImpl implements MusicalBandsService {
   @Override
   public boolean existsById(UUID id) {
     return musicalBandsRepository.existsById(id);
+  }
+
+  @Override
+  public Optional<MusicalBandsModel> findByHyphenatedName(String name) {
+    return musicalBandsRepository.findByHyphenatedName(name);
+  }
+
+  /**
+   * Hyphenate a name
+   * 
+   * @param name - name
+   * @return - hyphenated name
+   */
+  private String hyphenateName(String name) {
+    if (name == null || name.trim().isEmpty()) {
+      return "";
+    }
+
+    String[] words = name.trim().split("\\s+");
+    return String.join("-", words);
   }
 }

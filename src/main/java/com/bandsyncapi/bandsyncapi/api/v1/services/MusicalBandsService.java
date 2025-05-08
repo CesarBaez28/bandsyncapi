@@ -42,4 +42,12 @@ public interface MusicalBandsService {
    * @return - true if exists, false otherwise
    */
   boolean existsById(UUID id);
+
+  /**
+   * find a musical band by hyphenated name
+   * 
+   * @param name -  musical band name
+   * @return  - A Optional Object of type MusicalBandsModel
+   */
+  public Optional<MusicalBandsModel> findByHyphenatedName (String name);
 }

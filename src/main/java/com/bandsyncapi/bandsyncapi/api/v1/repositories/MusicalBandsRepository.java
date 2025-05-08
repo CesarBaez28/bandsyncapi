@@ -7,6 +7,8 @@ import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
 
 import com.bandsyncapi.bandsyncapi.api.v1.models.MusicalBandsModel;
+import java.util.Optional;
+
 
 /**
  * This interface is repository for the musical_bands table in the database.
@@ -22,4 +24,12 @@ public interface MusicalBandsRepository extends JpaRepository<MusicalBandsModel,
    * @return - true if exists, false otherwise
    */
   boolean existsById(@NonNull UUID id);
+
+  /**
+   * find musical band by hyphenated name
+   * 
+   * @param name - musical band name
+   * @return A Optional Object with the MusicalBandsModel if it is found
+   */
+  Optional<MusicalBandsModel> findByHyphenatedName(String name);
 }
