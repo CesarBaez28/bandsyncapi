@@ -7,6 +7,7 @@ import java.util.function.Function;
 
 import javax.crypto.SecretKey;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import io.jsonwebtoken.Claims;
@@ -22,7 +23,8 @@ import io.jsonwebtoken.security.Keys;
 @Service
 public class JWTService {
 
-  private static final String SECRET_KEY = "P439Os8gy/h+DIVuAU/ayovcqUTmX1OQ4e+kYsnIRl65fLESy9DvYNt9BxA8nEgf";
+  @Value("${secret.key.jwt}")
+  private String secretKey;
 
   /**
    * Generates a JWT token for the given username.
@@ -51,7 +53,7 @@ public class JWTService {
    * @return the secret key
    */
   public SecretKey getKey() {
-    byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
+    byte[] keyBytes = Decoders.BASE64.decode(secretKey);
     return Keys.hmacShaKeyFor(keyBytes);
   }
 
