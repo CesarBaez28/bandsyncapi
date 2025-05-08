@@ -45,7 +45,7 @@ public class MusicalBandsServiceImpl implements MusicalBandsService {
 
   private final RolesPermissionsService rolesPermissionsService;
 
-  private static final String ADMIN_ROLE_NAME = "Administrador";
+  private static final String OWNER_ROLE_NAME = "Propietario";
 
   /**
    * Constructor
@@ -103,7 +103,7 @@ public class MusicalBandsServiceImpl implements MusicalBandsService {
 
     // Save the role of the user in the musical band
     RolesModel role = rolesService.save(RolesModel.builder()
-        .name(ADMIN_ROLE_NAME)
+        .name(OWNER_ROLE_NAME)
         .musicalBand(savedMusicalBandsModel)
         .status(true).build());
 
