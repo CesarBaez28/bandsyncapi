@@ -63,6 +63,7 @@ class MusicalBandsServiceImplTest {
     // Given
     var musicalBand = MusicalBandsModel.builder()
         .name("Test Band")
+        .hyphenatedName("Test-band")
         .logo("test_logo.png")
         .address("Test Address")
         .phone("123456789")
@@ -110,6 +111,7 @@ class MusicalBandsServiceImplTest {
     var musicalBand = MusicalBandsModel.builder()
       .id(UUID.randomUUID())
       .name("Test Band")
+      .hyphenatedName("Test-band")
       .logo("test_logo.png")
       .address("Test Address")
       .phone("123456789")
@@ -128,7 +130,7 @@ class MusicalBandsServiceImplTest {
 
     var role = RolesModel.builder()
       .musicalBand(musicalBand)
-      .name("Administrador")
+      .name("Propietario")
       .status(true)
       .build();
 
