@@ -28,6 +28,7 @@ class MusicalGenresRepositoryTest {
     // Given
     var musicalBand = MusicalBandsModel.builder()
       .address("Test Address")
+      .hyphenatedName("Test-band")
       .email("test@hotmail.com")
       .logo("testLogo")
       .name("Test Band")
@@ -57,6 +58,7 @@ class MusicalGenresRepositoryTest {
     // Given
     var musicalBand = MusicalBandsModel.builder()
       .address("Test Address")
+      .hyphenatedName("Test-band")
       .email("test@hotmail.com")
       .logo("testLogo")
       .name("Test Band")

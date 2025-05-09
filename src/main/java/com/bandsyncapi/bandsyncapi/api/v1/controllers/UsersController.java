@@ -33,9 +33,11 @@ import org.springframework.web.bind.annotation.RequestParam;
  * This is the controller to handle requests for the users table.
  */
 @RestController
-@RequestMapping(path = "api/v1/users")
+@RequestMapping(path = "api/v1")
 @Slf4j
 public class UsersController {
+
+  private static final String USERS_PATH = "users";
 
   private final UsersService usersService;
 
@@ -61,7 +63,7 @@ public class UsersController {
    * @param userLoginPostDto - Request body with the user data
    * @return - An ApiResponse object
    */
-  @PostMapping("/auth/login")
+  @PostMapping("/" + USERS_PATH + "/auth/login")
   public ResponseEntity<ApiResponse<UserTokenDto>> login(@RequestBody UserLoginPostDto  userLoginPostDto) {
     usersService.verify(userLoginPostDto);
 
@@ -81,7 +83,7 @@ public class UsersController {
    * @param userRegisterPostDto - Request body with the user data
    * @return - An ApiResponse object
    */
-  @PostMapping("/register")
+  @PostMapping("/" + USERS_PATH + "/register")
   public ResponseEntity<ApiResponse<Void>> register(@Valid @RequestBody UserRegisterPostDto userRegisterPostDto) {
 
     if (!userRegisterPostDto.password().equals(userRegisterPostDto.repeatedPassword())) {
@@ -105,7 +107,7 @@ public class UsersController {
    * @param musicalBandId - musical band id
    * @return - ApiResponse object
    */
-  @PostMapping("/joinUserToMusicalBand/{musicalBandId}/{userId}")
+  @PostMapping("/" + USERS_PATH + "/joinUserToMusicalBand/{musicalBandId}/{userId}")
   public ResponseEntity<ApiResponse<Void>> joinUserToMusicalBand(@PathVariable UUID userId,
       @PathVariable UUID musicalBandId) {
     usersService.joinUserToMusicalBand(userId, musicalBandId);
@@ -121,8 +123,8 @@ public class UsersController {
    * @param musicalBandId - musical band id
    * @return ApiResponse object with the users
    */
-  @GetMapping("/findAllByMusicalBandId/{musicalBandId}")
-  public ResponseEntity<ApiResponse<List<UsersDto>>> findAllByMusicalBandId(@PathVariable UUID musicalBandId) {
+  @GetMapping("/{musicalBandName}/" + USERS_PATH + "/findAllByMusicalBandId/{musicalBandId}")
+  public ResponseEntity<ApiResponse<List<UsersDto>>> findAllByMusicalBandId(@PathVariable String musicalBandName, @PathVariable UUID musicalBandId) {
     List<UsersModel> users = usersService.getAllUsersByMusicalBandId(musicalBandId);
 
     List<UsersDto> usersResponse = usersMapper.toDtoList(users);
@@ -138,7 +140,7 @@ public class UsersController {
    * @param userId - User id
    * @return - ApiResponse object with the user
    */
-  @GetMapping("/findById/{userId}")
+  @GetMapping("/" + USERS_PATH + "/findById/{userId}")
   public ResponseEntity<ApiResponse<UsersDto>> findById(@PathVariable UUID userId) {
     UsersModel usersModel = usersService.getById(userId);
     UsersDto response = usersMapper.toDto(usersModel);
@@ -155,7 +157,7 @@ public class UsersController {
    * @param usersPutDto - user data to be updated
    * @return An ApiResponse object
    */
-  @PutMapping("/updateUser/{id}")
+  @PutMapping("/" + USERS_PATH + "/updateUser/{id}")
   public ResponseEntity<ApiResponse<Void>> updateUser(@PathVariable UUID id,
       @Valid @RequestBody UsersPutDto usersPutDto) {
     usersService.updateUser(id, usersPutDto);
@@ -171,7 +173,7 @@ public class UsersController {
    * @param email - email
    * @return An ApiResponse object
    */
-  @GetMapping("/existsByEmail")
+  @GetMapping("/" + USERS_PATH + "/existsByEmail")
   public ResponseEntity<ApiResponse<Boolean>> existsByEmail(@RequestParam String email) {
     boolean exists = usersService.existsByEmail(email);
 

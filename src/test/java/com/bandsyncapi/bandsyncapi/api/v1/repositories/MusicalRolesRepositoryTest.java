@@ -27,6 +27,7 @@ class MusicalRolesRepositoryTest {
     // Given
     var musicalBand = MusicalBandsModel.builder()
         .name("Test Band")
+        .hyphenatedName("Test-band")
         .address("Test Address")
         .email("test@gmail.com")
         .logo("Test logo")

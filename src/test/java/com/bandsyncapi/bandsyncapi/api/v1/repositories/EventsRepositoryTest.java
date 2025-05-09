@@ -34,6 +34,7 @@ class EventsRepositoryTest {
     // Given
     var musicalBand = MusicalBandsModel.builder()
         .name("Test Band")
+        .hyphenatedName("Test-band")
         .logo("test_logo.png")
         .address("Test Address")
         .phone("123456789")
@@ -78,6 +79,7 @@ class EventsRepositoryTest {
     // Given
     var musicalBand = MusicalBandsModel.builder()
         .name("Test Band")
+        .hyphenatedName("Test-band")
         .logo("test_logo.png")
         .address("Test Address")
         .phone("123456789")

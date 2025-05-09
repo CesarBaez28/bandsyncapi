@@ -36,6 +36,7 @@ class SongsRepositoryTest {
     var musicalBand = MusicalBandsModel.builder()
         .name("Test Band")
         .logo("test_logo.png")
+        .hyphenatedName("Test-band")
         .address("Test Address")
         .phone("123456789")
         .email("testEmail@gmail.com")
@@ -82,6 +83,7 @@ class SongsRepositoryTest {
     // Given
     var musicalBand = MusicalBandsModel.builder()
         .name("Test Band")
+        .hyphenatedName("Test-band")
         .logo("test_logo.png")
         .address("Test Address")
         .phone("123456789")
