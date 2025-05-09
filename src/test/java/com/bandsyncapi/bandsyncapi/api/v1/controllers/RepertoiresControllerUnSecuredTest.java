@@ -124,7 +124,7 @@ class RepertoiresControllerUnSecuredTest {
         .andExpect(MockMvcResultMatchers.status().isBadRequest())
         .andExpect(
             MockMvcResultMatchers.jsonPath("$.errors.name").value("El nombre debe tener entre 3 y 100 caracteres."))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.errors.songs").value("Debe agregar canciones al repertorio"));
+        .andExpect(MockMvcResultMatchers.jsonPath("$.errors.songs").value("Debe agregar canciones al repertorio."));
   }
 
   @Test
