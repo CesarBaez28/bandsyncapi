@@ -122,6 +122,7 @@ class MusicalBandsServiceImplTest {
     var musicalBandDto = new MusicalBandsDto(
       UUID.randomUUID(), 
       "Test Band", 
+      "Test-Band",
       "test_logo.png", 
       "Test Address", 
       "123456789", 

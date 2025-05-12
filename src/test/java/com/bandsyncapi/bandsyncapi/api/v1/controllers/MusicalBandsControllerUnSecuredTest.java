@@ -1,8 +1,10 @@
 package com.bandsyncapi.bandsyncapi.api.v1.controllers;
 
 import static org.mockito.BDDMockito.given;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
@@ -19,6 +21,7 @@ import com.bandsyncapi.bandsyncapi.api.v1.dto.musicalbands.MusicalBandsDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.musicalbands.MusicalBandsPostDto;
 import com.bandsyncapi.bandsyncapi.api.v1.models.UsersModel;
 import com.bandsyncapi.bandsyncapi.api.v1.services.MusicalBandsService;
+import com.bandsyncapi.bandsyncapi.api.v1.services.UsersMusicalBandsService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.bandsyncapi.bandsyncapi.config.TestBeansConfig;
 
@@ -38,6 +41,9 @@ class MusicalBandsControllerUnSecuredTest {
   @MockitoBean
   private MusicalBandsService musicalBandsService;
 
+  @MockitoBean
+  private UsersMusicalBandsService usersMusicalBandsService;
+
   @Test
   void testSaveMusicalBand_Valid_Post_Request () throws Exception {
     // Given
@@ -55,6 +61,7 @@ class MusicalBandsControllerUnSecuredTest {
 
     var savedMusicalBand = new MusicalBandsDto(
        postRequest.id(), 
+       "Test-Band",
        postRequest.name(), 
        postRequest.logo(), 
        postRequest.address(), 
@@ -132,5 +139,39 @@ class MusicalBandsControllerUnSecuredTest {
       .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Las validaciones de los campos fallaron."))
       .andExpect(MockMvcResultMatchers.jsonPath("$.errors.name").value("El nombre debe tener entre 3 y 100 caracteres."))
       .andExpect(MockMvcResultMatchers.jsonPath("$.errors.email").value("El email debe ser válido."));
+  }
+
+  @Test
+  void testFindByUserId_Data_Found () throws Exception {
+    // Given
+    var userId = UUID.randomUUID();
+
+    var musicalBandDto = new MusicalBandsDto(
+      UUID.randomUUID(), 
+      "Test band", 
+      "test-band", 
+      "http://localhost", 
+      "test address", 
+      "8093457653", 
+      "test@gmail.com", 
+      true);
+
+    List<MusicalBandsDto> list = List.of(musicalBandDto);
+
+    given(usersMusicalBandsService.findByUser(new UsersModel(userId))).willReturn(list);
+
+    // When
+    mockMvc.perform(
+      get(BASE_URL + "/findByUserId/" + userId))
+      // Then
+      .andExpect(MockMvcResultMatchers.status().isOk())
+      .andExpect(MockMvcResultMatchers.jsonPath("$.success").value(true))
+      .andExpect(MockMvcResultMatchers.jsonPath("$.data[0].name").value(musicalBandDto.name()))
+      .andExpect(MockMvcResultMatchers.jsonPath("$.data[0].hyphenatedName").value(musicalBandDto.hyphenatedName()))
+      .andExpect(MockMvcResultMatchers.jsonPath("$.data[0].logo").value(musicalBandDto.logo()))
+      .andExpect(MockMvcResultMatchers.jsonPath("$.data[0].address").value(musicalBandDto.address()))
+      .andExpect(MockMvcResultMatchers.jsonPath("$.data[0].phone").value(musicalBandDto.phone()))
+      .andExpect(MockMvcResultMatchers.jsonPath("$.data[0].email").value(musicalBandDto.email()))
+      .andExpect(MockMvcResultMatchers.jsonPath("$.data[0].status").value(musicalBandDto.status()));
   }
 }
