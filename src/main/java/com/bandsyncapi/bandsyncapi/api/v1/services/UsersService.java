@@ -67,4 +67,12 @@ public interface UsersService {
    * @param usersPutDto - A UsersPutDto with the data to be updated
    */
   void updateUser (UUID userId, UsersPutDto usersPutDto);
+
+  /**
+   * Get user by username
+   * 
+   * @param username - username
+   * @return UsersModel object
+   */
+  UsersModel getByUsername(String username);
 }

@@ -71,7 +71,7 @@ public class GlobalExceptionHandler {
     constraintMessages.put("artists.musical_band_id", "Ese artista ya está registrado para esta banda.");
     constraintMessages.put("repertoires.musical_band_id", "Ese repertorio ya está registrado para esta banda.");
     constraintMessages.put("users.email", "Ya existe un usuario con ese mismo correo electrónico.");
-    constraintMessages.put("users.username", "Ya existe un usuario con ese nombre de usuario");
+    constraintMessages.put("users.username", "Ya existe un usuario registrado con ese nombre.");
 
     String key = extractConstraintName(errorMessage);
 

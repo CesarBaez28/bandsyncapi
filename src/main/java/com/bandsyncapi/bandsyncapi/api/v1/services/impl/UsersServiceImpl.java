@@ -121,4 +121,12 @@ public class UsersServiceImpl implements UsersService {
       throw new EntityNotFoundException("User not found");
     }
   }
+
+  @Override
+  public UsersModel getByUsername(String username) {
+    log.info("Getting user by username {}", username);
+    
+    return usersRepository.findByUsername(username)
+        .orElseThrow(() -> new EntityNotFoundException("User not found with username: " + username));
+  }
 }

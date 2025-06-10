@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.bandsyncapi.bandsyncapi.api.v1.dto.users.UserLoginPostDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.users.UserRegisterPostDto;
-import com.bandsyncapi.bandsyncapi.api.v1.dto.users.UserTokenDto;
+import com.bandsyncapi.bandsyncapi.api.v1.dto.users.UserSessionDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.users.UsersDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.users.UsersPutDto;
 import com.bandsyncapi.bandsyncapi.api.v1.mappers.UsersMapper;
@@ -37,7 +37,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Slf4j
 public class UsersController {
 
-  private static final String USERS_PATH = "users";
+  private static final String USERS_PATH = "/users";
 
   private final UsersService usersService;
 
@@ -63,18 +63,22 @@ public class UsersController {
    * @param userLoginPostDto - Request body with the user data
    * @return - An ApiResponse object
    */
-  @PostMapping("/" + USERS_PATH + "/auth/login")
-  public ResponseEntity<ApiResponse<UserTokenDto>> login(@RequestBody UserLoginPostDto  userLoginPostDto) {
+  @PostMapping(USERS_PATH + "/auth/login")
+  public ResponseEntity<ApiResponse<UserSessionDto>> login(@RequestBody UserLoginPostDto userLoginPostDto) {
     usersService.verify(userLoginPostDto);
+    
+    log.info("User authenticated successfully: {}", userLoginPostDto.username());  
 
     String token = jwtService.generateToken(userLoginPostDto.username());
 
-    var userTokenDto = new UserTokenDto(token);
+    log.info("Generated token for user: {}", userLoginPostDto.username());
+    
+    UsersModel userModel = usersService.getByUsername(userLoginPostDto.username());
 
-    log.info("User authenticated successfully: {}", userLoginPostDto.username());  
+    UserSessionDto userSessionDto = usersMapper.toSessionDto(userModel, token);
 
     return ResponseEntity.status(HttpStatus.OK)
-        .body(new ApiResponse<>(true, "User authenticated successfully", userTokenDto, null));
+        .body(new ApiResponse<>(true, "User authenticated successfully", userSessionDto, null));
   }
 
   /**
@@ -83,7 +87,7 @@ public class UsersController {
    * @param userRegisterPostDto - Request body with the user data
    * @return - An ApiResponse object
    */
-  @PostMapping("/" + USERS_PATH + "/register")
+  @PostMapping(USERS_PATH + "/register")
   public ResponseEntity<ApiResponse<Void>> register(@Valid @RequestBody UserRegisterPostDto userRegisterPostDto) {
 
     if (!userRegisterPostDto.password().equals(userRegisterPostDto.repeatedPassword())) {
@@ -107,7 +111,7 @@ public class UsersController {
    * @param musicalBandId - musical band id
    * @return - ApiResponse object
    */
-  @PostMapping("/" + USERS_PATH + "/joinUserToMusicalBand/{musicalBandId}/{userId}")
+  @PostMapping(USERS_PATH + "/joinUserToMusicalBand/{musicalBandId}/{userId}")
   public ResponseEntity<ApiResponse<Void>> joinUserToMusicalBand(@PathVariable UUID userId,
       @PathVariable UUID musicalBandId) {
     usersService.joinUserToMusicalBand(userId, musicalBandId);
@@ -123,8 +127,8 @@ public class UsersController {
    * @param musicalBandId - musical band id
    * @return ApiResponse object with the users
    */
-  @GetMapping("/{musicalBandName}/" + USERS_PATH + "/findAllByMusicalBandId/{musicalBandId}")
-  public ResponseEntity<ApiResponse<List<UsersDto>>> findAllByMusicalBandId(@PathVariable String musicalBandName, @PathVariable UUID musicalBandId) {
+  @GetMapping(USERS_PATH + "/findAllByMusicalBandId/{musicalBandId}")
+  public ResponseEntity<ApiResponse<List<UsersDto>>> findAllByMusicalBandId(@PathVariable UUID musicalBandId) {
     List<UsersModel> users = usersService.getAllUsersByMusicalBandId(musicalBandId);
 
     List<UsersDto> usersResponse = usersMapper.toDtoList(users);
@@ -140,7 +144,7 @@ public class UsersController {
    * @param userId - User id
    * @return - ApiResponse object with the user
    */
-  @GetMapping("/" + USERS_PATH + "/findById/{userId}")
+  @GetMapping(USERS_PATH + "/findById/{userId}")
   public ResponseEntity<ApiResponse<UsersDto>> findById(@PathVariable UUID userId) {
     UsersModel usersModel = usersService.getById(userId);
     UsersDto response = usersMapper.toDto(usersModel);
@@ -157,7 +161,7 @@ public class UsersController {
    * @param usersPutDto - user data to be updated
    * @return An ApiResponse object
    */
-  @PutMapping("/" + USERS_PATH + "/updateUser/{id}")
+  @PutMapping(USERS_PATH + "/updateUser/{id}")
   public ResponseEntity<ApiResponse<Void>> updateUser(@PathVariable UUID id,
       @Valid @RequestBody UsersPutDto usersPutDto) {
     usersService.updateUser(id, usersPutDto);
@@ -173,7 +177,7 @@ public class UsersController {
    * @param email - email
    * @return An ApiResponse object
    */
-  @GetMapping("/" + USERS_PATH + "/existsByEmail")
+  @GetMapping(USERS_PATH + "/existsByEmail")
   public ResponseEntity<ApiResponse<Boolean>> existsByEmail(@RequestParam String email) {
     boolean exists = usersService.existsByEmail(email);
 
@@ -186,5 +190,5 @@ public class UsersController {
     
     return ResponseEntity.status(HttpStatus.NOT_FOUND)
         .body(new ApiResponse<>(false, "User not found by email", exists, null));
-  }
+  }  
 }

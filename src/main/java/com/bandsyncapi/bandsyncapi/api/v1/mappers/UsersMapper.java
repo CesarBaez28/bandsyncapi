@@ -6,6 +6,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 import com.bandsyncapi.bandsyncapi.api.v1.dto.users.UserRegisterPostDto;
+import com.bandsyncapi.bandsyncapi.api.v1.dto.users.UserSessionDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.users.UsersDto;
 import com.bandsyncapi.bandsyncapi.api.v1.models.UsersModel;
 
@@ -23,4 +24,6 @@ public interface UsersMapper {
   UsersModel toModelFromRegisterDto(UserRegisterPostDto userRegisterPostDto);
 
   List<UsersDto> toDtoList (List<UsersModel> usersModelList);
+
+  UserSessionDto toSessionDto(UsersModel usersModel, String accessToken);
 }
