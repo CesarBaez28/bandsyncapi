@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
@@ -14,6 +15,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.mock.web.MockMultipartFile;
 
 import com.bandsyncapi.bandsyncapi.api.v1.dto.musicalbands.MusicalBandsDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.musicalbands.MusicalBandsPostDto;
@@ -25,6 +27,7 @@ import com.bandsyncapi.bandsyncapi.api.v1.models.RolesPermissionsModel;
 import com.bandsyncapi.bandsyncapi.api.v1.models.UsersModel;
 import com.bandsyncapi.bandsyncapi.api.v1.models.UsersRolesModel;
 import com.bandsyncapi.bandsyncapi.api.v1.repositories.MusicalBandsRepository;
+import com.bandsyncapi.bandsyncapi.api.v1.services.FilesService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.PermissionsService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.RolesPermissionsService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.RolesService;
@@ -33,6 +36,8 @@ import com.bandsyncapi.bandsyncapi.api.v1.services.UsersRolesService;
 
 @ExtendWith(MockitoExtension.class)
 class MusicalBandsServiceImplTest {
+
+  private static final String LOGOS_DIRECTORY = "bandsync/logos";
 
   @Mock
   private MusicalBandsRepository musicalBandsRepository;
@@ -54,6 +59,9 @@ class MusicalBandsServiceImplTest {
 
   @Mock
   private RolesPermissionsService rolesPermissionsService;
+
+  @Mock
+  private FilesService filesService;
 
   @InjectMocks
   private MusicalBandsServiceImpl musicalBandsServiceImpl;
@@ -96,58 +104,64 @@ class MusicalBandsServiceImplTest {
   }
 
   @Test
-  void testRegisterMusicalBand () {
+  void testRegisterMusicalBand() throws IOException {
     // Given
     var musicalBandPostDto = new MusicalBandsPostDto(
-      UUID.randomUUID(),
-      "Test Musical Band", 
-      "Test Logo", 
-      "Test Address", 
-      "8093459854", 
-      "Test@Gamil.com", 
-      true, 
-      new UsersModel(UUID.randomUUID()));
+        UUID.randomUUID(),
+        "Test Musical Band",
+        "Test Address",
+        "8093459854",
+        "Test@Gamil.com",
+        true,
+        new UsersModel(UUID.randomUUID()));
 
     var musicalBand = MusicalBandsModel.builder()
-      .id(UUID.randomUUID())
-      .name("Test Band")
-      .hyphenatedName("Test-band")
-      .logo("test_logo.png")
-      .address("Test Address")
-      .phone("123456789")
-      .email("testEmail@gmail.com")
-      .status(true)
-      .build();   
-    
+        .id(UUID.randomUUID())
+        .name("Test Band")
+        .hyphenatedName("Test-band")
+        .logo("https://test_logo.png")
+        .address("Test Address")
+        .phone("123456789")
+        .email("testEmail@gmail.com")
+        .status(true)
+        .build();
+
     var musicalBandDto = new MusicalBandsDto(
-      UUID.randomUUID(), 
-      "Test Band", 
-      "Test-Band",
-      "test_logo.png", 
-      "Test Address", 
-      "123456789", 
-      "testEmail@gmail.com", 
-      true);
+        UUID.randomUUID(),
+        "Test Band",
+        "Test-Band",
+        "https://test_logo.png",
+        "Test Address",
+        "123456789",
+        "testEmail@gmail.com",
+        true);
 
     var role = RolesModel.builder()
-      .musicalBand(musicalBand)
-      .name("Propietario")
-      .status(true)
-      .build();
+        .musicalBand(musicalBand)
+        .name("Propietario")
+        .status(true)
+        .build();
 
     var permissions = List.of(new PermissionsModel(1, "PERMISSION_1", true));
     var rolesPermissions = permissions.stream()
         .map(permission -> new RolesPermissionsModel(role, permission, true))
         .toList();
 
+    MockMultipartFile image = new MockMultipartFile(
+        "image",
+        "test_logo.png",
+        "image/png",
+        "dummy image content".getBytes());
+
     given(musicalBandsMapper.toModel(musicalBandPostDto)).willReturn(musicalBand);
     given(musicalBandsMapper.toDto(musicalBand)).willReturn(musicalBandDto);
     given(musicalBandsRepository.save(musicalBand)).willReturn(musicalBand);
     given(rolesService.save(role)).willReturn(role);
     given(permissionsService.findAll()).willReturn(permissions);
+    given(filesService.uploadFile(image, LOGOS_DIRECTORY)).willReturn("https://test_logo.png");
 
     // When
-    MusicalBandsDto result = musicalBandsServiceImpl.registerMusicalBand(musicalBandPostDto);
+    MusicalBandsDto result = musicalBandsServiceImpl.registerMusicalBand(musicalBandPostDto, image);
 
     // Then
     verify(musicalBandsMapper).toModel(musicalBandPostDto);
@@ -158,6 +172,7 @@ class MusicalBandsServiceImplTest {
     verify(permissionsService).findAll();
     verify(rolesPermissionsService).saveAll(rolesPermissions);
     verify(musicalBandsMapper).toDto(musicalBand);
+    verify(filesService).uploadFile(image, LOGOS_DIRECTORY);
 
     assertNotNull(result);
     assertEquals(musicalBand.getName(), result.name());
@@ -169,7 +184,7 @@ class MusicalBandsServiceImplTest {
   }
 
   @Test
-  void testExistsById () {
+  void testExistsById() {
     // Given
     var musicalBandId = UUID.randomUUID();
 

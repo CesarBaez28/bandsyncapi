@@ -2,7 +2,7 @@ package com.bandsyncapi.bandsyncapi.api.v1.controllers;
 
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 
 import java.util.List;
 import java.util.UUID;
@@ -13,6 +13,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -49,34 +50,40 @@ class MusicalBandsControllerUnSecuredTest {
     // Given
     var musicalBandId = UUID.randomUUID();
     var userId = UUID.randomUUID();
-    var postRequest = new MusicalBandsPostDto(
+    var postRequestObject = new MusicalBandsPostDto(
       musicalBandId, 
       "Test Band", 
-      "logo.png", 
       "123 Test St", 
       "1234567890", 
       "test@gmail.com", 
       true, 
       new UsersModel(userId));
 
-    var savedMusicalBand = new MusicalBandsDto(
-       postRequest.id(), 
-       "Test-Band",
-       postRequest.name(), 
-       postRequest.logo(), 
-       postRequest.address(), 
-       postRequest.phone(), 
-       postRequest.email(), 
-       postRequest.status());
+    MockMultipartFile request = new MockMultipartFile(
+      "musicalBand", 
+      "", 
+      "application/json", 
+      objectMapper.writeValueAsString(postRequestObject).getBytes()
+    );
 
-    given(musicalBandsService.registerMusicalBand(postRequest))
+    var savedMusicalBand = new MusicalBandsDto(
+       postRequestObject.id(), 
+       "Test-Band",
+       postRequestObject.name(), 
+       "https://logo.com", 
+       postRequestObject.address(), 
+       postRequestObject.phone(), 
+       postRequestObject.email(), 
+       postRequestObject.status());
+
+    given(musicalBandsService.registerMusicalBand(postRequestObject, null))
       .willReturn(savedMusicalBand);
 
     // When
     mockMvc.perform(
-      post(BASE_URL + "/save")
-        .contentType(MediaType.APPLICATION_JSON)
-        .content(objectMapper.writeValueAsString(postRequest)))
+      multipart(BASE_URL + "/save")
+        .file(request)
+        .contentType(MediaType.MULTIPART_FORM_DATA_VALUE))
       .andExpect(MockMvcResultMatchers.status().isCreated())
       .andExpect(MockMvcResultMatchers.jsonPath("$.success").value(true))
       .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Banda musical registrada correctamente")) 
@@ -94,20 +101,26 @@ class MusicalBandsControllerUnSecuredTest {
     // Given
     var musicalBandId = UUID.randomUUID();
     var userId = UUID.randomUUID();
-    var postRequest = new MusicalBandsPostDto(
+    var postRequestObject = new MusicalBandsPostDto(
       musicalBandId, 
       "", 
-      "logo.png", 
       "123 Test St", 
       "1234567890", 
       "", 
       true, 
       new UsersModel(userId));
 
+    MockMultipartFile request = new MockMultipartFile(
+      "musicalBand", 
+      "", 
+      "application/json", 
+      objectMapper.writeValueAsString(postRequestObject).getBytes()
+    );
+
     // When
-    mockMvc.perform(post(BASE_URL + "/save")
-        .contentType(MediaType.APPLICATION_JSON)
-        .content(objectMapper.writeValueAsString(postRequest)))
+    mockMvc.perform(multipart(BASE_URL + "/save")
+        .file(request)
+        .contentType(MediaType.MULTIPART_FORM_DATA_VALUE))
       .andExpect(MockMvcResultMatchers.status().isBadRequest())
       .andExpect(MockMvcResultMatchers.jsonPath("$.success").value(false))
       .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Las validaciones de los campos fallaron."))
@@ -120,20 +133,26 @@ class MusicalBandsControllerUnSecuredTest {
     // Given
     var musicalBandId = UUID.randomUUID();
     var userId = UUID.randomUUID();
-    var postRequest = new MusicalBandsPostDto(
+    var postRequestObject = new MusicalBandsPostDto(
       musicalBandId, 
       "", 
-      "logo.png", 
       "123 Test St", 
       "1234567890", 
       "cesar.test.com", 
       true, 
       new UsersModel(userId));
 
+    MockMultipartFile request = new MockMultipartFile(
+      "musicalBand", 
+      "", 
+      "application/json", 
+      objectMapper.writeValueAsString(postRequestObject).getBytes()
+    );
+
     // When
-    mockMvc.perform(post(BASE_URL + "/save")
-        .contentType(MediaType.APPLICATION_JSON)
-        .content(objectMapper.writeValueAsString(postRequest)))
+    mockMvc.perform(multipart(BASE_URL + "/save")
+        .file(request)
+        .contentType(MediaType.MULTIPART_FORM_DATA_VALUE))
       .andExpect(MockMvcResultMatchers.status().isBadRequest())
       .andExpect(MockMvcResultMatchers.jsonPath("$.success").value(false))
       .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Las validaciones de los campos fallaron."))
