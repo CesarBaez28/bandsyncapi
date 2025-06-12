@@ -1,7 +1,10 @@
 package com.bandsyncapi.bandsyncapi.api.v1.services;
 
+import java.io.IOException;
 import java.util.Optional;
 import java.util.UUID;
+
+import org.springframework.web.multipart.MultipartFile;
 
 import com.bandsyncapi.bandsyncapi.api.v1.dto.musicalbands.MusicalBandsDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.musicalbands.MusicalBandsPostDto;
@@ -31,9 +34,10 @@ public interface MusicalBandsService {
    * Register a new musical band
    *  
    * @param musicalBandsPostDto - Post request for creating the new MusicalBand
+   * @param imageFile - musicalband logo
    * @return - The new musical band
    */
-  public MusicalBandsDto registerMusicalBand (MusicalBandsPostDto musicalBandsPostDto);
+  public MusicalBandsDto registerMusicalBand (MusicalBandsPostDto musicalBandsPostDto, MultipartFile imageFile) throws IOException;
 
   /**
    * Check if the musical band exists by id

@@ -1,11 +1,13 @@
 package com.bandsyncapi.bandsyncapi.api.v1.services.impl;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.bandsyncapi.bandsyncapi.api.v1.dto.musicalbands.MusicalBandsDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.musicalbands.MusicalBandsPostDto;
@@ -15,6 +17,7 @@ import com.bandsyncapi.bandsyncapi.api.v1.models.RolesModel;
 import com.bandsyncapi.bandsyncapi.api.v1.models.RolesPermissionsModel;
 import com.bandsyncapi.bandsyncapi.api.v1.models.UsersRolesModel;
 import com.bandsyncapi.bandsyncapi.api.v1.repositories.MusicalBandsRepository;
+import com.bandsyncapi.bandsyncapi.api.v1.services.FilesService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.MusicalBandsService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.PermissionsService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.RolesPermissionsService;
@@ -45,7 +48,11 @@ public class MusicalBandsServiceImpl implements MusicalBandsService {
 
   private final RolesPermissionsService rolesPermissionsService;
 
+  private final FilesService filesService;
+
   private static final String OWNER_ROLE_NAME = "Propietario";
+
+  private static final String LOGOS_DIRECTORY = "bandsync/logos";
 
   /**
    * Constructor
@@ -55,11 +62,12 @@ public class MusicalBandsServiceImpl implements MusicalBandsService {
    * @param rolesService             - Service for RolesModel
    * @param usersRolesService        - Service for UsersRolesModel
    * @param musicalBandsMapper       - Mapper for MusicalBandsModel
+   * @param filesService             - Service to upload images
    */
   public MusicalBandsServiceImpl(MusicalBandsRepository musicalBandsRepository,
       UsersMusicalBandsService usersMusicalBandsService, RolesService rolesService, UsersRolesService usersRolesService,
       PermissionsService permissionsService, RolesPermissionsService rolesPermissionsService,
-      MusicalBandsMapper musicalBandsMapper) {
+      MusicalBandsMapper musicalBandsMapper, FilesService filesService) {
     this.musicalBandsRepository = musicalBandsRepository;
     this.usersMusicalBandsService = usersMusicalBandsService;
     this.rolesService = rolesService;
@@ -67,6 +75,7 @@ public class MusicalBandsServiceImpl implements MusicalBandsService {
     this.permissionsService = permissionsService;
     this.rolesPermissionsService = rolesPermissionsService;
     this.musicalBandsMapper = musicalBandsMapper;
+    this.filesService = filesService;
   }
 
   @Override
@@ -88,17 +97,25 @@ public class MusicalBandsServiceImpl implements MusicalBandsService {
 
   @Transactional
   @Override
-  public MusicalBandsDto registerMusicalBand(MusicalBandsPostDto musicalBandsPostDto) {
+  public MusicalBandsDto registerMusicalBand(MusicalBandsPostDto musicalBandsPostDto, MultipartFile imagefile)
+      throws IOException {
     log.info("Registering musical band...", musicalBandsPostDto);
 
     MusicalBandsModel musicalBandsModel = musicalBandsMapper.toModel(musicalBandsPostDto);
+
+    String fileUrl = "";
+    if (validateImage(imagefile)) {
+      fileUrl = filesService.uploadFile(imagefile, LOGOS_DIRECTORY);
+    }
+
+    musicalBandsModel.setLogo(fileUrl);
 
     // Save the new musical band
     MusicalBandsModel savedMusicalBandsModel = save(musicalBandsModel);
 
     log.info("Saved musical band: {}", savedMusicalBandsModel);
+    
     // Save relationship between the user and the musical band
-
     usersMusicalBandsService.save(musicalBandsPostDto.user(), savedMusicalBandsModel);
 
     log.info("Saved relationship between user and musical band: {}", musicalBandsPostDto.user(),
@@ -139,6 +156,27 @@ public class MusicalBandsServiceImpl implements MusicalBandsService {
   @Override
   public Optional<MusicalBandsModel> findByHyphenatedName(String name) {
     return musicalBandsRepository.findByHyphenatedName(name);
+  }
+
+  /**
+   * Validate if the image is valid
+   * 
+   * @param file - file to validate
+   * @return - boolean if it is valid or not
+   */
+  private boolean validateImage(MultipartFile file) {
+    if (file == null || file.isEmpty()) return false;
+    
+    String contentType = file.getContentType();
+    if (contentType == null || !contentType.startsWith("image/")) {
+      throw new IllegalArgumentException("El archivo no es una imagen válida");
+    }
+
+    if (file.getSize() > 5 * 1024 * 1024) { // 5MB
+      throw new IllegalArgumentException("El tamaño de la imagen excede el límite permitido");
+    }
+
+    return true;
   }
 
   /**

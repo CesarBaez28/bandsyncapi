@@ -16,6 +16,7 @@ public interface MusicalBandsMapper {
   MusicalBandsDto toDto(MusicalBandsModel musicalBandsModel);
 
   @Mapping(target = "hyphenatedName", ignore = true)
+  @Mapping(target = "logo", ignore = true)
   MusicalBandsModel toModel(MusicalBandsPostDto musicalBandsPostDto);
 
   @Mapping(source = "musicalBand.id", target = "id")
