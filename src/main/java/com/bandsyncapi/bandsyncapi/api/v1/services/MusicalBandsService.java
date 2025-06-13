@@ -54,4 +54,12 @@ public interface MusicalBandsService {
    * @return  - A Optional Object of type MusicalBandsModel
    */
   public Optional<MusicalBandsModel> findByHyphenatedName (String name);
+
+  /**
+   * Update logo by id
+   * 
+   * @param musicalBandId - Musical band id
+   * @param logo - Logo
+   */
+  void updateLogoById (UUID musicalBandId, String logo);
 }

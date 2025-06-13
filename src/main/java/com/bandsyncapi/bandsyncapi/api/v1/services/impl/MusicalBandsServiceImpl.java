@@ -103,12 +103,7 @@ public class MusicalBandsServiceImpl implements MusicalBandsService {
 
     MusicalBandsModel musicalBandsModel = musicalBandsMapper.toModel(musicalBandsPostDto);
 
-    String fileUrl = "";
-    if (validateImage(imagefile)) {
-      fileUrl = filesService.uploadFile(imagefile, LOGOS_DIRECTORY);
-    }
-
-    musicalBandsModel.setLogo(fileUrl);
+    musicalBandsModel.setLogo("");
 
     // Save the new musical band
     MusicalBandsModel savedMusicalBandsModel = save(musicalBandsModel);
@@ -145,6 +140,13 @@ public class MusicalBandsServiceImpl implements MusicalBandsService {
 
     log.info("Saved all permissions to the role: {}", rolesPermissions);
 
+    String fileUrl = filesService.uploadFile(imagefile, LOGOS_DIRECTORY);
+
+    if (!fileUrl.isEmpty()) {
+      updateLogoById(savedMusicalBandsModel.getId(), fileUrl);
+      savedMusicalBandsModel.setLogo(fileUrl);
+    }
+
     return musicalBandsMapper.toDto(savedMusicalBandsModel);
   }
 
@@ -158,25 +160,9 @@ public class MusicalBandsServiceImpl implements MusicalBandsService {
     return musicalBandsRepository.findByHyphenatedName(name);
   }
 
-  /**
-   * Validate if the image is valid
-   * 
-   * @param file - file to validate
-   * @return - boolean if it is valid or not
-   */
-  private boolean validateImage(MultipartFile file) {
-    if (file == null || file.isEmpty()) return false;
-    
-    String contentType = file.getContentType();
-    if (contentType == null || !contentType.startsWith("image/")) {
-      throw new IllegalArgumentException("El archivo no es una imagen válida");
-    }
-
-    if (file.getSize() > 5 * 1024 * 1024) { // 5MB
-      throw new IllegalArgumentException("El tamaño de la imagen excede el límite permitido");
-    }
-
-    return true;
+  @Override
+  public void updateLogoById(UUID musicalBandId, String logo) {
+    musicalBandsRepository.updateLogoById(musicalBandId, logo);
   }
 
   /**

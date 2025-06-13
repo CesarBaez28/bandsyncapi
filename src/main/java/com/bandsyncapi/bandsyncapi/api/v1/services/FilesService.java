@@ -14,7 +14,7 @@ public interface FilesService {
    * 
    * @param file - file
    * @param directory - The specific directory to upload the file 
-   * @return - file url 
+   * @return - file url or an empty string if the file is null or empty
    */
   String uploadFile (MultipartFile file, String directory) throws IOException;
 }

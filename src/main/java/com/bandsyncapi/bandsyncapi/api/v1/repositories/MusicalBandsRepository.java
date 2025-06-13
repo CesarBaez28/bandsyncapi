@@ -3,8 +3,12 @@ package com.bandsyncapi.bandsyncapi.api.v1.repositories;
 import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.bandsyncapi.bandsyncapi.api.v1.models.MusicalBandsModel;
 import java.util.Optional;
@@ -32,4 +36,16 @@ public interface MusicalBandsRepository extends JpaRepository<MusicalBandsModel,
    * @return A Optional Object with the MusicalBandsModel if it is found
    */
   Optional<MusicalBandsModel> findByHyphenatedName(String name);
+
+  /**
+   * Update logo by id
+   * 
+   * @param musicalBandId - musical band id
+   * @param logo - new url logo
+   * @return number of rows updated
+   */
+  @Transactional
+  @Modifying
+  @Query("UPDATE MusicalBandsModel mb SET mb.logo = :logo WHERE mb.id = :musicalBandId")
+  int updateLogoById (@Param("musicalBandId") UUID musicalBandId, @Param("logo") String logo);
 }

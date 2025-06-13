@@ -123,7 +123,20 @@ public class GlobalExceptionHandler {
    */
   @ExceptionHandler(BadCredentialsException.class)
   public ResponseEntity<ApiResponse<Void>> handleBadCredentialsException(BadCredentialsException ex) {
-    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse<>(false, "Bad credentials.", null, null));
+    return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+        .body(new ApiResponse<>(false, "Bad credentials.", null, null));
+  }
+
+  /**
+   * Handle FileStorageException
+   * 
+   * @param ex - FileStorageException object
+   * @return - An ApiResponse object with the error
+   */
+  @ExceptionHandler(FileStorageException.class)
+  public ResponseEntity<ApiResponse<Void>> handleFileStorageException(FileStorageException ex) {
+    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .body(new ApiResponse<>(false, ex.getMessage(), null, null));
   }
 
   /**
