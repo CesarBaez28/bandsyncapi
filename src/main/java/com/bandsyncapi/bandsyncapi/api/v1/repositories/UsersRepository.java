@@ -43,13 +43,10 @@ public interface UsersRepository extends JpaRepository<UsersModel, UUID> {
   @Modifying
   @Query("""
       UPDATE UsersModel u SET
-        u.username = :#{#updateUserDTO.username},
-        u.email = :#{#updateUserDTO.email},
         u.firstName = :#{#updateUserDTO.firstName},
         u.lastName = :#{#updateUserDTO.lastName},
         u.phone = :#{#updateUserDTO.phone},
-        u.photo = :#{#updateUserDTO.photo},
-        u.status = :#{#updateUserDTO.status}
+        u.photo = :#{#updateUserDTO.photo}
       WHERE u.id = :userId
       """)
   int updateUser(@Param("userId") UUID userId, @Param("updateUserDTO") UsersPutDto updateUserDTO);

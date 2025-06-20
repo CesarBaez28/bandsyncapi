@@ -83,13 +83,10 @@ class UsersRepositoryTest {
 
     // When
     UsersPutDto updateUserDTO = new UsersPutDto(
-        "update_user",
-        "update@gmaio.com",
         "updated first name",
         "updated last name",
         "8092341234",
-        "UpdatedPhoto",
-        true);
+        "UpdatedPhoto");
 
     int updatedRows = usersRepository.updateUser(user.getId(), updateUserDTO);
 
@@ -120,7 +117,7 @@ class UsersRepositoryTest {
   }
 
   @Test
-  void testNotExistsByEmail () {
+  void testNotExistsByEmail() {
     // Given
     String email = "non_existent_email";
 

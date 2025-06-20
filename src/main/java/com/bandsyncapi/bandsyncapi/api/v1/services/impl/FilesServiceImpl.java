@@ -13,6 +13,7 @@ import com.bandsyncapi.bandsyncapi.exceptions.FileStorageException;
 import lombok.extern.slf4j.Slf4j;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.S3Exception;
 
@@ -37,29 +38,36 @@ public class FilesServiceImpl implements FilesService {
 
   @Override
   public String uploadFile(MultipartFile file, String directory) throws IOException {
-    if (!validateImage(file)) return "";
-    
+    if (!validateImage(file))
+      return "";
+
     String fileName = UUID.randomUUID() + "-" + file.getOriginalFilename();
-    log.info("Uploading musical band logo: {}", fileName);
+    log.info("Uploading imagen en directorio " + directory + " : {}", fileName);
 
     try {
       var request = PutObjectRequest.builder()
           .bucket(bucketName)
           .key(directory + "/" + fileName)
           .build();
-  
+
       s3Client.putObject(request, RequestBody.fromBytes(file.getBytes()));
-  
-      log.info("logo saved successfully");
-  
+
+      log.info("Image saved successfully");
+
       return "https://" + bucketName + ".s3." + region + ".amazonaws.com/" + directory + "/" + fileName;
     } catch (IOException e) {
       log.error("Error al leer archivo: {}", e.getMessage(), e);
-      throw new FileStorageException("No se pudo leer el archivo que se intentó subir");      
+      throw new FileStorageException("No se pudo leer el archivo que se intentó subir");
     } catch (S3Exception e) {
-      log.error("Error al guardar el archivo a S3: {}",  e.awsErrorDetails().errorMessage(), e);
+      log.error("Error al guardar el archivo a S3: {}", e.awsErrorDetails().errorMessage(), e);
       throw new FileStorageException("Ocurrió un error al intentar guardar la imagen");
     }
+  }
+
+  @Override
+  public void deleteFile(String key) {
+    s3Client.deleteObject(DeleteObjectRequest.builder()
+        .bucket(bucketName).key(key).build());
   }
 
   /**
@@ -69,8 +77,9 @@ public class FilesServiceImpl implements FilesService {
    * @return - boolean if it is valid or not
    */
   private boolean validateImage(MultipartFile file) {
-    if (file == null || file.isEmpty()) return false;
-    
+    if (file == null || file.isEmpty())
+      return false;
+
     String contentType = file.getContentType();
     if (contentType == null || !contentType.startsWith("image/")) {
       throw new FileStorageException("El archivo no es una imagen válida");

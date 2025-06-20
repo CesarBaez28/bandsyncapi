@@ -1,7 +1,10 @@
 package com.bandsyncapi.bandsyncapi.api.v1.services;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
+
+import org.springframework.web.multipart.MultipartFile;
 
 import com.bandsyncapi.bandsyncapi.api.v1.dto.users.UserLoginPostDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.users.UsersPutDto;
@@ -65,8 +68,10 @@ public interface UsersService {
    * 
    * @param userId - user id
    * @param usersPutDto - A UsersPutDto with the data to be updated
+   * @param image - User image
+   * @return updated user info
    */
-  void updateUser (UUID userId, UsersPutDto usersPutDto);
+  UsersPutDto updateUser (UUID userId, UsersPutDto usersPutDto, MultipartFile image) throws IOException;
 
   /**
    * Get user by username

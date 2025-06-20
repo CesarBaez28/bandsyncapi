@@ -1,12 +1,15 @@
 package com.bandsyncapi.bandsyncapi.api.v1.controllers;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.bandsyncapi.bandsyncapi.api.v1.dto.users.UserLoginPostDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.users.UserRegisterPostDto;
@@ -28,6 +31,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 
 /**
  * This is the controller to handle requests for the users table.
@@ -66,13 +70,13 @@ public class UsersController {
   @PostMapping(USERS_PATH + "/auth/login")
   public ResponseEntity<ApiResponse<UserSessionDto>> login(@RequestBody UserLoginPostDto userLoginPostDto) {
     usersService.verify(userLoginPostDto);
-    
-    log.info("User authenticated successfully: {}", userLoginPostDto.username());  
+
+    log.info("User authenticated successfully: {}", userLoginPostDto.username());
 
     String token = jwtService.generateToken(userLoginPostDto.username());
 
     log.info("Generated token for user: {}", userLoginPostDto.username());
-    
+
     UsersModel userModel = usersService.getByUsername(userLoginPostDto.username());
 
     UserSessionDto userSessionDto = usersMapper.toSessionDto(userModel, token);
@@ -93,7 +97,7 @@ public class UsersController {
     if (!userRegisterPostDto.password().equals(userRegisterPostDto.repeatedPassword())) {
       log.info("Passwords do not match for user: {}", userRegisterPostDto.username());
       return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-      .body(new ApiResponse<>(false, "Passwords do not match", null, null));
+          .body(new ApiResponse<>(false, "Passwords do not match", null, null));
     }
 
     UsersModel usersModel = usersMapper.toModelFromRegisterDto(userRegisterPostDto);
@@ -101,7 +105,8 @@ public class UsersController {
 
     log.info("User registered successfully: {}", userRegisterPostDto.username());
 
-    return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse<>(true, "User registered successfully", null, null));
+    return ResponseEntity.status(HttpStatus.CREATED)
+        .body(new ApiResponse<>(true, "User registered successfully", null, null));
   }
 
   /**
@@ -118,7 +123,8 @@ public class UsersController {
 
     log.info("User {} joined to musical band {}", userId, musicalBandId);
 
-    return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(true, "User joined to musical band", null, null));
+    return ResponseEntity.status(HttpStatus.OK)
+        .body(new ApiResponse<>(true, "User joined to musical band", null, null));
   }
 
   /**
@@ -161,14 +167,16 @@ public class UsersController {
    * @param usersPutDto - user data to be updated
    * @return An ApiResponse object
    */
-  @PutMapping(USERS_PATH + "/updateUser/{id}")
-  public ResponseEntity<ApiResponse<Void>> updateUser(@PathVariable UUID id,
-      @Valid @RequestBody UsersPutDto usersPutDto) {
-    usersService.updateUser(id, usersPutDto);
+  @PutMapping(path = USERS_PATH + "/updateUser/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  public ResponseEntity<ApiResponse<UsersPutDto>> updateUser(@PathVariable UUID id,
+      @Valid @RequestPart("user") UsersPutDto usersPutDto,
+      @RequestPart(value = "image", required = false) MultipartFile imageFile) throws IOException {
 
-    log.info("User updated successfully: {}", usersPutDto);
+    UsersPutDto result = usersService.updateUser(id, usersPutDto, imageFile);
 
-    return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(true, "User updated successfully", null, null));
+    log.info("User updated successfully: {}", result);
+
+    return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(true, "User updated successfully", result, null));
   }
 
   /**
@@ -187,8 +195,8 @@ public class UsersController {
     }
 
     log.info("User not found by email: {}", email);
-    
+
     return ResponseEntity.status(HttpStatus.NOT_FOUND)
         .body(new ApiResponse<>(false, "User not found by email", exists, null));
-  }  
+  }
 }

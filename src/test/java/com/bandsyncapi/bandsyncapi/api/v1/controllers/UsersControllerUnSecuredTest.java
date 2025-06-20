@@ -286,13 +286,11 @@ class UsersControllerUnSecuredTest {
     // Given
     var userId = UUID.randomUUID();
     var putRequest = new UsersPutDto(
-        "CesarBaez87",
-        "CesarBaez@gmail.com",
         "Cesar",
         "Baez",
         "89798453542",
-        "http://localhost",
-        true);
+        "http://localhost"
+        );
 
     // When
     mockMvc.perform(
@@ -310,13 +308,11 @@ class UsersControllerUnSecuredTest {
     // Given
     var userId = UUID.randomUUID();
     var putRequest = new UsersPutDto(
-        "cs",
-        "CesarBaez",
-        "Cesar",
-        "Baez",
+        "Ce",
+        "Ba",
         "89798453542",
-        "http://localhost",
-        true);
+        "http://localhost"
+        );
 
     // When
     mockMvc.perform(

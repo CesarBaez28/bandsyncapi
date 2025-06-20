@@ -17,6 +17,8 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -28,6 +30,7 @@ import com.bandsyncapi.bandsyncapi.api.v1.models.UsersModel;
 import com.bandsyncapi.bandsyncapi.api.v1.repositories.UsersRepository;
 import com.bandsyncapi.bandsyncapi.api.v1.services.UsersMusicalBandsService;
 import com.bandsyncapi.bandsyncapi.utils.Encrypt;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.persistence.EntityNotFoundException;
 
@@ -48,6 +51,9 @@ class UsersServiceImplTest {
 
   @InjectMocks
   private UsersServiceImpl usersServiceImpl;
+
+  @Autowired
+  private ObjectMapper objectMapper;
 
   @Test
   void testVerify() {
@@ -72,7 +78,7 @@ class UsersServiceImplTest {
   }
 
   @Test
-  void testRegister () {
+  void testRegister() {
     // Given
     var userModel = UsersModel.builder()
         .id(UUID.randomUUID())
@@ -84,13 +90,13 @@ class UsersServiceImplTest {
         .phone("phone")
         .photo("photo")
         .status(true)
-        .build();     
+        .build();
 
     // When
     usersServiceImpl.register(userModel);
 
     // Then
-    ArgumentCaptor<UsersModel> userModelCaptor = ArgumentCaptor.forClass(UsersModel.class); 
+    ArgumentCaptor<UsersModel> userModelCaptor = ArgumentCaptor.forClass(UsersModel.class);
 
     verify(usersRepository).save(userModelCaptor.capture());
 
@@ -111,7 +117,7 @@ class UsersServiceImplTest {
     // Then
     verify(usersMusicalBandsService).save(new UsersModel(userId), new MusicalBandsModel(musicalBandId));
   }
-  
+
   @Test
   void testExistsByEmail() {
     // Given
@@ -189,45 +195,51 @@ class UsersServiceImplTest {
   }
 
   @Test
-  void testUpdateUser () {
+  void testUpdateUser() throws Exception {
     // Given
     var userId = UUID.randomUUID();
     var usersPutDto = new UsersPutDto(
-      "username", 
-      "password", 
-      "firstName", 
-      "lastName", 
-      "phone", 
-      "photo", 
-      true);
+        "firstName",
+        "lastName",
+        "phone",
+        "photo");
+
+    MockMultipartFile imageFile = new MockMultipartFile(
+        "user",
+        "",
+        "application/json",
+        objectMapper.writeValueAsString(usersPutDto).getBytes());
 
     given(usersRepository.updateUser(userId, usersPutDto)).willReturn(1);
 
     // When
-    usersServiceImpl.updateUser(userId, usersPutDto);
+    usersServiceImpl.updateUser(userId, usersPutDto, imageFile);
 
     // Then
     verify(usersRepository).updateUser(userId, usersPutDto);
   }
 
   @Test
-  void testUpdateUser_Empty() {
+  void testUpdateUser_Empty() throws Exception {
     // Given
     var userId = UUID.randomUUID();
     var usersPutDto = new UsersPutDto(
-      "username", 
-      "password", 
-      "firstName", 
-      "lastName", 
-      "phone", 
-      "photo", 
-      true);
+        "firstName",
+        "lastName",
+        "phone",
+        "photo");
+
+    MockMultipartFile imageFile = new MockMultipartFile(
+        "user",
+        "",
+        "application/json",
+        objectMapper.writeValueAsString(usersPutDto).getBytes());
 
     given(usersRepository.updateUser(userId, usersPutDto)).willReturn(0);
 
     // When
     assertThrows(EntityNotFoundException.class, () -> {
-      usersServiceImpl.updateUser(userId, usersPutDto);
+      usersServiceImpl.updateUser(userId, usersPutDto, imageFile);
     });
 
     // Then
