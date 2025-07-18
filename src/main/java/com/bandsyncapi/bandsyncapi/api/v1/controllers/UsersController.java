@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
-import org.springframework.boot.autoconfigure.security.SecurityProperties.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
