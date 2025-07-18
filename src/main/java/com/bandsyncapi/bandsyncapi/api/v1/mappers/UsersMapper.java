@@ -5,6 +5,7 @@ import java.util.List;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import com.bandsyncapi.bandsyncapi.api.v1.dto.musicalbands.MusicalBandsDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.users.UserRegisterPostDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.users.UserSessionDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.users.UsersDto;
@@ -25,5 +26,5 @@ public interface UsersMapper {
 
   List<UsersDto> toDtoList (List<UsersModel> usersModelList);
 
-  UserSessionDto toSessionDto(UsersModel usersModel, String accessToken);
+  UserSessionDto toSessionDto(UsersModel usersModel, String accessToken, List<MusicalBandsDto> musicalBands);
 }

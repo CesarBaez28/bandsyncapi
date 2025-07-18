@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.boot.autoconfigure.security.SecurityProperties.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.bandsyncapi.bandsyncapi.api.v1.dto.musicalbands.MusicalBandsDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.users.UserLoginPostDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.users.UserRegisterPostDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.users.UserSessionDto;
@@ -19,6 +21,7 @@ import com.bandsyncapi.bandsyncapi.api.v1.dto.users.UsersPutDto;
 import com.bandsyncapi.bandsyncapi.api.v1.mappers.UsersMapper;
 import com.bandsyncapi.bandsyncapi.api.v1.models.UsersModel;
 import com.bandsyncapi.bandsyncapi.api.v1.services.JWTService;
+import com.bandsyncapi.bandsyncapi.api.v1.services.UsersMusicalBandsService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.UsersService;
 import com.bandsyncapi.bandsyncapi.response.ApiResponse;
 
@@ -45,6 +48,8 @@ public class UsersController {
 
   private final UsersService usersService;
 
+  private final UsersMusicalBandsService usersMusicalBandsService;
+
   private final JWTService jwtService;
 
   private UsersMapper usersMapper;
@@ -55,10 +60,11 @@ public class UsersController {
    * @param usersService - Users Service
    * @param usersMapper  - Users mapper
    */
-  public UsersController(UsersService usersService, UsersMapper usersMapper, JWTService jwtService) {
+  public UsersController(UsersService usersService, UsersMapper usersMapper, JWTService jwtService, UsersMusicalBandsService usersMusicalBandsService) {
     this.usersService = usersService;
     this.jwtService = jwtService;
     this.usersMapper = usersMapper;
+    this.usersMusicalBandsService = usersMusicalBandsService;
   }
 
   /**
@@ -79,7 +85,9 @@ public class UsersController {
 
     UsersModel userModel = usersService.getByUsername(userLoginPostDto.username());
 
-    UserSessionDto userSessionDto = usersMapper.toSessionDto(userModel, token);
+    List<MusicalBandsDto> musicalbands = usersMusicalBandsService.findByUser(userModel);
+
+    UserSessionDto userSessionDto = usersMapper.toSessionDto(userModel, token, musicalbands);
 
     return ResponseEntity.status(HttpStatus.OK)
         .body(new ApiResponse<>(true, "User authenticated successfully", userSessionDto, null));
