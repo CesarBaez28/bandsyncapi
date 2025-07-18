@@ -1,6 +1,7 @@
 package com.bandsyncapi.bandsyncapi.api.v1.controllers;
 
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.bandsyncapi.bandsyncapi.api.v1.dto.artists.ArtistsDto;
@@ -10,6 +11,7 @@ import com.bandsyncapi.bandsyncapi.api.v1.mappers.ArtistsMapper;
 import com.bandsyncapi.bandsyncapi.api.v1.models.ArtistsModel;
 import com.bandsyncapi.bandsyncapi.api.v1.services.ArtistsService;
 import com.bandsyncapi.bandsyncapi.response.ApiResponse;
+import com.bandsyncapi.bandsyncapi.response.PagedData;
 
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -37,6 +40,8 @@ public class ArtistsController {
   private final ArtistsService artistsService;
 
   private final ArtistsMapper artistsMapper;
+
+  private static final int PAGE_SIZE = 15;
 
   /**
    * Constructor
@@ -83,7 +88,32 @@ public class ArtistsController {
     log.info("Artists found by musical band id: {}", id);
 
     return ResponseEntity.status(HttpStatus.OK)
-        .body(new ApiResponse<>(true, "Data not found.", artistsDtoList, null));
+        .body(new ApiResponse<>(true, "Artists found successfully.", artistsDtoList, null));
+  }
+
+  /**
+   * Finds all artists by musical band id and name.
+   * 
+   * @param musicalBandId - Musical Band id
+   * @param query         - Artist name
+   * @return An ApiResponse Object with a List of artists
+   */
+  @GetMapping("/findByMusicalBandIdAndName/{musicalBandId}")
+  public ResponseEntity<ApiResponse<PagedData<ArtistsDto>>> findByMusicalBandIdAndName(
+      @PathVariable UUID musicalBandId,
+      @RequestParam String query,
+      @RequestParam int page) {
+
+    Page<ArtistsModel> resultPage = artistsService.findByMusicalBandIdAndName(musicalBandId, query, page, PAGE_SIZE);
+
+    List<ArtistsDto> artistsDtoList = artistsMapper.toDtoList(resultPage.getContent());
+
+    PagedData<ArtistsDto> pagedData = new PagedData<>(artistsDtoList, resultPage);
+
+    log.info("Artists found by musical band id: {} and name: {}", musicalBandId, query);
+
+    return ResponseEntity.status(HttpStatus.OK)
+        .body(new ApiResponse<>(true, "Artists found successfully.", pagedData, null));
   }
 
   /**

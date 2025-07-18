@@ -3,6 +3,8 @@ package com.bandsyncapi.bandsyncapi.api.v1.services;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
+
 import com.bandsyncapi.bandsyncapi.api.v1.models.ArtistsModel;
 
 /**
@@ -26,6 +28,17 @@ public interface ArtistsService {
    * @return
    */
   public List<ArtistsModel> findByMusicalBandId(UUID id);
+
+  /**
+   * Finds all artists by musical band id and name.
+   * 
+   * @param musicalBandId - Musical Band id
+   * @param name          - Artist name
+   * @param page          - Page number for pagination
+   * @param size          - Size of the page for pagination
+   * @return - A list of Artists
+   */
+  public Page<ArtistsModel> findByMusicalBandIdAndName(UUID musicalBandId, String name, int page, int size);
 
   /**
    * Update Artist

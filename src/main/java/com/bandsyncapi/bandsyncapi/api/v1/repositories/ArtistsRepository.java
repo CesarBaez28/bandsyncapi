@@ -3,6 +3,8 @@ package com.bandsyncapi.bandsyncapi.api.v1.repositories;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -18,23 +20,40 @@ import jakarta.transaction.Transactional;
  * Provides methods for performing CRUD operations on the artists table.
  */
 @Repository
-public interface ArtistsRepository extends JpaRepository<ArtistsModel, Integer>{
+public interface ArtistsRepository extends JpaRepository<ArtistsModel, Integer> {
 
-    /**
+  /**
    * Get all Artists by Musical Band id
+   * 
    * @param musicalBandId - Musical Band id
    * @return - A list of Artists
    */
-  @Query(""" 
-    SELECT art FROM ArtistsModel art 
-    JOIN art.musicalBand mb
-    WHERE mb.id = :musicalBandId
-  """)
+  @Query("""
+        SELECT art FROM ArtistsModel art
+        JOIN art.musicalBand mb
+        WHERE mb.id = :musicalBandId
+      """)
   List<ArtistsModel> findByMusicalBandId(@Param("musicalBandId") UUID musicalBandId);
 
   /**
+   * Get all Artists by Musical Band id and name
+   * 
+   * @param musicalBandId - Musical Band id
+   * @param name          - Artists name
+   * @return - A list of Artists
+   */
+  @Query("""
+        SELECT art FROM ArtistsModel art
+        JOIN art.musicalBand mb
+        WHERE mb.id = :musicalBandId AND art.name LIKE %:name%
+      """)
+  Page<ArtistsModel> findByMusicalBandIdAndName(@Param("musicalBandId") UUID musicalBandId, @Param("name") String name,
+      Pageable pageable);
+
+  /**
    * Update Artists name
-   * @param id - Artists id
+   * 
+   * @param id   - Artists id
    * @param name - new Artists name
    * @return - An integer number that represents the row updated
    */

@@ -3,6 +3,9 @@ package com.bandsyncapi.bandsyncapi.api.v1.services.impl;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.bandsyncapi.bandsyncapi.api.v1.models.ArtistsModel;
@@ -21,14 +24,14 @@ public class ArtistsServiceImpl implements ArtistsService {
 
   private final ArtistsRepository artistsRepository;
 
-  public ArtistsServiceImpl (ArtistsRepository artistsRepository) {
+  public ArtistsServiceImpl(ArtistsRepository artistsRepository) {
     this.artistsRepository = artistsRepository;
   }
 
   @Override
   public ArtistsModel save(ArtistsModel artistsModel) {
     log.info("Saving artist: {}", artistsModel);
-    return artistsRepository.save(artistsModel); 
+    return artistsRepository.save(artistsModel);
   }
 
   @Override
@@ -40,12 +43,12 @@ public class ArtistsServiceImpl implements ArtistsService {
   @Override
   public void updateArtist(Integer id, String name) {
     log.info("Updating artist with id: {} and name: {}", id, name);
-    
-    int rowsUpdated =  artistsRepository.updateArtistName(id, name);
+
+    int rowsUpdated = artistsRepository.updateArtistName(id, name);
 
     if (rowsUpdated == 0) {
       log.error("Artist not found with id: {}", id);
-      throw new EntityNotFoundException("Artist not found with id: " + id); 
+      throw new EntityNotFoundException("Artist not found with id: " + id);
     }
   }
 
@@ -53,5 +56,12 @@ public class ArtistsServiceImpl implements ArtistsService {
   public void deleteById(Integer id) {
     log.info("Deleting artist with id: {}", id);
     artistsRepository.deleteById(id);
-  } 
+  }
+
+  @Override
+  public Page<ArtistsModel> findByMusicalBandIdAndName(UUID musicalBandId, String name, int page, int size) {
+    log.info("Finding artists by musical band id: {} and name: {}", musicalBandId, name);
+    return artistsRepository.findByMusicalBandIdAndName(musicalBandId, name,
+        PageRequest.of(page, size, Sort.by("name")));
+  }
 }
