@@ -41,7 +41,7 @@ public class ArtistsController {
 
   private final ArtistsMapper artistsMapper;
 
-  private static final int PAGE_SIZE = 15;
+  private static final int PAGE_SIZE = 10;
 
   /**
    * Constructor
@@ -102,7 +102,9 @@ public class ArtistsController {
   public ResponseEntity<ApiResponse<PagedData<ArtistsDto>>> findByMusicalBandIdAndName(
       @PathVariable UUID musicalBandId,
       @RequestParam String query,
-      @RequestParam int page) {
+      @RequestParam(defaultValue = "0") int page) {
+        
+    page--; // convert to zero-based index
 
     Page<ArtistsModel> resultPage = artistsService.findByMusicalBandIdAndName(musicalBandId, query, page, PAGE_SIZE);
 
