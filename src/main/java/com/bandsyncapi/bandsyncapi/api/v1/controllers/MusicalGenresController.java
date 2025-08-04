@@ -10,6 +10,7 @@ import com.bandsyncapi.bandsyncapi.api.v1.mappers.MusicalGenresMapper;
 import com.bandsyncapi.bandsyncapi.api.v1.models.MusicalGenresModel;
 import com.bandsyncapi.bandsyncapi.api.v1.services.MusicalGenresService;
 import com.bandsyncapi.bandsyncapi.response.ApiResponse;
+import com.bandsyncapi.bandsyncapi.response.PagedData;
 
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,6 +27,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * This is the controller to handle requests for the musical_genres table.
@@ -37,6 +40,8 @@ public class MusicalGenresController {
   private final MusicalGenresService musicalGenresService;
 
   private final MusicalGenresMapper musicalGenresMapper;
+
+  private static final int PAGE_SIZE = 10;
 
   /**
    * Constructor for the MusicalGenresController class.
@@ -56,7 +61,8 @@ public class MusicalGenresController {
    * @return - An object ApiResponse with the new musical genre
    */
   @PostMapping(path = "/save")
-  public ResponseEntity<ApiResponse<MusicalGenreDto>> saveMusicalGenre(@Valid @RequestBody MusicalGenrePostDto musicalGenrePostDto) {
+  public ResponseEntity<ApiResponse<MusicalGenreDto>> saveMusicalGenre(
+      @Valid @RequestBody MusicalGenrePostDto musicalGenrePostDto) {
     MusicalGenresModel musicalGenre = musicalGenresMapper.toModel(musicalGenrePostDto);
     MusicalGenresModel savedEntity = musicalGenresService.save(musicalGenre);
     MusicalGenreDto responseDto = musicalGenresMapper.toDto(savedEntity);
@@ -85,6 +91,34 @@ public class MusicalGenresController {
   }
 
   /**
+   * finds all musical genres by musical band and name
+   * 
+   * @param musicalBandId - Musical band id
+   * @param query - Musical genre name
+   * @param page - Page number for pagination
+   * @return A Page List of MusicalGenreDto
+   */
+  @GetMapping("/findByMusicalBandIdAndName/{musicalBandId}")
+  public ResponseEntity<ApiResponse<PagedData<MusicalGenreDto>>> getMethodName(@PathVariable UUID musicalBandId,
+      @RequestParam String query,
+      @RequestParam(defaultValue = "0") int page) {
+
+    page--; // Convert to base zero
+
+    Page<MusicalGenresModel> resultPage = musicalGenresService.findByMusicalBandIdAndName(musicalBandId, query, page,
+        PAGE_SIZE);
+
+    List<MusicalGenreDto> musicalGenreDtoList = musicalGenresMapper.toDtoList(resultPage.getContent());
+
+    PagedData<MusicalGenreDto> pagedData = new PagedData<>(musicalGenreDtoList, resultPage);
+
+    log.info("Musical Genres found by musical band id: {} and name: {}", musicalBandId, query);
+
+    return ResponseEntity.status(HttpStatus.OK)
+        .body(new ApiResponse<>(true, "Musical genres found successfully.", pagedData, null));
+  }
+
+  /**
    * Update the name of a musical genre
    * 
    * @param id                 - musical genre id
@@ -94,7 +128,7 @@ public class MusicalGenresController {
    */
   @PutMapping("/updateMusicalGenreName/{id}")
   public ResponseEntity<ApiResponse<Void>> updateMusicalGenreName(@PathVariable Integer id,
-     @Valid @RequestBody MusicalGenrePutDto musicalGenrePutDto) {
+      @Valid @RequestBody MusicalGenrePutDto musicalGenrePutDto) {
     musicalGenresService.updateGenreName(id, musicalGenrePutDto.name());
 
     log.info("Musical genre name updated successfully: {}", musicalGenrePutDto.name());

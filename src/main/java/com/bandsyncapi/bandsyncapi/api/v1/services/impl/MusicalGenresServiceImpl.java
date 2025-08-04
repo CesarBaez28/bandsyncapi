@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.bandsyncapi.bandsyncapi.api.v1.models.MusicalGenresModel;
@@ -24,7 +27,9 @@ public class MusicalGenresServiceImpl implements MusicalGenresService {
 
   /**
    * Constructor for the MusicalGenresServiceImpl class.
-   * @param musicalGenresRepository - Repository with methods for performing CRUD operations on the musical_genres table.
+   * 
+   * @param musicalGenresRepository - Repository with methods for performing CRUD
+   *                                operations on the musical_genres table.
    */
   public MusicalGenresServiceImpl(MusicalGenresRepository musicalGenresRepository) {
     this.musicalGenresRepository = musicalGenresRepository;
@@ -40,6 +45,13 @@ public class MusicalGenresServiceImpl implements MusicalGenresService {
   public List<MusicalGenresModel> findByMusicalBandId(UUID id) {
     log.info("Fetching all musical genres for the band with id: {}", id);
     return musicalGenresRepository.findByMusicalBandId(id);
+  }
+
+  @Override
+  public Page<MusicalGenresModel> findByMusicalBandIdAndName(UUID musicalBandId, String name, int page, int size) {
+    log.info("Fetching all musical genres for the band with id: {} and name: {}", musicalBandId, name);
+    return musicalGenresRepository.findByMusicalBandIdAndName(musicalBandId, name,
+        PageRequest.of(page, size, Sort.by("name")));
   }
 
   @Override
@@ -69,4 +81,5 @@ public class MusicalGenresServiceImpl implements MusicalGenresService {
     log.info("Deleting musical genre with id: {}", id);
     musicalGenresRepository.deleteById(id);
   }
+
 }

@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
+
 import com.bandsyncapi.bandsyncapi.api.v1.models.MusicalGenresModel;
 
 /*
@@ -14,26 +16,42 @@ public interface MusicalGenresService {
 
   /**
    * Finds all musical genres in the database.
+   * 
    * @return A list with all musical genres in the database.
    */
   public List<MusicalGenresModel> findAll();
 
   /**
    * Finds all musical genres by musical band id
+   * 
    * @param id - musical band id
    * @return - A list of musical genres
    */
-  public List<MusicalGenresModel>findByMusicalBandId(UUID id);
+  public List<MusicalGenresModel> findByMusicalBandId(UUID id);
+
+  /**
+   * Finds all musical genres by musical band id and name
+   * 
+   * @param musicalBandId - Musical Band id
+   * @param name          - Name
+   * @param page          - Page number for pagination
+   * @param size          - Size of the page of pagination
+   * @return A Page List of MusicalGenresModel
+   */
+  public Page<MusicalGenresModel> findByMusicalBandIdAndName(UUID musicalBandId, String name, int page, int size);
 
   /**
    * Finds a musical genre by its id.
+   * 
    * @param id - Id of the musical genre to be found.
-   * @return An Optional with the musical genre if found, or an empty Optional if not found.
+   * @return An Optional with the musical genre if found, or an empty Optional if
+   *         not found.
    */
   public Optional<MusicalGenresModel> findById(Integer id);
 
   /**
    * Saves a musical genre to the database.
+   * 
    * @param musicalGenresModel - Musical genre to be saved.
    * @return The saved musical genre.
    */
@@ -41,13 +59,16 @@ public interface MusicalGenresService {
 
   /**
    * Update musical genre name
-   * @param id - musical genre id
+   * 
+   * @param id   - musical genre id
    * @param name - musical genre name
    */
   public void updateGenreName(Integer id, String name);
 
   /**
    * Deletes a musical genre from the database by its id.
+   * and all related data to this genre id
+   * 
    * @param id - Id of the musical genre to be deleted.
    */
   public void deleteById(Integer id);
