@@ -58,4 +58,21 @@ public class SongsServiceImpl implements SongsService {
     }
   }
 
+  @Override
+  public void deleteByArtistId(Integer artistId) {
+    log.info("Deleting by artist id: {}", artistId); 
+    
+    songsRepository.deleteByArtistId(artistId);
+
+    log.info("Songs deleted successfully by artist id: {}", artistId);
+  }
+
+  @Override
+  public void deleteByGenreId(Integer genreId) {
+    log.info("Deleting by genre id: {}", genreId);
+
+    songsRepository.deleteByGenreId(genreId);
+
+    log.info("Songs deleted successfully by genre id: {}", genreId);
+  }
 }

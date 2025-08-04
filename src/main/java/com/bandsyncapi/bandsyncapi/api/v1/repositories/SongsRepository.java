@@ -33,6 +33,13 @@ public interface SongsRepository extends JpaRepository<SongsModel, Integer> {
       """)
   List<SongsModel> findByMusicalBandId(@Param("musicalBandId") UUID musicalBandId);
 
+  @Query("""
+    SELECT s FROM SongsModel s
+    JOIN s.artist a
+    WHERE a.id = :artistId
+          """)
+  List<SongsModel> findByArtistId(@Param("artistId") Integer artistId);
+
   /**
    * Update song info
    * 
@@ -54,4 +61,31 @@ public interface SongsRepository extends JpaRepository<SongsModel, Integer> {
   int updateSong(@Param("id") Integer id, @Param("name") String name, @Param("artist") ArtistsModel artist,
       @Param("genre") MusicalGenresModel genre,
       @Param("tonality") String tonality, @Param("link") String link, @Param("sheetMusic") String sheetMusic);
+
+
+  /**
+   * Deletes songs by artist id
+   * 
+   * @param artistId - Artist id
+   */
+  @Transactional
+  @Modifying
+  @Query("""
+    DELETE FROM SongsModel s
+    WHERE s.artist.id = :artistId
+          """)
+  void deleteByArtistId(@Param("artistId") Integer artistId);
+
+  /**
+   * Deletes songs by genre id
+   * 
+   * @param genreId - Genre id
+   */
+  @Transactional
+  @Modifying
+  @Query("""
+    DELETE FROM SongsModel s
+    WHERE s.genre.id = :genreId
+          """)
+  void deleteByGenreId(@Param("genreId") Integer genreId);
 }

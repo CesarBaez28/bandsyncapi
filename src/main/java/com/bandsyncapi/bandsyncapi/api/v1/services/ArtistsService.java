@@ -50,6 +50,7 @@ public interface ArtistsService {
 
   /**
    * Deletes an artist from the database by its id.
+   * and all related data to this artist id
    * 
    * @param id - Id of the artist to be deleted.
    */

@@ -40,4 +40,18 @@ public interface SongsService {
    * @param sheetMusic - SheetMusic
    */
   void updateSong (Integer id, String name, ArtistsModel artist, MusicalGenresModel genre, String tonality, String link, String sheetMusic);
+
+  /**
+   * Deletes a song by artist id
+   * 
+   * @param artistId - artist id
+   */
+  void deleteByArtistId (Integer artistId);
+
+  /**
+   * Deletes a song by genre id
+   * 
+   * @param genreId
+   */
+  void deleteByGenreId (Integer genreId);
 }
