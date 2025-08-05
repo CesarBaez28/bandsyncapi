@@ -33,6 +33,12 @@ public interface SongsRepository extends JpaRepository<SongsModel, Integer> {
       """)
   List<SongsModel> findByMusicalBandId(@Param("musicalBandId") UUID musicalBandId);
 
+  /**
+   * finds song by artist id
+   * 
+   * @param artistId - artist id
+   * @return - A SongsModel List
+   */
   @Query("""
     SELECT s FROM SongsModel s
     JOIN s.artist a
