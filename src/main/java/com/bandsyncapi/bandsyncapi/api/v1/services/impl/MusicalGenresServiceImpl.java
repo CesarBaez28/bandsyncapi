@@ -10,7 +10,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.bandsyncapi.bandsyncapi.api.v1.models.MusicalGenresModel;
+import com.bandsyncapi.bandsyncapi.api.v1.models.SongsModel;
 import com.bandsyncapi.bandsyncapi.api.v1.repositories.MusicalGenresRepository;
+import com.bandsyncapi.bandsyncapi.api.v1.repositories.RepertoiresSongsRepository;
+import com.bandsyncapi.bandsyncapi.api.v1.repositories.SongsRepository;
 import com.bandsyncapi.bandsyncapi.api.v1.services.MusicalGenresService;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -25,14 +28,25 @@ public class MusicalGenresServiceImpl implements MusicalGenresService {
 
   private final MusicalGenresRepository musicalGenresRepository;
 
+  private final SongsRepository songsRepository;
+
+  private final RepertoiresSongsRepository repertoiresSongsRepository;
+
   /**
    * Constructor for the MusicalGenresServiceImpl class.
    * 
-   * @param musicalGenresRepository - Repository with methods for performing CRUD
-   *                                operations on the musical_genres table.
+   * @param musicalGenresRepository    - Repository with methods for performing
+   *                                   CRUD
+   *                                   operations on the musical_genres table.
+   * @param songsRepository            - Repository for songs table.
+   * @param repertoiresSongsRepository - Repository for repertoires_songs table.
+   * 
    */
-  public MusicalGenresServiceImpl(MusicalGenresRepository musicalGenresRepository) {
+  public MusicalGenresServiceImpl(MusicalGenresRepository musicalGenresRepository, SongsRepository songsRepository,
+      RepertoiresSongsRepository repertoiresSongsRepository) {
     this.musicalGenresRepository = musicalGenresRepository;
+    this.songsRepository = songsRepository;
+    this.repertoiresSongsRepository = repertoiresSongsRepository;
   }
 
   @Override
@@ -79,7 +93,22 @@ public class MusicalGenresServiceImpl implements MusicalGenresService {
   @Override
   public void deleteById(Integer id) {
     log.info("Deleting musical genre with id: {}", id);
+
+    log.info("finding songs related to the genre id: {}", id);
+
+    List<SongsModel> songs = songsRepository.findByGenreId(id);
+
+    log.info("Deleting relationship between repertoires and songs");
+
+    repertoiresSongsRepository.deleteBySongs(songs);
+
+    log.info("Deleting songs related to the genre id: {}", id);
+
+    songsRepository.deleteByGenreId(id);
+
     musicalGenresRepository.deleteById(id);
+
+    log.info("Musical genre successfully deleted by id: {}", id);
   }
 
 }

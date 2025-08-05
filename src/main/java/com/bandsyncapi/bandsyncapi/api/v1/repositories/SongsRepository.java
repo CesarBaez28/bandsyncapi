@@ -40,18 +40,31 @@ public interface SongsRepository extends JpaRepository<SongsModel, Integer> {
    * @return - A SongsModel List
    */
   @Query("""
-    SELECT s FROM SongsModel s
-    JOIN s.artist a
-    WHERE a.id = :artistId
-          """)
+      SELECT s FROM SongsModel s
+      JOIN s.artist a
+      WHERE a.id = :artistId
+            """)
   List<SongsModel> findByArtistId(@Param("artistId") Integer artistId);
+
+  /**
+   * finds songs by genre id
+   * 
+   * @param genreId - Musical genre id
+   * @return - A SongsModel List
+   */
+  @Query("""
+      SELECT s FROM SongsModel s
+      JOIN s.genre g
+      WHERE g.id = :genreId
+            """)
+  List<SongsModel> findByGenreId(@Param("genreId") Integer genreId);
 
   /**
    * Update song info
    * 
    * @param id         - song id
-   * @param artist   - Artist id
-   * @param genre    - genre id
+   * @param artist     - Artist id
+   * @param genre      - genre id
    * @param tonality   - tonality song
    * @param link       - link to share song
    * @param sheetMusic - sheetMusic
@@ -68,7 +81,6 @@ public interface SongsRepository extends JpaRepository<SongsModel, Integer> {
       @Param("genre") MusicalGenresModel genre,
       @Param("tonality") String tonality, @Param("link") String link, @Param("sheetMusic") String sheetMusic);
 
-
   /**
    * Deletes songs by artist id
    * 
@@ -77,9 +89,9 @@ public interface SongsRepository extends JpaRepository<SongsModel, Integer> {
   @Transactional
   @Modifying
   @Query("""
-    DELETE FROM SongsModel s
-    WHERE s.artist.id = :artistId
-          """)
+      DELETE FROM SongsModel s
+      WHERE s.artist.id = :artistId
+            """)
   void deleteByArtistId(@Param("artistId") Integer artistId);
 
   /**
@@ -90,8 +102,8 @@ public interface SongsRepository extends JpaRepository<SongsModel, Integer> {
   @Transactional
   @Modifying
   @Query("""
-    DELETE FROM SongsModel s
-    WHERE s.genre.id = :genreId
-          """)
+      DELETE FROM SongsModel s
+      WHERE s.genre.id = :genreId
+            """)
   void deleteByGenreId(@Param("genreId") Integer genreId);
 }
