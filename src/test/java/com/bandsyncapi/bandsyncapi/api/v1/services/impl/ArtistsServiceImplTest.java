@@ -6,10 +6,10 @@ import static org.mockito.Mockito.verify;
 
 import java.util.UUID;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import static org.mockito.BDDMockito.given;
@@ -17,6 +17,8 @@ import static org.mockito.BDDMockito.given;
 import com.bandsyncapi.bandsyncapi.api.v1.models.ArtistsModel;
 import com.bandsyncapi.bandsyncapi.api.v1.models.MusicalBandsModel;
 import com.bandsyncapi.bandsyncapi.api.v1.repositories.ArtistsRepository;
+import com.bandsyncapi.bandsyncapi.api.v1.repositories.RepertoiresSongsRepository;
+import com.bandsyncapi.bandsyncapi.api.v1.repositories.SongsRepository;
 
 import jakarta.persistence.EntityNotFoundException;
 
@@ -26,12 +28,14 @@ class ArtistsServiceImplTest {
   @Mock
   private ArtistsRepository artistsRepository;
 
-  private ArtistsServiceImpl artistsService;
+  @Mock
+  private SongsRepository songsRepository;
 
-  @BeforeEach
-  void setUp () {
-    artistsService = new ArtistsServiceImpl(artistsRepository);
-  }
+  @Mock
+  private RepertoiresSongsRepository repertoiresSongsRepository;
+
+  @InjectMocks
+  private ArtistsServiceImpl artistsService;
 
   @Test
   void testSave () {
