@@ -61,4 +61,14 @@ public interface ArtistsRepository extends JpaRepository<ArtistsModel, Integer> 
   @Transactional
   @Query("UPDATE ArtistsModel art SET art.name = :name WHERE art.id = :id")
   int updateArtistName(@Param("id") Integer id, @Param("name") String name);
+
+  /**
+   * Delete artist by id
+   * 
+   * @param id - Artist id
+   */
+  @Transactional
+  @Modifying
+  @Query(value = "DELETE FROM artists WHERE id = :id", nativeQuery = true)
+  void deleteArtistById(@Param("id") Integer id);
 }

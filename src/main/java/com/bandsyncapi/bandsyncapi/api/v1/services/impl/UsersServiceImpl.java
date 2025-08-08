@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -19,6 +20,7 @@ import com.bandsyncapi.bandsyncapi.api.v1.repositories.UsersRepository;
 import com.bandsyncapi.bandsyncapi.api.v1.services.FilesService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.UsersMusicalBandsService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.UsersService;
+import com.bandsyncapi.bandsyncapi.utils.AwsUtils;
 import com.bandsyncapi.bandsyncapi.utils.Encrypt;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -42,7 +44,8 @@ public class UsersServiceImpl implements UsersService {
 
   private final FilesService filesService;
 
-  private static final String USERS_AWS_PHOTO_DIRECTORY = "bandsync/users";
+  @Value("${aws.bucket.users.directory}")
+  private String awsUsersDirectory;
 
   /**
    * Constructor
@@ -124,14 +127,14 @@ public class UsersServiceImpl implements UsersService {
   public UsersPutDto updateUser(UUID userId, UsersPutDto usersPutDto, MultipartFile imagFile) throws IOException {
     log.info("Updating user with id {}", userId);
 
-    String fileUrl = filesService.uploadFile(imagFile, USERS_AWS_PHOTO_DIRECTORY);
+    String fileUrl = filesService.uploadFile(imagFile, awsUsersDirectory);
 
     if (!fileUrl.isEmpty()) {
       String existingPhoto = usersPutDto.getPhoto();
 
       if (existingPhoto != null && !existingPhoto.isEmpty()) {
-        String fileName = getFileNameFromAwsUrl(existingPhoto);
-        filesService.deleteFile(USERS_AWS_PHOTO_DIRECTORY + "/" + fileName);
+        String fileName = AwsUtils.getFileNameFromAwsUrl(existingPhoto);
+        filesService.deleteFile(awsUsersDirectory + "/" + fileName);
       }
 
       usersPutDto.setPhoto(fileUrl);
@@ -152,17 +155,5 @@ public class UsersServiceImpl implements UsersService {
 
     return usersRepository.findByUsername(username)
         .orElseThrow(() -> new EntityNotFoundException("User not found with username: " + username));
-  }
-
-  /**
-   * Get file name form aws url
-   * it is always in the last position for example: https://amazonaws.com/test/fileName.jpg
-   * 
-   * @param url - aws url
-   * @return - file name
-   */
-  private String getFileNameFromAwsUrl(String url) {
-    String[] splitUrl = url.split("/");
-    return splitUrl[splitUrl.length - 1];
   }
 }

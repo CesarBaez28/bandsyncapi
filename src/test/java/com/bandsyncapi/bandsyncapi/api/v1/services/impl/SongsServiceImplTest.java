@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
 import static org.mockito.BDDMockito.given;
 
+import java.io.IOException;
 import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
@@ -13,6 +14,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.mock.web.MockMultipartFile;
 
 import com.bandsyncapi.bandsyncapi.api.v1.models.ArtistsModel;
 import com.bandsyncapi.bandsyncapi.api.v1.models.MusicalBandsModel;
@@ -32,7 +34,7 @@ class SongsServiceImplTest {
   private SongsServiceImpl songsServiceImpl;
 
   @Test
-  void testSave() {
+  void testSave() throws IOException{
    // Given
    var song = SongsModel.builder()
        .name("Song Name")       
@@ -43,9 +45,15 @@ class SongsServiceImplTest {
        .link("https://example.com")
        .sheetMusic("Sheet Music")
        .build();
+
+   MockMultipartFile file = new MockMultipartFile(
+    "image",
+    "test_logo.png",
+    "image/png",
+    "dummy image content".getBytes());
        
    // When
-    songsServiceImpl.save(song);
+    songsServiceImpl.save(song, file);
 
    // Then
    ArgumentCaptor<SongsModel> captor = ArgumentCaptor.forClass(SongsModel.class);
@@ -57,7 +65,7 @@ class SongsServiceImplTest {
   }
 
   @Test
-  void testFindByMusicalBandId () {
+  void testFindByMusicalBandId() {
     // Given
     var musicalBandId = UUID.randomUUID();
 
@@ -69,7 +77,7 @@ class SongsServiceImplTest {
   }
 
   @Test
-  void testUpdateSong () {
+  void testUpdateSong() {
     // Given
     Integer id = 1;
     String name = "Updated Song Name";
@@ -78,9 +86,9 @@ class SongsServiceImplTest {
     String tonality = "D";
     String link = "https://example.com/updated";
     String sheetMusic = "Updated Sheet Music";
-    
+
     given(songsRepository.updateSong(id, name, artist, genre, tonality, link, sheetMusic)).willReturn(1);
-    
+
     // When
     songsServiceImpl.updateSong(id, name, artist, genre, tonality, link, sheetMusic);
 
@@ -89,7 +97,7 @@ class SongsServiceImplTest {
   }
 
   @Test
-  void testUpdateSongNotFound () {
+  void testUpdateSongNotFound() {
     // Given
     Integer id = 1;
     String name = "Updated Song Name";
@@ -98,7 +106,7 @@ class SongsServiceImplTest {
     String tonality = "D";
     String link = "https://example.com/updated";
     String sheetMusic = "Updated Sheet Music";
-    
+
     given(songsRepository.updateSong(id, name, artist, genre, tonality, link, sheetMusic)).willReturn(0);
 
     // When

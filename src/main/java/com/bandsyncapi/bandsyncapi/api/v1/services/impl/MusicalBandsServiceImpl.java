@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -50,9 +51,10 @@ public class MusicalBandsServiceImpl implements MusicalBandsService {
 
   private final FilesService filesService;
 
-  private static final String OWNER_ROLE_NAME = "Propietario";
+  @Value("${aws.bucket.logos.directory}")
+  private String awsLogosDirectory;
 
-  private static final String LOGOS_DIRECTORY = "bandsync/logos";
+  private static final String OWNER_ROLE_NAME = "Propietario";
 
   /**
    * Constructor
@@ -140,7 +142,7 @@ public class MusicalBandsServiceImpl implements MusicalBandsService {
 
     log.info("Saved all permissions to the role: {}", rolesPermissions);
 
-    String fileUrl = filesService.uploadFile(imagefile, LOGOS_DIRECTORY);
+    String fileUrl = filesService.uploadFile(imagefile, awsLogosDirectory);
 
     if (!fileUrl.isEmpty()) {
       updateLogoById(savedMusicalBandsModel.getId(), fileUrl);

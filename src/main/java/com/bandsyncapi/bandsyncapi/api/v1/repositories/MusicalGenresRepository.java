@@ -40,7 +40,7 @@ public interface MusicalGenresRepository extends JpaRepository<MusicalGenresMode
    * 
    * @param musicalBandId - Musical Band id
    * @param name          - Name
-   * @param pageable - parameter for pagination
+   * @param pageable      - parameter for pagination
    * @return - A Page List of MusicalGenresModel
    */
   @Query("""
@@ -62,4 +62,14 @@ public interface MusicalGenresRepository extends JpaRepository<MusicalGenresMode
   @Transactional
   @Query("UPDATE MusicalGenresModel mg SET mg.name = :name WHERE mg.id = :id")
   int updateGenreName(@Param("id") Integer id, @Param("name") String name);
+
+  /**
+   * Delete musical genre by id
+   * 
+   * @param id - Musical genre id
+   */
+  @Transactional
+  @Modifying
+  @Query(value = "DELETE FROM musical_genres WHERE id = :id", nativeQuery = true)
+  void deleteMusicalGenreById(@Param("id") Integer id);
 }

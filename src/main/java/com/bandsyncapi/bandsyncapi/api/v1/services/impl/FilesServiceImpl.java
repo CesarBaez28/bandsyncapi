@@ -81,7 +81,12 @@ public class FilesServiceImpl implements FilesService {
       return false;
 
     String contentType = file.getContentType();
-    if (contentType == null || !contentType.startsWith("image/")) {
+
+    if (contentType == null) {
+      throw new FileStorageException("Tipo de archivo no reconocido");
+    }
+
+    if (!contentType.startsWith("image/") && !contentType.equals("application/pdf")) {
       throw new FileStorageException("El archivo no es una imagen válida");
     }
 

@@ -3,7 +3,9 @@ package com.bandsyncapi.bandsyncapi.api.v1.services.impl;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -14,7 +16,9 @@ import com.bandsyncapi.bandsyncapi.api.v1.models.SongsModel;
 import com.bandsyncapi.bandsyncapi.api.v1.repositories.MusicalGenresRepository;
 import com.bandsyncapi.bandsyncapi.api.v1.repositories.RepertoiresSongsRepository;
 import com.bandsyncapi.bandsyncapi.api.v1.repositories.SongsRepository;
+import com.bandsyncapi.bandsyncapi.api.v1.services.FilesService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.MusicalGenresService;
+import com.bandsyncapi.bandsyncapi.utils.AwsUtils;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
@@ -32,6 +36,11 @@ public class MusicalGenresServiceImpl implements MusicalGenresService {
 
   private final RepertoiresSongsRepository repertoiresSongsRepository;
 
+  private final FilesService filesService;
+
+  @Value("${aws.bucket.songs.directory}")
+  private String awsSongsDirectory;
+
   /**
    * Constructor for the MusicalGenresServiceImpl class.
    * 
@@ -40,13 +49,15 @@ public class MusicalGenresServiceImpl implements MusicalGenresService {
    *                                   operations on the musical_genres table.
    * @param songsRepository            - Repository for songs table.
    * @param repertoiresSongsRepository - Repository for repertoires_songs table.
+   * @param filesService - Service to storage files
    * 
    */
   public MusicalGenresServiceImpl(MusicalGenresRepository musicalGenresRepository, SongsRepository songsRepository,
-      RepertoiresSongsRepository repertoiresSongsRepository) {
+      RepertoiresSongsRepository repertoiresSongsRepository, FilesService filesService) {
     this.musicalGenresRepository = musicalGenresRepository;
     this.songsRepository = songsRepository;
     this.repertoiresSongsRepository = repertoiresSongsRepository;
+    this.filesService = filesService;
   }
 
   @Override
@@ -92,23 +103,38 @@ public class MusicalGenresServiceImpl implements MusicalGenresService {
 
   @Override
   public void deleteById(Integer id) {
-    log.info("Deleting musical genre with id: {}", id);
+    log.info("Starting process to delete musial genre with id: {}", id);
 
     log.info("finding songs related to the genre id: {}", id);
-
     List<SongsModel> songs = songsRepository.findByGenreId(id);
+    List<Integer> songIds = songs.stream().map(SongsModel::getId).toList();
+
+    // Deletes files from the songs in background
+    CompletableFuture.runAsync(() -> {
+      songs.parallelStream()
+          .filter(song -> !song.getSheetMusic().isEmpty())
+          .forEach(song -> {
+            String fileName = AwsUtils.getFileNameFromAwsUrl(song.getSheetMusic());
+            String fileLocation = (awsSongsDirectory + "/" + fileName).trim();
+            try {
+              filesService.deleteFile(fileLocation);
+              log.info("Deleted file: {}", fileLocation);
+            } catch (Exception e) {
+              log.error("Error deleting file {}: {}", fileLocation, e.getMessage(), e);
+            }
+          });
+      log.info("Files deleted in background (parallel execution)");
+    });
 
     log.info("Deleting relationship between repertoires and songs");
-
-    repertoiresSongsRepository.deleteBySongs(songs);
+    repertoiresSongsRepository.deleteBySongIds(songIds);
 
     log.info("Deleting songs related to the genre id: {}", id);
-
     songsRepository.deleteByGenreId(id);
 
-    musicalGenresRepository.deleteById(id);
+    log.info("Deleting musical genre with id: {}", id);
+    musicalGenresRepository.deleteMusicalGenreById(id);
 
     log.info("Musical genre successfully deleted by id: {}", id);
   }
-
 }

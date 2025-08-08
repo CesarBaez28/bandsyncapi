@@ -3,6 +3,8 @@ package com.bandsyncapi.bandsyncapi.api.v1.repositories;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -32,6 +34,27 @@ public interface SongsRepository extends JpaRepository<SongsModel, Integer> {
       WHERE mb.id = :musicalBandId
       """)
   List<SongsModel> findByMusicalBandId(@Param("musicalBandId") UUID musicalBandId);
+
+
+  /**
+   * Finds song by musical band id and name, artist name, genre name and tonality
+   * 
+   * @param term - search term
+   * @param pageable - Pageable object for pagination
+   * @return A list of SongsModel
+   */
+  @Query("""
+      SELECT s FROM SongsModel s
+      JOIN s.musicalBand mb
+      WHERE mb.id = :musicalBandId AND 
+      (
+        s.name LIKE %:term% OR
+        s.artist.name LIKE %:term% OR
+        s.genre.name LIKE %:term% OR
+        s.tonality LIKE %:term%
+      )
+        """)
+  Page<SongsModel> find(@Param("musicalBandId") UUID musicalBandId, @Param("term") String term, Pageable pageable);
 
   /**
    * finds song by artist id
@@ -82,16 +105,27 @@ public interface SongsRepository extends JpaRepository<SongsModel, Integer> {
       @Param("tonality") String tonality, @Param("link") String link, @Param("sheetMusic") String sheetMusic);
 
   /**
+   * Update sheetMusic of a song
+   * 
+   * @param id -  song id
+   * @param sheetMusic - sheetMusic url
+   */
+  @Transactional
+  @Modifying
+  @Query("""
+    UPDATE SongsModel s
+    SET s.sheetMusic = :sheetMusic WHERE s.id = :id
+    """)
+  void updateSheetMusicById (@Param("id") Integer id, @Param("sheetMusic") String sheetMusic);
+
+  /**
    * Deletes songs by artist id
    * 
    * @param artistId - Artist id
    */
   @Transactional
   @Modifying
-  @Query("""
-      DELETE FROM SongsModel s
-      WHERE s.artist.id = :artistId
-            """)
+  @Query(value = "DELETE FROM songs WHERE artist_id = :artistId", nativeQuery = true)
   void deleteByArtistId(@Param("artistId") Integer artistId);
 
   /**
@@ -101,9 +135,6 @@ public interface SongsRepository extends JpaRepository<SongsModel, Integer> {
    */
   @Transactional
   @Modifying
-  @Query("""
-      DELETE FROM SongsModel s
-      WHERE s.genre.id = :genreId
-            """)
+  @Query(value = "DELETE FROM songs WHERE musical_genre_id = :genreId", nativeQuery = true)
   void deleteByGenreId(@Param("genreId") Integer genreId);
 }

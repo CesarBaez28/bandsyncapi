@@ -1,7 +1,6 @@
 package com.bandsyncapi.bandsyncapi.api.v1.filter;
 
 import java.io.IOException;
-import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.lang.NonNull;
@@ -11,10 +10,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.bandsyncapi.bandsyncapi.api.v1.models.MusicalBandsModel;
 import com.bandsyncapi.bandsyncapi.api.v1.services.CustomUserDetailsService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.JWTService;
-import com.bandsyncapi.bandsyncapi.api.v1.services.MusicalBandsService;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -38,13 +35,9 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
 
   private final CustomUserDetailsService customUserDetailsService;
 
-  private final MusicalBandsService musicalBandsService;
-
-  public JWTAuthorizationFilter(JWTService jwtService, CustomUserDetailsService customUserDetailsService,
-      MusicalBandsService musicalBandsService) {
+  public JWTAuthorizationFilter(JWTService jwtService, CustomUserDetailsService customUserDetailsService) {
     this.jwtService = jwtService;
     this.customUserDetailsService = customUserDetailsService;
-    this.musicalBandsService = musicalBandsService;
   }
 
   @Override
@@ -79,7 +72,14 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
       return;
     }
 
-    UUID musicalBandId = getMusicalBandId(request);
+    log.info("Getting musical band id from header");
+    String musicalBandHeader = request.getHeader("X-MUSICAL-BAND-ID");
+    UUID musicalBandId = null;
+
+    if (musicalBandHeader != null && !musicalBandHeader.isEmpty()) {
+      musicalBandId = UUID.fromString(musicalBandHeader);
+      log.info("Musical band id obtained: {}", musicalBandId);
+    }
 
     log.info("Getting UserDetails");
 
@@ -102,38 +102,5 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
     log.info("Authorization process finish successfully");
 
     filterChain.doFilter(request, response);
-  }
-
-  /**
-   * Gets the musical band id from the request URI.
-   * 
-   * If a request contains a musical band name, it means that the user is making a
-   * request
-   * from a specific musical band.
-   * 
-   * So, we get the musical band ID from the musical band name in oder to get the roles and permissions of
-   * the user in
-   * that specific musical band using the loadUserByUsernameAndMusicalBandId
-   * method.
-   * 
-   * @param request the HttpServletRequest object
-   * @return musical band id
-   */
-  private UUID getMusicalBandId(HttpServletRequest request) {
-    String requestURI = request.getRequestURI();
-    String[] pathSegments = requestURI.split("/");
-    
-    // At index 3 because the first two segments are "api" and "v1"
-    String musicalBandName = pathSegments[3];
-    Optional<MusicalBandsModel> musicalBand = musicalBandsService.findByHyphenatedName(musicalBandName);
-
-    if (musicalBand.isPresent()) {
-      log.info("Musical band found successfully: {}" + musicalBand.get());
-      return musicalBand.get().getId();
-    }
-
-    log.info("Musical band not found in URI");
-
-    return null;
   }
 }

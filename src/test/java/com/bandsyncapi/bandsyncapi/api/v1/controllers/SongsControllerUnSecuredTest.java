@@ -14,10 +14,13 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import com.bandsyncapi.bandsyncapi.api.v1.dto.artists.ArtistsDto;
+import com.bandsyncapi.bandsyncapi.api.v1.dto.musicalgenres.MusicalGenreDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.songs.SongsDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.songs.SongsPostDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.songs.SongsPutDto;
@@ -60,7 +63,6 @@ class SongsControllerUnSecuredTest {
         new MusicalGenresModel(1),
         "G",
         "http://localhost",
-        "http://locahost",
         true);
 
     var song = SongsModel.builder()
@@ -77,16 +79,22 @@ class SongsControllerUnSecuredTest {
     var songDto = new SongsDto(
         song.getId(),
         song.getName(),
-        song.getArtist(),
-        song.getGenre(),
+        new ArtistsDto(1, "artist", true),
+        new MusicalGenreDto(1, "genre", true),
         song.getTonality(),
         song.getLink(),
-        song.getSheetMusic());
+        "Sheet Music");
+
+    MockMultipartFile file = new MockMultipartFile(
+      "image",
+      "test_logo.png",
+      "image/png",
+      "dummy image content".getBytes());
 
     given(songsMapper.toModel(postRequest)).willReturn(song);
-    given(songsService.save(song)).willReturn(song);
+    given(songsService.save(song, file)).willReturn(song);
     given(songsMapper.toDto(song)).willReturn(songDto);
-
+    
     // When
     mockMvc.perform(
         post(BASE_URL + "/save")
@@ -111,7 +119,6 @@ class SongsControllerUnSecuredTest {
         null,
         "G",
         "http://localhost",
-        "http://locahost",
         true);
 
     // When
@@ -146,11 +153,11 @@ class SongsControllerUnSecuredTest {
     var songDto = new SongsDto(
         song.getId(),
         song.getName(),
-        song.getArtist(),
-        song.getGenre(),
+        new ArtistsDto(1, "artist", true),
+        new MusicalGenreDto(1, "genre", true),
         song.getTonality(),
         song.getLink(),
-        song.getSheetMusic());
+        "Sheet Music");
 
     List<SongsModel> songsModelList = List.of(song);
     List<SongsDto> songsDtoList = List.of(songDto);

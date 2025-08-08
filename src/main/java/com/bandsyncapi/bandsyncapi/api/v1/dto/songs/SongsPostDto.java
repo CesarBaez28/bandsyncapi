@@ -26,6 +26,5 @@ public record SongsPostDto(
 
   String tonality, 
   String link, 
-  String sheetMusic,
   Boolean status
 ) {}
