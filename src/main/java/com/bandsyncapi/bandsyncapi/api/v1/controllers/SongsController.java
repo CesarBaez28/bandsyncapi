@@ -109,6 +109,14 @@ public class SongsController {
         .body(new ApiResponse<>(true, "Songs found", songsDtoResponse, null));
   }
 
+  /**
+   * finds songs by musical band id and search term
+   * 
+   * @param id - song id 
+   * @param query - seach term
+   * @param page - page number
+   * @return - A Page of type SongsModel
+   */
   @GetMapping("/findByMusicalBandIdAndTerm/{id}")
   public ResponseEntity<ApiResponse<PagedData<SongsDto>>> find(
       @PathVariable UUID id,
