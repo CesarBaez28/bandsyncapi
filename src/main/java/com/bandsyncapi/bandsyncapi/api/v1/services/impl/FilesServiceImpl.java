@@ -42,7 +42,7 @@ public class FilesServiceImpl implements FilesService {
       return "";
 
     String fileName = UUID.randomUUID() + "-" + file.getOriginalFilename();
-    log.info("Uploading imagen en directorio " + directory + " : {}", fileName);
+    log.info("Uploading image in directory: " + directory + " : {}", fileName);
 
     try {
       var request = PutObjectRequest.builder()
@@ -52,14 +52,14 @@ public class FilesServiceImpl implements FilesService {
 
       s3Client.putObject(request, RequestBody.fromBytes(file.getBytes()));
 
-      log.info("Image saved successfully");
+      log.info("File saved successfully");
 
       return "https://" + bucketName + ".s3." + region + ".amazonaws.com/" + directory + "/" + fileName;
     } catch (IOException e) {
-      log.error("Error al leer archivo: {}", e.getMessage(), e);
+      log.error("Error reading file: {}", e.getMessage(), e);
       throw new FileStorageException("No se pudo leer el archivo que se intentó subir");
     } catch (S3Exception e) {
-      log.error("Error al guardar el archivo a S3: {}", e.awsErrorDetails().errorMessage(), e);
+      log.error("Error uploading file to S3: {}", e.awsErrorDetails().errorMessage(), e);
       throw new FileStorageException("Ocurrió un error al intentar guardar la imagen");
     }
   }
