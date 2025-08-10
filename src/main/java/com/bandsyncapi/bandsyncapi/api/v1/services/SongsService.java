@@ -7,8 +7,7 @@ import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.bandsyncapi.bandsyncapi.api.v1.models.ArtistsModel;
-import com.bandsyncapi.bandsyncapi.api.v1.models.MusicalGenresModel;
+import com.bandsyncapi.bandsyncapi.api.v1.dto.songs.SongsPutDto;
 import com.bandsyncapi.bandsyncapi.api.v1.models.SongsModel;
 
 /**
@@ -45,17 +44,21 @@ public interface SongsService {
   Page<SongsModel> find(UUID musicalBandId, String term, int page, int size);
 
   /**
+   * finds a song by id
+   * 
+   * @param id - song id
+   * @return - A SongsModel object
+   */
+  SongsModel findById(Integer id);
+
+  /**
    * update song info
    * 
    * @param id - song id
-   * @param name - song name
-   * @param artistId - artist id
-   * @param genreId - genre id
-   * @param tonality - Song tonality
-   * @param link - Link to share song
-   * @param sheetMusic - SheetMusic
+   * @param songPutDto - New values to be updated
+   * @param file - New sheetMusic file
    */
-  void updateSong (Integer id, String name, ArtistsModel artist, MusicalGenresModel genre, String tonality, String link, String sheetMusic);
+  void updateSong (Integer id, SongsPutDto songPutDto, MultipartFile file) throws IOException;
 
   /**
    * Deletes a song by artist id

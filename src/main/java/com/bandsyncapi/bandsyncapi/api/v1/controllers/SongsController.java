@@ -77,6 +77,23 @@ public class SongsController {
   }
 
   /**
+   * finds a song by id
+   * 
+   * @param id - song id
+   * @return - A SongsDto
+   */
+  @GetMapping("/findById/{id}")
+  public ResponseEntity<ApiResponse<SongsDto>> findById(@PathVariable Integer id) {
+    SongsModel song = songsService.findById(id);
+    SongsDto songDto = songsMapper.toDto(song);
+
+    log.info("Song found with id: {}", id);
+
+    return ResponseEntity.status(HttpStatus.OK)
+        .body(new ApiResponse<>(true, "Song found successfully", songDto, null));
+  }
+
+  /**
    * finds songs by musical band id
    * 
    * @param id - musical band id
@@ -120,11 +137,13 @@ public class SongsController {
    * @param songsPutDto - Song info to be updated
    * @return
    */
-  @PutMapping("updateSong/{id}")
-  public ResponseEntity<ApiResponse<Void>> update(@PathVariable Integer id,
-      @Valid @RequestBody SongsPutDto songsPutDto) {
-    songsService.updateSong(id, songsPutDto.name(), songsPutDto.artist(), songsPutDto.genre(),
-        songsPutDto.tonality(), songsPutDto.link(), songsPutDto.sheetMusic());
+  @PutMapping(path = "/update/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  public ResponseEntity<ApiResponse<Void>> update(
+      @PathVariable Integer id,
+      @Valid @RequestPart("song") SongsPutDto songsPutDto,
+      @RequestPart(value = "file", required = false) MultipartFile file) throws IOException {
+        
+    songsService.updateSong(id, songsPutDto, file);
 
     log.info("Song updated successfully: {}", songsPutDto);
 

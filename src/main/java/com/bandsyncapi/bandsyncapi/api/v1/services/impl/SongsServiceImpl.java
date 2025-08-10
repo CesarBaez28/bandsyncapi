@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -11,12 +12,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.bandsyncapi.bandsyncapi.api.v1.models.ArtistsModel;
-import com.bandsyncapi.bandsyncapi.api.v1.models.MusicalGenresModel;
+import com.bandsyncapi.bandsyncapi.api.v1.dto.songs.SongsPutDto;
 import com.bandsyncapi.bandsyncapi.api.v1.models.SongsModel;
 import com.bandsyncapi.bandsyncapi.api.v1.repositories.SongsRepository;
 import com.bandsyncapi.bandsyncapi.api.v1.services.FilesService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.SongsService;
+import com.bandsyncapi.bandsyncapi.utils.AwsUtils;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
@@ -32,13 +33,14 @@ public class SongsServiceImpl implements SongsService {
 
   private final FilesService filesService;
 
-  private static final String SONGS_DIRECTORY = "bandsync/songs";
+  @Value("${aws.bucket.songs.directory}")
+  private String awsSongsDirectory;
 
   /**
    * Constructor
    * 
    * @param songsRepository - Songs repository
-   * @param filesService - Service to upload files
+   * @param filesService    - Service to upload files
    */
   public SongsServiceImpl(SongsRepository songsRepository, FilesService filesService) {
     this.songsRepository = songsRepository;
@@ -54,7 +56,7 @@ public class SongsServiceImpl implements SongsService {
 
     SongsModel savedSong = songsRepository.save(song);
 
-    String fileUrl = filesService.uploadFile(file, SONGS_DIRECTORY);
+    String fileUrl = filesService.uploadFile(file, awsSongsDirectory);
 
     if (!fileUrl.isEmpty()) {
       savedSong.setSheetMusic(fileUrl);
@@ -71,19 +73,37 @@ public class SongsServiceImpl implements SongsService {
   }
 
   @Override
+  public SongsModel findById(Integer id) {
+    return songsRepository.findById(id)
+        .orElseThrow(() -> new EntityNotFoundException("Song not found with id: " + id));
+  }
+
+  @Override
   public List<SongsModel> findByMusicalBandId(UUID musicalBandId) {
     log.info("Finding songs by musical band id: {}", musicalBandId);
     return songsRepository.findByMusicalBandId(musicalBandId);
   }
 
   @Override
-  public void updateSong(Integer id, String name, ArtistsModel artist, MusicalGenresModel genre, String tonality,
-      String link,
-      String sheetMusic) {
+  public void updateSong(Integer id, SongsPutDto songPutDto, MultipartFile file) throws IOException {
 
     log.info("Updating song with id: {}", id);
 
-    int rowsUpdated = songsRepository.updateSong(id, name, artist, genre, tonality, link, sheetMusic);
+    String fileUrl = filesService.uploadFile(file, awsSongsDirectory);
+    String currentFile = songPutDto.sheetMusic();
+
+    boolean hasNewFile = !fileUrl.isEmpty();
+    boolean hasOldFile = currentFile != null && !currentFile.isEmpty();
+
+    if (hasNewFile && hasOldFile) {
+      String fileName = AwsUtils.getFileNameFromAwsUrl(currentFile);
+      filesService.deleteFile(awsSongsDirectory + "/" + fileName);
+    } else {
+      fileUrl = currentFile;
+    }
+
+    int rowsUpdated = songsRepository.updateSong(id, songPutDto.name(), songPutDto.artist(), songPutDto.genre(),
+        songPutDto.tonality(), songPutDto.link(), fileUrl);
 
     if (rowsUpdated == 0) {
       throw new EntityNotFoundException("Song not found with id: " + id);

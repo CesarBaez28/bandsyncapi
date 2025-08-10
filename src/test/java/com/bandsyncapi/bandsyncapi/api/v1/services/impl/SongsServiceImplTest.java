@@ -16,6 +16,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
 
+import com.bandsyncapi.bandsyncapi.api.v1.dto.songs.SongsPutDto;
 import com.bandsyncapi.bandsyncapi.api.v1.models.ArtistsModel;
 import com.bandsyncapi.bandsyncapi.api.v1.models.MusicalBandsModel;
 import com.bandsyncapi.bandsyncapi.api.v1.models.MusicalGenresModel;
@@ -34,34 +35,34 @@ class SongsServiceImplTest {
   private SongsServiceImpl songsServiceImpl;
 
   @Test
-  void testSave() throws IOException{
-   // Given
-   var song = SongsModel.builder()
-       .name("Song Name")       
-       .artist(new ArtistsModel(1))
-       .genre(new MusicalGenresModel(1))
-       .musicalBand(new MusicalBandsModel(UUID.randomUUID()))
-       .tonality("C")
-       .link("https://example.com")
-       .sheetMusic("Sheet Music")
-       .build();
+  void testSave() throws IOException {
+    // Given
+    var song = SongsModel.builder()
+        .name("Song Name")
+        .artist(new ArtistsModel(1))
+        .genre(new MusicalGenresModel(1))
+        .musicalBand(new MusicalBandsModel(UUID.randomUUID()))
+        .tonality("C")
+        .link("https://example.com")
+        .sheetMusic("Sheet Music")
+        .build();
 
-   MockMultipartFile file = new MockMultipartFile(
-    "image",
-    "test_logo.png",
-    "image/png",
-    "dummy image content".getBytes());
-       
-   // When
+    MockMultipartFile file = new MockMultipartFile(
+        "image",
+        "test_logo.png",
+        "image/png",
+        "dummy image content".getBytes());
+
+    // When
     songsServiceImpl.save(song, file);
 
-   // Then
-   ArgumentCaptor<SongsModel> captor = ArgumentCaptor.forClass(SongsModel.class);
+    // Then
+    ArgumentCaptor<SongsModel> captor = ArgumentCaptor.forClass(SongsModel.class);
 
-   verify(songsRepository).save(captor.capture());
+    verify(songsRepository).save(captor.capture());
 
-   SongsModel savedSong = captor.getValue();
-   assertEquals(song, savedSong);
+    SongsModel savedSong = captor.getValue();
+    assertEquals(song, savedSong);
   }
 
   @Test
@@ -77,44 +78,58 @@ class SongsServiceImplTest {
   }
 
   @Test
-  void testUpdateSong() {
+  void testUpdateSong() throws IOException{
     // Given
     Integer id = 1;
-    String name = "Updated Song Name";
-    ArtistsModel artist = new ArtistsModel(1);
-    MusicalGenresModel genre = new MusicalGenresModel(1);
-    String tonality = "D";
-    String link = "https://example.com/updated";
-    String sheetMusic = "Updated Sheet Music";
+    SongsPutDto songPutDto = new SongsPutDto(
+      "Updated Song Name",
+      new ArtistsModel(1),
+      new MusicalGenresModel(1),
+      "D",
+      "https://example.com/updated",
+      "Updated Sheet Music");
+    
+    MockMultipartFile file = new MockMultipartFile(
+        "image",
+        "test_logo.png",
+        "image/png",
+        "dummy image content".getBytes());
 
-    given(songsRepository.updateSong(id, name, artist, genre, tonality, link, sheetMusic)).willReturn(1);
+    given(songsRepository.updateSong(id, songPutDto.name(), songPutDto.artist(), songPutDto.genre(), songPutDto.tonality(), songPutDto.link(), songPutDto.sheetMusic())).willReturn(1);
 
     // When
-    songsServiceImpl.updateSong(id, name, artist, genre, tonality, link, sheetMusic);
+    songsServiceImpl.updateSong(id, songPutDto, file);
 
     // Then
-    verify(songsRepository).updateSong(id, name, artist, genre, tonality, link, sheetMusic);
+    verify(songsRepository).updateSong(id, songPutDto.name(), songPutDto.artist(), songPutDto.genre(), songPutDto.tonality(), songPutDto.link(), songPutDto.sheetMusic());
   }
 
   @Test
   void testUpdateSongNotFound() {
     // Given
     Integer id = 1;
-    String name = "Updated Song Name";
-    ArtistsModel artist = new ArtistsModel(1);
-    MusicalGenresModel genre = new MusicalGenresModel(1);
-    String tonality = "D";
-    String link = "https://example.com/updated";
-    String sheetMusic = "Updated Sheet Music";
+    SongsPutDto songPutDto = new SongsPutDto(
+      "Updated Song Name",
+      new ArtistsModel(1),
+      new MusicalGenresModel(1),
+      "D",
+      "https://example.com/updated",
+      "Updated Sheet Music");
 
-    given(songsRepository.updateSong(id, name, artist, genre, tonality, link, sheetMusic)).willReturn(0);
+    MockMultipartFile file = new MockMultipartFile(
+        "image",
+        "test_logo.png",
+        "image/png",
+        "dummy image content".getBytes());
+
+    given(songsRepository.updateSong(id, songPutDto.name(), songPutDto.artist(), songPutDto.genre(), songPutDto.tonality(), songPutDto.link(), songPutDto.sheetMusic())).willReturn(0);
 
     // When
     assertThrows(EntityNotFoundException.class, () -> {
-      songsServiceImpl.updateSong(id, name, artist, genre, tonality, link, sheetMusic);
+      songsServiceImpl.updateSong(id, songPutDto, file);
     });
 
     // Then
-    verify(songsRepository).updateSong(id, name, artist, genre, tonality, link, sheetMusic);
+    verify(songsRepository).updateSong(id, songPutDto.name(), songPutDto.artist(), songPutDto.genre(), songPutDto.tonality(), songPutDto.link(), songPutDto.sheetMusic());
   }
 }

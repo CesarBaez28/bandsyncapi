@@ -9,8 +9,6 @@ import org.springframework.data.repository.query.Param;
 
 import com.bandsyncapi.bandsyncapi.api.v1.models.RepertoiresSongsKey;
 import com.bandsyncapi.bandsyncapi.api.v1.models.RepertoiresSongsModel;
-import com.bandsyncapi.bandsyncapi.api.v1.models.SongsModel;
-
 import jakarta.transaction.Transactional;
 
 /*
