@@ -25,6 +25,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -112,9 +113,9 @@ public class SongsController {
   /**
    * finds songs by musical band id and search term
    * 
-   * @param id - song id 
+   * @param id    - song id
    * @param query - seach term
-   * @param page - page number
+   * @param page  - page number
    * @return - A Page of type SongsModel
    */
   @GetMapping("/findByMusicalBandIdAndTerm/{id}")
@@ -149,11 +150,26 @@ public class SongsController {
       @PathVariable Integer id,
       @Valid @RequestPart("song") SongsPutDto songsPutDto,
       @RequestPart(value = "file", required = false) MultipartFile file) throws IOException {
-        
+
     songsService.updateSong(id, songsPutDto, file);
 
     log.info("Song updated successfully: {}", songsPutDto);
 
     return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(true, "Song updated successfully", null, null));
+  }
+
+  /**
+   * Deletes a song by id
+   * 
+   * @param id - Song id
+   * @return An ApiResponse object
+   */
+  @DeleteMapping("/delete/{id}")
+  public ResponseEntity<ApiResponse<Void>> delete(@PathVariable Integer id) {
+    songsService.deleteById(id);
+
+    log.info("Song deleted successfully with id: {}", id);
+
+    return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(true, "Song deleted successfully", null, null));
   }
 }

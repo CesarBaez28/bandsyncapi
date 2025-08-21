@@ -29,4 +29,17 @@ public interface RepertoiresSongsRepository extends JpaRepository<RepertoiresSon
       WHERE rs.song.id IN :songIds
       """)
   void deleteBySongIds(@Param("songIds") List<Integer> songIds);
+
+  /**
+   * Deletes by song id
+   * 
+   * @param songId - Song id 
+   */
+  @Modifying
+  @Transactional
+  @Query("""
+      DELETE FROM RepertoiresSongsModel rs
+      WHERE rs.song.id = :songId
+      """)
+  void deleteBySongId(@Param("songId") Integer songId);
 }

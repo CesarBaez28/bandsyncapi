@@ -61,6 +61,13 @@ public interface SongsService {
   void updateSong (Integer id, SongsPutDto songPutDto, MultipartFile file) throws IOException;
 
   /**
+   * delete by song id
+   * 
+   * @param id -  song id
+   */
+  void deleteById (Integer id);
+
+  /**
    * Deletes a song by artist id
    * 
    * @param artistId - artist id

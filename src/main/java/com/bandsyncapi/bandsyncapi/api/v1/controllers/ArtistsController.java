@@ -68,7 +68,7 @@ public class ArtistsController {
     ArtistsModel artistsModelSaved = artistsService.save(artistsModel);
     ArtistsDto artistsDto = artistsMapper.toDto(artistsModelSaved);
 
-    log.info("Artist successfully saved: {}", artistsModelSaved);
+    log.info("Artist successfully saved: {}", artistsDto);
 
     return ResponseEntity.status(HttpStatus.CREATED)
         .body(new ApiResponse<>(true, "Artist successfully register.", artistsDto, null));
