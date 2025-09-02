@@ -3,6 +3,9 @@ package com.bandsyncapi.bandsyncapi.api.v1.services.impl;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.bandsyncapi.bandsyncapi.api.v1.models.MusicalRolesModel;
@@ -23,9 +26,11 @@ public class MusicalRolesServiceImpl implements MusicalRolesService {
 
   /**
    * Constructor for the MusicalRolesServiceImpl class.
-   * @param musicalRolesRepository - Repository with methods for performing CRUD operations on the musical_roles table.
+   * 
+   * @param musicalRolesRepository - Repository with methods for performing CRUD
+   *                               operations on the musical_roles table.
    */
-  public MusicalRolesServiceImpl (MusicalRolesRepository musicalRolesRepository) {
+  public MusicalRolesServiceImpl(MusicalRolesRepository musicalRolesRepository) {
     this.musicalRolesRepository = musicalRolesRepository;
   }
 
@@ -53,8 +58,15 @@ public class MusicalRolesServiceImpl implements MusicalRolesService {
 
   @Override
   public void deleteById(Integer id) {
-    log.info("Deleting musical role with id: {}", id);  
+    log.info("Deleting musical role with id: {}", id);
     musicalRolesRepository.deleteById(id);
+  }
+
+  @Override
+  public Page<MusicalRolesModel> findByMusicalBandIdAndName(UUID musicalBandId, String name, int page, int size) {
+    log.info("Finding musical roles by musical band id: {} and name: {}", musicalBandId, name);
+    return musicalRolesRepository.findAllByMusicalBandId(musicalBandId, name,
+        PageRequest.of(page, size, Sort.by("name").ascending()));
   }
 
 }

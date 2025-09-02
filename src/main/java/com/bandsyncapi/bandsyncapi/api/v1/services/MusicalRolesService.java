@@ -3,6 +3,8 @@ package com.bandsyncapi.bandsyncapi.api.v1.services;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
+
 import com.bandsyncapi.bandsyncapi.api.v1.models.MusicalRolesModel;
 
 /*
@@ -24,6 +26,17 @@ public interface MusicalRolesService {
    * @return
    */
   public List<MusicalRolesModel> findByMusicalBandId (UUID id);
+
+  /**
+   * Finds all musical roles by musical band id and name.
+   * 
+   * @param musicalBandId - Musical Band id
+   * @param name          - Artist name
+   * @param page          - Page number for pagination
+   * @param size          - Size of the page for pagination
+   * @return - A list of Musical Roles
+   */
+  public Page<MusicalRolesModel> findByMusicalBandIdAndName(UUID musicalBandId, String name, int page, int size);
 
   /**
    * Update musical genre name

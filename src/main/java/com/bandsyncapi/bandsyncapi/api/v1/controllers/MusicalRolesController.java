@@ -1,6 +1,7 @@
 package com.bandsyncapi.bandsyncapi.api.v1.controllers;
 
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.bandsyncapi.bandsyncapi.api.v1.dto.musicalroles.MusicalRolesDto;
@@ -10,6 +11,7 @@ import com.bandsyncapi.bandsyncapi.api.v1.mappers.MusicalRolesMapper;
 import com.bandsyncapi.bandsyncapi.api.v1.models.MusicalRolesModel;
 import com.bandsyncapi.bandsyncapi.api.v1.services.MusicalRolesService;
 import com.bandsyncapi.bandsyncapi.response.ApiResponse;
+import com.bandsyncapi.bandsyncapi.response.PagedData;
 
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -37,6 +40,8 @@ public class MusicalRolesController {
   private final MusicalRolesService musicalRolesService;
 
   private final MusicalRolesMapper musicalRolesMapper;
+
+  private static final int PAGE_SIZE = 10;
 
   /**
    * Constructor of the class
@@ -88,6 +93,35 @@ public class MusicalRolesController {
 
     return ResponseEntity.status(HttpStatus.OK)
         .body(new ApiResponse<>(true, "Musical roles found successfully", musicalRolesDtoListResponse, null));
+  }
+
+  /**
+   * Finds all musical roles by musical band id and name.
+   * 
+   * @param musicalBandId - Musical Band id
+   * @param name          - Artist name
+   * @param page          - Page number for pagination
+   * @return - A list of Musical Roles
+   */
+  @GetMapping("/findByMusicalBandIdAndName/{musicalBandId}")
+  public ResponseEntity<ApiResponse<PagedData<MusicalRolesDto>>> findByMusicalBandIdAndName(
+      @PathVariable UUID musicalBandId,
+      @RequestParam String query,
+      @RequestParam(defaultValue = "0") int page) {
+
+    // convert to zero-based index
+    page = Math.max(0, page - 1); // Ensure page is not negative
+
+    Page<MusicalRolesModel> resultPage = musicalRolesService.findByMusicalBandIdAndName(musicalBandId, query, page, PAGE_SIZE);
+
+    List<MusicalRolesDto> musicalRolesDtoList = musicalRolesMapper.toDtoList(resultPage.getContent());
+
+    PagedData<MusicalRolesDto> pagedData = new PagedData<>(musicalRolesDtoList, resultPage);
+
+    log.info("Musical roles found by musical band id and name: {}, {}", musicalBandId, query);
+
+    return ResponseEntity.status(HttpStatus.OK)
+        .body(new ApiResponse<>(true, "Musical roles found successfully.", pagedData, null));
   }
 
   /**
