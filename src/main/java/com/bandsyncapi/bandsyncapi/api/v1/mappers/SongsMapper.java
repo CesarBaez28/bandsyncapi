@@ -18,6 +18,7 @@ public interface SongsMapper {
   SongsDto toDto (SongsModel songsModel);
 
   @Mapping(target = "id", ignore = true)
+  @Mapping(target = "sheetMusic", ignore = true)
   SongsModel toModel (SongsPostDto songsPostDto);
 
   List<SongsDto> toDtoList (List<SongsModel> songsModels);
