@@ -18,13 +18,11 @@ import com.bandsyncapi.bandsyncapi.api.v1.models.RepertoiresModel;
 @Mapper(componentModel = "spring")
 public interface RepertoiresMapper {
 
-  RepertoiresDto toDto (RepertoiresModel repertoiresModel);
+  RepertoiresDto toDto(RepertoiresModel repertoiresModel);
 
   @Mapping(target = "id", ignore = true)
   @Mapping(target = "musicalBand", source = "musicalBand", qualifiedByName = "mapBandIdToEntity")
-  RepertoiresModel toModel (RepertoiresPostDto repertoiresPostDto);
-
-  List<RepertoiresDto> toDtoList (List<RepertoiresModel> repertoiresModels);
+  RepertoiresModel toModel(RepertoiresPostDto repertoiresPostDto);
 
   @Named("mapBandIdToEntity")
   default MusicalBandsModel mapBandIdToEntity(UUID bandId) {
@@ -33,4 +31,6 @@ public interface RepertoiresMapper {
     }
     return new MusicalBandsModel(bandId);
   }
+
+  List<RepertoiresDto> toDtoList(List<RepertoiresModel> repertoiresModels);
 }

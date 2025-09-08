@@ -1,5 +1,9 @@
 package com.bandsyncapi.bandsyncapi.api.v1.dto.repertoires;
 
+import java.util.List;
+
+import com.bandsyncapi.bandsyncapi.api.v1.models.SongsModel;
+
 import jakarta.validation.constraints.Size;
 
 /**
@@ -11,5 +15,6 @@ public record RepertoiresPutDto(
   String name, 
   String description, 
   String link, 
-  Boolean status
+  Boolean status,
+  List<SongsModel> songs
 ) {}

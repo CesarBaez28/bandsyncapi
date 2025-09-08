@@ -191,7 +191,8 @@ class RepertoiresControllerUnSecuredTest {
         "new name",
         "new Description",
         "http://locahost",
-        true);
+        true,
+        List.of());
 
     // When
     mockMvc.perform(
@@ -213,7 +214,8 @@ class RepertoiresControllerUnSecuredTest {
         "nc",
         "Test description",
         "http://locahost",
-        true);
+        true,
+        List.of());
 
     // When
     mockMvc.perform(

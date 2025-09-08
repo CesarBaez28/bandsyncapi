@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
@@ -74,7 +75,8 @@ class RepertoiresServiceImplTest {
         "New name",
         "New description",
         "http://localhost",
-        true);
+        true,
+        new ArrayList<>());
 
     given(repertoiresRepository.updateRepertoire(
         repertoireId,
@@ -103,7 +105,8 @@ class RepertoiresServiceImplTest {
         "New name",
         "New description",
         "http://localhost",
-        true);
+        true,
+        new ArrayList<>());
 
     given(repertoiresRepository.updateRepertoire(
         repertoireId,
@@ -119,7 +122,7 @@ class RepertoiresServiceImplTest {
   }
 
   @Test
-  void testDeleteRepertoireId () {
+  void testDeleteRepertoireId() {
     // Give
     var repertoireId = UUID.randomUUID();
 

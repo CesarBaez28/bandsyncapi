@@ -30,22 +30,32 @@ public interface EventsRepository extends JpaRepository<EventsModel, UUID> {
   /**
    * This method updates an event.
    * 
-   * @param id - Event id
+   * @param id           - Event id
    * @param eventsPutDto - Events info to update @see EventsPutDto
    * @return - Returns the number of rows affected
    */
   @Transactional
   @Modifying
   @Query("""
-      UPDATE EventsModel e 
+      UPDATE EventsModel e
       SET e.repertoire.id = :#{#EventsPutDto.repertoireId},
           e.date = :#{#EventsPutDto.date},
           e.name = :#{#EventsPutDto.name},
-          e.description = :#{#EventsPutDto.description}, 
-          e.place = :#{#EventsPutDto.place}, 
+          e.description = :#{#EventsPutDto.description},
+          e.place = :#{#EventsPutDto.place},
           e.location = :#{#EventsPutDto.location},
-          e.status = :#{#EventsPutDto.status} 
+          e.status = :#{#EventsPutDto.status}
       WHERE e.id = :id
       """)
   int updateEvent(@Param("id") UUID id, @Param("EventsPutDto") EventsPutDto eventsPutDto);
+
+  /**
+   * This method deletes an event by id.
+   * 
+   * @param id - Event id
+   */
+  @Modifying
+  @Transactional
+  @Query(value = "DELETE FROM events WHERE repertoire_id = :repertoireId", nativeQuery = true)
+  void deleteByRepertoireId(UUID repertoireId);
 }

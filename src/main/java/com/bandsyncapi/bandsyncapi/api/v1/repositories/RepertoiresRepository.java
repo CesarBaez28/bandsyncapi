@@ -3,6 +3,8 @@ package com.bandsyncapi.bandsyncapi.api.v1.repositories;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -32,6 +34,26 @@ public interface RepertoiresRepository extends JpaRepository<RepertoiresModel, U
       WHERE mb.id = :musicalBandId
         """)
   List<RepertoiresModel> findByMusicalBandId(@Param("musicalBandId") UUID musicalBandId);
+
+  /**
+   * finds repertoires by musical band id, name and description
+   * 
+   * @param musicalBandId - musical band id
+   * @param term          - search term
+   * @param pageable      - Pageable object for pagination
+   * @return - Page of RepertoiresModel
+   */
+  @Query("""
+      SELECT rp FROM RepertoiresModel rp
+      JOIN rp.musicalBand mb
+      WHERE mb.id = :musicalBandId AND
+      (
+        rp.name LIKE %:term% OR
+        rp.description LIKE %:term%
+      )
+      """)
+  Page<RepertoiresModel> find(@Param("musicalBandId") UUID musicalBandId,
+      @Param("term") String term, Pageable pageable);
 
   /**
    * update repertoire info

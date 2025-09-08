@@ -6,11 +6,15 @@ import org.springframework.web.bind.annotation.RestController;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.repertoires.RepertoiresDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.repertoires.RepertoiresPostDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.repertoires.RepertoiresPutDto;
+import com.bandsyncapi.bandsyncapi.api.v1.dto.songs.SongsDto;
 import com.bandsyncapi.bandsyncapi.api.v1.mappers.RepertoiresMapper;
+import com.bandsyncapi.bandsyncapi.api.v1.mappers.SongsMapper;
 import com.bandsyncapi.bandsyncapi.api.v1.models.RepertoiresModel;
+import com.bandsyncapi.bandsyncapi.api.v1.models.SongsModel;
 import com.bandsyncapi.bandsyncapi.api.v1.services.RepertoiresService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.RepertoiresSongsService;
 import com.bandsyncapi.bandsyncapi.response.ApiResponse;
+import com.bandsyncapi.bandsyncapi.response.PagedData;
 
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -18,13 +22,16 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
 @RequestMapping(path = "api/v1/repertoires")
@@ -35,7 +42,11 @@ public class RepertoiresController {
 
   private final RepertoiresMapper repertoiresMapper;
 
+  private final SongsMapper songsMapper;
+
   private final RepertoiresSongsService repertoiresSongsService;
+
+  private static final int PAGE_SIZE = 10;
 
   /**
    * Constructor
@@ -48,10 +59,11 @@ public class RepertoiresController {
    *                                and RepertoiresDto.
    */
   public RepertoiresController(RepertoiresService repertoiresService, RepertoiresSongsService repertoiresSongsService,
-      RepertoiresMapper repertoiresMapper) {
+      RepertoiresMapper repertoiresMapper, SongsMapper songsMapper) {
     this.repertoiresService = repertoiresService;
     this.repertoiresSongsService = repertoiresSongsService;
     this.repertoiresMapper = repertoiresMapper;
+    this.songsMapper = songsMapper;
   }
 
   /**
@@ -96,6 +108,68 @@ public class RepertoiresController {
   }
 
   /**
+   * finds repertoires by musical band id and search term
+   * 
+   * @param musicalBandId - musical band id
+   * @param query         - seach term
+   * @param page          - page number
+   * @return - A Page of type RepertoiresDto
+   */
+  @GetMapping("/find/{musicalBandId}")
+  public ResponseEntity<ApiResponse<PagedData<RepertoiresDto>>> find(
+      @PathVariable UUID musicalBandId,
+      @RequestParam String query,
+      @RequestParam(defaultValue = "0") int page) {
+
+    page = Math.max(page - 1, 0); // convert to zero-based index and ensure non-negative
+
+    Page<RepertoiresModel> repertoiresPage = repertoiresService.find(musicalBandId, query, page, PAGE_SIZE);
+
+    List<RepertoiresDto> repertoiresDtoList = repertoiresMapper.toDtoList(repertoiresPage.getContent());
+
+    PagedData<RepertoiresDto> pagedData = new PagedData<>(repertoiresDtoList, repertoiresPage);
+
+    log.info("Repertoires found by musical band id: {} and term: {}", musicalBandId, query);
+
+    return ResponseEntity.status(HttpStatus.OK)
+        .body(new ApiResponse<>(true, "Repertoires found successfully", pagedData, null));
+  }
+
+  /**
+   * finds a repertoire by id
+   * 
+   * @param id - repertoire id
+   * @return - A RepertoiresDto
+   */
+  @GetMapping("/findById/{id}")
+  public ResponseEntity<ApiResponse<RepertoiresDto>> findById(@PathVariable UUID id) {
+    RepertoiresModel repertoire = repertoiresService.findById(id);
+    RepertoiresDto repertoireDto = repertoiresMapper.toDto(repertoire);
+
+    log.info("Repertoire found with id: {}", id);
+
+    return ResponseEntity.status(HttpStatus.OK)
+        .body(new ApiResponse<>(true, "Repertoire found successfully", repertoireDto, null));
+  }
+
+  /**
+   * finds songs of a repertoire 
+   * 
+   * @param id - repertoire id
+   * @return - songs of the repertoire
+   */
+  @GetMapping("/findRepertoireSongs/{id}")
+  public ResponseEntity<ApiResponse<List<SongsDto>>> findRepertoireSongs(@PathVariable UUID id) {
+    List<SongsModel> repertoiresSongs = repertoiresSongsService.findByRepertoireId(id);
+    List<SongsDto> songs = songsMapper.toDtoList(repertoiresSongs);
+
+    log.info("Repertoire songs found with repertoire id: {}", id);
+
+    return ResponseEntity.status(HttpStatus.OK)
+        .body(new ApiResponse<>(true, "Repertoire songs found successfully", songs, null));
+  }
+
+  /**
    * Update repertoire
    * 
    * @param id                - repertoire id
@@ -108,8 +182,24 @@ public class RepertoiresController {
     repertoiresService.updateRepertoire(id, repertoiresPutDto);
 
     log.info("Repertoire updated successfully with id: {}", id);
-    
-    return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(true, "Repertoire updated successfully", null, null));
+
+    return ResponseEntity.status(HttpStatus.OK)
+        .body(new ApiResponse<>(true, "Repertoire updated successfully", null, null));
   }
 
+  /**
+   * deletes a repertoire by id
+   * 
+   * @param id - repertoire id
+   * @return - An ApiResponse object
+   */
+  @DeleteMapping("/delete/{id}")
+  public ResponseEntity<ApiResponse<Void>> deleteById(@PathVariable UUID id) {
+    repertoiresService.deleteById(id);
+
+    log.info("Repertoire deleted successfully with id: {}", id);
+
+    return ResponseEntity.status(HttpStatus.OK)
+        .body(new ApiResponse<>(true, "Repertoire deleted successfully", null, null));
+  }
 }

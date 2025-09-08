@@ -104,7 +104,7 @@ public class SongsController {
     List<SongsModel> songsModelList = songsService.findByMusicalBandId(id);
     List<SongsDto> songsDtoResponse = songsMapper.toDtoList(songsModelList);
 
-    log.info("Songs found: {}", songsDtoResponse);
+    log.info("Songs found by musicalBandId {}", id);
 
     return ResponseEntity.status(HttpStatus.OK)
         .body(new ApiResponse<>(true, "Songs found", songsDtoResponse, null));
@@ -113,7 +113,7 @@ public class SongsController {
   /**
    * finds songs by musical band id and search term
    * 
-   * @param id    - song id
+   * @param id    - musical band id
    * @param query - seach term
    * @param page  - page number
    * @return - A Page of type SongsModel
