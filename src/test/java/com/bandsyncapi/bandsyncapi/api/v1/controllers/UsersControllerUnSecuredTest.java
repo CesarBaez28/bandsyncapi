@@ -289,6 +289,7 @@ class UsersControllerUnSecuredTest {
         "Cesar",
         "Baez",
         "89798453542",
+        "correo@gmail.com",
         "http://localhost"
         );
 
@@ -311,6 +312,7 @@ class UsersControllerUnSecuredTest {
         "Ce",
         "Ba",
         "89798453542",
+        "coreo@gmail.com",
         "http://localhost"
         );
 

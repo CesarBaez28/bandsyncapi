@@ -202,6 +202,7 @@ class UsersServiceImplTest {
         "firstName",
         "lastName",
         "phone",
+        "correo@gmail.com",
         "photo");
 
     MockMultipartFile imageFile = new MockMultipartFile(
@@ -227,6 +228,7 @@ class UsersServiceImplTest {
         "firstName",
         "lastName",
         "phone",
+        "correo@gmail.com",
         "photo");
 
     MockMultipartFile imageFile = new MockMultipartFile(

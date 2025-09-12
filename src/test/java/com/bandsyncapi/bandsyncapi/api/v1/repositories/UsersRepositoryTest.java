@@ -86,6 +86,7 @@ class UsersRepositoryTest {
         "updated first name",
         "updated last name",
         "8092341234",
+        "correo@gmail.com",
         "UpdatedPhoto");
 
     int updatedRows = usersRepository.updateUser(user.getId(), updateUserDTO);
