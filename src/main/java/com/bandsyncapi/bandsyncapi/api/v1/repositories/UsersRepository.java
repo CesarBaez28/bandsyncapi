@@ -46,6 +46,7 @@ public interface UsersRepository extends JpaRepository<UsersModel, UUID> {
         u.firstName = :#{#updateUserDTO.firstName},
         u.lastName = :#{#updateUserDTO.lastName},
         u.phone = :#{#updateUserDTO.phone},
+        u.email = :#{#updateUserDTO.email},
         u.photo = :#{#updateUserDTO.photo}
       WHERE u.id = :userId
       """)

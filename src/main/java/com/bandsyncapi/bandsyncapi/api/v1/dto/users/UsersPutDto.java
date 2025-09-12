@@ -1,5 +1,6 @@
 package com.bandsyncapi.bandsyncapi.api.v1.dto.users;
 
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,6 +25,9 @@ public class UsersPutDto {
 
   @Size(min = 10, max = 100, message = "El número debe tener mínimo 10 dígitos.")
   private String phone;
+
+  @Email(message = "El correo no es válido")
+  private String email;
 
   private String photo;
 }
