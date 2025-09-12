@@ -5,8 +5,10 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.bandsyncapi.bandsyncapi.api.v1.dto.musicalbands.MusicalBandPutDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.musicalbands.MusicalBandsDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.musicalbands.MusicalBandsPostDto;
+import com.bandsyncapi.bandsyncapi.api.v1.models.MusicalBandsModel;
 import com.bandsyncapi.bandsyncapi.api.v1.models.UsersModel;
 import com.bandsyncapi.bandsyncapi.api.v1.services.MusicalBandsService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.UsersMusicalBandsService;
@@ -25,6 +27,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
 
 /**
  * This is the controller to handle requests for the MusicalBandsModel.
@@ -69,6 +72,45 @@ public class MusicalBandsController {
 
     return ResponseEntity.status(HttpStatus.CREATED)
         .body(new ApiResponse<>(true, "Banda musical registrada correctamente", saved, null));
+  }
+
+  /**
+   * Update musical band info
+   * 
+   * @param id                - musical band id
+   * @param musicalBandPutDto - musical bad info to be uptaded
+   * @param imageFile         - new logo file
+   * @return - a MusicalBandsDto object with the new values
+   * @throws IOException
+   */
+  @PutMapping(path = "/update/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  public ResponseEntity<ApiResponse<MusicalBandPutDto>> update(
+      @PathVariable UUID id,
+      @Valid @RequestPart("musicalBand") MusicalBandPutDto musicalBandPutDto,
+      @RequestPart(value = "image", required = false) MultipartFile imageFile) throws IOException {
+
+    MusicalBandPutDto result = musicalBandsService.update(id, musicalBandPutDto, imageFile);
+
+    log.info("Musical band successfully updated");
+
+    return ResponseEntity.status(HttpStatus.OK)
+        .body(new ApiResponse<>(true, "Musical Band successfully updated", result, null));
+  }
+
+  /**
+   * find musical band by od
+   * 
+   * @param musicalBandId - musical band id
+   * @return - An ApiResponse Object containing the list of MusicalBandsDto
+   */
+  @GetMapping("/findById/{musicalBandId}")
+  public ResponseEntity<ApiResponse<MusicalBandsDto>> findById(@PathVariable UUID musicalBandId) {
+    MusicalBandsDto response = musicalBandsService.findById(musicalBandId);
+
+    log.info("Musical band found successfully");
+
+    return ResponseEntity.status(HttpStatus.OK)
+        .body(new ApiResponse<>(true, "Musical band found successfully", response, null));
   }
 
   /**

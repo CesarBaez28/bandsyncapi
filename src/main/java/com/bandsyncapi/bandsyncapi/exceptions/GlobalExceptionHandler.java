@@ -12,6 +12,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 import com.bandsyncapi.bandsyncapi.response.ApiResponse;
 
@@ -138,6 +139,19 @@ public class GlobalExceptionHandler {
     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
         .body(new ApiResponse<>(false, ex.getMessage(), null, null));
   }
+
+  /**
+   * handle MaxUploadSizeExceededException
+   * 
+   * @param ex - MaxUploadSizeExceededException object
+   * @return An ApiResponse object with the error
+   */
+  @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ResponseEntity<ApiResponse<Void>> handleMaxUploadSizeExceededException(MaxUploadSizeExceededException ex) {
+    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .body(new ApiResponse<>(false, "El archivo sobrepasó el tamaño máximo permitido", null, null));
+  }
+
 
   /**
    * Extract the constrain name from the database

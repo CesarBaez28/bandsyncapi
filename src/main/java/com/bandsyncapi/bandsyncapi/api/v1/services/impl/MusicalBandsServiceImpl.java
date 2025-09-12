@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.bandsyncapi.bandsyncapi.api.v1.dto.musicalbands.MusicalBandPutDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.musicalbands.MusicalBandsDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.musicalbands.MusicalBandsPostDto;
 import com.bandsyncapi.bandsyncapi.api.v1.mappers.MusicalBandsMapper;
@@ -25,7 +26,9 @@ import com.bandsyncapi.bandsyncapi.api.v1.services.RolesPermissionsService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.RolesService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.UsersMusicalBandsService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.UsersRolesService;
+import com.bandsyncapi.bandsyncapi.utils.AwsUtils;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -81,10 +84,13 @@ public class MusicalBandsServiceImpl implements MusicalBandsService {
   }
 
   @Override
-  public Optional<MusicalBandsModel> findById(UUID id) {
+  public MusicalBandsDto findById(UUID id) {
     log.info("Finding musical band by id: {}", id);
 
-    return musicalBandsRepository.findById(id);
+    MusicalBandsModel musicalBandsModel = musicalBandsRepository.findById(id)
+        .orElseThrow(() -> new EntityNotFoundException("musical band not found"));
+
+    return musicalBandsMapper.toDto(musicalBandsModel);
   }
 
   @Override
@@ -111,7 +117,7 @@ public class MusicalBandsServiceImpl implements MusicalBandsService {
     MusicalBandsModel savedMusicalBandsModel = save(musicalBandsModel);
 
     log.info("Saved musical band: {}", savedMusicalBandsModel);
-    
+
     // Save relationship between the user and the musical band
     usersMusicalBandsService.save(musicalBandsPostDto.user(), savedMusicalBandsModel);
 
@@ -153,6 +159,40 @@ public class MusicalBandsServiceImpl implements MusicalBandsService {
   }
 
   @Override
+  @Transactional
+  public MusicalBandPutDto update(UUID musicalBandId, MusicalBandPutDto musicalBandPutDto, MultipartFile imageFile)
+      throws IOException {
+    log.info("Updating musical band with id {}", musicalBandId);
+
+    String fileUrl = filesService.uploadFile(imageFile, awsLogosDirectory);
+    String currentFile = musicalBandPutDto.logo();
+
+    boolean hasNewFile = !fileUrl.isEmpty();
+    boolean hasOldFile = currentFile != null && !currentFile.isEmpty();
+
+    if (hasNewFile && hasOldFile) {
+      String fileName = AwsUtils.getFileNameFromAwsUrl(currentFile);
+      filesService.deleteFile(awsLogosDirectory + "/" + fileName);
+    } else {
+      fileUrl = currentFile;
+    }
+
+    int rowsUpdated = musicalBandsRepository.update(musicalBandId, musicalBandPutDto, fileUrl);
+
+    if (rowsUpdated == 0) {
+      throw new EntityNotFoundException("Musical band not found with id: " + musicalBandId);
+    }
+
+    return MusicalBandPutDto.builder()
+        .name(musicalBandPutDto.name())
+        .address(musicalBandPutDto.address())
+        .email(musicalBandPutDto.email())
+        .phone(musicalBandPutDto.phone())
+        .logo(fileUrl)
+        .build();
+  }
+
+  @Override
   public boolean existsById(UUID id) {
     return musicalBandsRepository.existsById(id);
   }
@@ -181,4 +221,5 @@ public class MusicalBandsServiceImpl implements MusicalBandsService {
     String[] words = name.trim().split("\\s+");
     return String.join("-", words);
   }
+
 }

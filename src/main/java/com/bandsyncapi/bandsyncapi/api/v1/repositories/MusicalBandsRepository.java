@@ -10,9 +10,9 @@ import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.bandsyncapi.bandsyncapi.api.v1.dto.musicalbands.MusicalBandPutDto;
 import com.bandsyncapi.bandsyncapi.api.v1.models.MusicalBandsModel;
 import java.util.Optional;
-
 
 /**
  * This interface is repository for the musical_bands table in the database.
@@ -41,11 +41,31 @@ public interface MusicalBandsRepository extends JpaRepository<MusicalBandsModel,
    * Update logo by id
    * 
    * @param musicalBandId - musical band id
-   * @param logo - new url logo
+   * @param logo          - new url logo
    * @return number of rows updated
    */
   @Transactional
   @Modifying
   @Query("UPDATE MusicalBandsModel mb SET mb.logo = :logo WHERE mb.id = :musicalBandId")
-  int updateLogoById (@Param("musicalBandId") UUID musicalBandId, @Param("logo") String logo);
+  int updateLogoById(@Param("musicalBandId") UUID musicalBandId, @Param("logo") String logo);
+
+  /**
+   * Update user info
+   * 
+   * @param musicalBandId - musical band id
+   * @param newData       - new info to be uptaded
+   * @return - number of rows updated
+   */
+  @Transactional
+  @Modifying
+  @Query("""
+      UPDATE MusicalBandsModel mb
+      SET mb.name = :#{#newData.name},
+          mb.address = :#{#newData.address},
+          mb.phone = :#{#newData.phone},
+          mb.email = :#{#newData.email},
+          mb.logo = :logo
+      WHERE mb.id = :musicalBandId
+      """)
+  int update(@Param("musicalBandId") UUID musicalBandId, @Param("newData") MusicalBandPutDto newData, @Param("logo") String logo);
 }

@@ -5,7 +5,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.web.multipart.MultipartFile;
-
+import com.bandsyncapi.bandsyncapi.api.v1.dto.musicalbands.MusicalBandPutDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.musicalbands.MusicalBandsDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.musicalbands.MusicalBandsPostDto;
 import com.bandsyncapi.bandsyncapi.api.v1.models.MusicalBandsModel;
@@ -19,9 +19,9 @@ public interface MusicalBandsService {
   /**
    * Finds a musical band by its id.
    * @param id - Id of the musical band to be found.
-   * @return - An Optional with the musical band if found, or an empty Optional if not found.
+   * @return - the musical band found
    */
-  public Optional<MusicalBandsModel> findById(UUID id);
+  public MusicalBandsDto findById(UUID id);
 
   /**
    * Saves a musical band to the database.
@@ -38,6 +38,17 @@ public interface MusicalBandsService {
    * @return - The new musical band
    */
   public MusicalBandsDto registerMusicalBand (MusicalBandsPostDto musicalBandsPostDto, MultipartFile imageFile) throws IOException;
+
+  /**
+   * Update a musical band
+   * 
+   * @param musicalBandId - musical band id
+   * @param musicalBandPutDto - new musical band data to be updated
+   * @param imageFile - new logo to be updated
+   * @return - a MusicalBandsDto object with the new values 
+   * @throws IOException
+   */
+  public MusicalBandPutDto update (UUID musicalBandId, MusicalBandPutDto musicalBandPutDto,MultipartFile imageFile) throws IOException;
 
   /**
    * Check if the musical band exists by id
