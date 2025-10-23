@@ -9,7 +9,9 @@ import com.bandsyncapi.bandsyncapi.api.v1.dto.musicalroles.MusicalRolesPostDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.musicalroles.MusicalRolesPutDto;
 import com.bandsyncapi.bandsyncapi.api.v1.mappers.MusicalRolesMapper;
 import com.bandsyncapi.bandsyncapi.api.v1.models.MusicalRolesModel;
+import com.bandsyncapi.bandsyncapi.api.v1.projections.MusicalRolesSingleUserProjection;
 import com.bandsyncapi.bandsyncapi.api.v1.services.MusicalRolesService;
+import com.bandsyncapi.bandsyncapi.api.v1.services.MusicalRolesUsersService;
 import com.bandsyncapi.bandsyncapi.response.ApiResponse;
 import com.bandsyncapi.bandsyncapi.response.PagedData;
 
@@ -48,8 +50,12 @@ public class MusicalRolesController {
    * 
    * @param musicalRolesService - Service with methods for performing CRUD
    *                            operations on the musical_roles table.
+   * @param musicalRolesMapper  - Mapper for converting between
+   *                            MusicalRolesModel
+   *                            and MusicalRolesDto
    */
-  public MusicalRolesController(MusicalRolesService musicalRolesService, MusicalRolesMapper musicalRolesMapper) {
+  public MusicalRolesController(MusicalRolesService musicalRolesService,
+      MusicalRolesMapper musicalRolesMapper) {
     this.musicalRolesService = musicalRolesService;
     this.musicalRolesMapper = musicalRolesMapper;
   }
@@ -112,7 +118,8 @@ public class MusicalRolesController {
     // convert to zero-based index
     page = Math.max(0, page - 1); // Ensure page is not negative
 
-    Page<MusicalRolesModel> resultPage = musicalRolesService.findByMusicalBandIdAndName(musicalBandId, query, page, PAGE_SIZE);
+    Page<MusicalRolesModel> resultPage = musicalRolesService.findByMusicalBandIdAndName(musicalBandId, query, page,
+        PAGE_SIZE);
 
     List<MusicalRolesDto> musicalRolesDtoList = musicalRolesMapper.toDtoList(resultPage.getContent());
 

@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -34,6 +36,31 @@ public interface UsersRepository extends JpaRepository<UsersModel, UUID> {
   List<UsersModel> findAllByMusicalBandId(@Param("musicalBandId") UUID musicalBandId);
 
   /**
+   * find all users that are part of a musical band and by
+   * username, email, firstname, lastanme and phone number
+   * 
+   * @param musicalBandId - musical band id
+   * @param term          - search term
+   * @param pageable      - Pageable for pagination
+   * @return Page of UsersModel
+   */
+  @Query("""
+      SELECT u FROM UsersModel u
+      JOIN UsersMusicalBandsModel um
+      ON u.id = um.user.id
+      WHERE um.musicalBand.id = :musicalBandId AND
+      (
+        u.username LIKE %:term% OR
+        u.email LIKE %:term% OR
+        u.firstName LIKE %:term% OR
+        u.lastName LIKE %:term% OR
+        u.phone LIKE %:term%
+      )
+      """)
+  Page<UsersModel> find(@Param("musicalBandId") UUID musicalBandId,
+      @Param("term") String term, Pageable pageable);
+
+  /**
    * Update user info
    * 
    * @param updateUserDTO - user info to be updated
@@ -55,7 +82,7 @@ public interface UsersRepository extends JpaRepository<UsersModel, UUID> {
   /**
    * Check if the user exists by email
    * 
-   * @param email -  email
+   * @param email - email
    * @return boolean
    */
   boolean existsByEmail(String email);

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +24,7 @@ import com.bandsyncapi.bandsyncapi.api.v1.services.JWTService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.UsersMusicalBandsService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.UsersService;
 import com.bandsyncapi.bandsyncapi.response.ApiResponse;
+import com.bandsyncapi.bandsyncapi.response.PagedData;
 
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -45,6 +47,8 @@ public class UsersController {
 
   private static final String USERS_PATH = "/users";
 
+  private static final int PAGE_SIZE = 15;
+
   private final UsersService usersService;
 
   private final UsersMusicalBandsService usersMusicalBandsService;
@@ -59,7 +63,8 @@ public class UsersController {
    * @param usersService - Users Service
    * @param usersMapper  - Users mapper
    */
-  public UsersController(UsersService usersService, UsersMapper usersMapper, JWTService jwtService, UsersMusicalBandsService usersMusicalBandsService) {
+  public UsersController(UsersService usersService, UsersMapper usersMapper, JWTService jwtService,
+      UsersMusicalBandsService usersMusicalBandsService) {
     this.usersService = usersService;
     this.jwtService = jwtService;
     this.usersMapper = usersMapper;
@@ -152,6 +157,35 @@ public class UsersController {
   }
 
   /**
+   * finds users by musical band id and by
+   * username, email, firstname, lastanme and phone number
+   * 
+   * @param musicalBandId - musical band id
+   * @param query - search term
+   * @param page - page number
+   * @return A Page of type UsersDto
+   */
+  @GetMapping("/users/find/{musicalBandId}")
+  public ResponseEntity<ApiResponse<PagedData<UsersDto>>> find(
+      @PathVariable UUID musicalBandId,
+      @RequestParam String query,
+      @RequestParam(defaultValue = "0") int page) {
+
+    page = Math.max(page - 1, 0); // convert to zero-based index and ensure non-negative
+
+    Page<UsersModel> usersPage = usersService.find(musicalBandId, query, page, PAGE_SIZE);
+
+    List<UsersDto> userDtoList = usersMapper.toDtoList(usersPage.getContent());
+
+    PagedData<UsersDto> pagedData = new PagedData<>(userDtoList, usersPage);
+
+    log.info("Repertoires found by musical band id: {} and term: {}", musicalBandId, query);
+
+    return ResponseEntity.status(HttpStatus.OK)
+        .body(new ApiResponse<>(true, "Repertoires found successfully", pagedData, null));
+  }
+
+  /**
    * Find a user by id
    * 
    * @param userId - User id
@@ -183,7 +217,8 @@ public class UsersController {
 
     log.info("User updated successfully: {}", result);
 
-    return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(true, "User updated successfully", result, null));
+    return ResponseEntity.status(HttpStatus.OK)
+        .body(new ApiResponse<>(true, "User updated successfully", result, null));
   }
 
   /**

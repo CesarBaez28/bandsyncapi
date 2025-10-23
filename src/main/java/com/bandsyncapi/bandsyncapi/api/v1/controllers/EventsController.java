@@ -80,13 +80,13 @@ public class EventsController {
     if (response.isEmpty()) {
       log.warn("No events found for musical band ID: {}", musicalBandId);
 
-      return ResponseEntity.status(HttpStatus.NO_CONTENT)
+      return ResponseEntity.status(HttpStatus.OK)
           .body(new ApiResponse<>(false, "Events Not Found.", null, null));
     }
 
     log.info("Events found for musical band ID: {}: {}", musicalBandId, response);
 
-    return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(true, "Events Not Found.", response, null));
+    return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(true, "Events found successfully.", response, null));
   }
 
   /**
@@ -96,7 +96,7 @@ public class EventsController {
    * @param eventsPutDto - Event info to update @see EventsPutDto
    * @return - An ApiResponse object
    */
-  @PutMapping("/updateEvent/{id}")
+  @PutMapping("/update/{id}")
   public ResponseEntity<ApiResponse<Void>> updateEvent(@Valid @PathVariable UUID id, @Valid @RequestBody EventsPutDto eventsPutDto) {
     eventsService.updateEvent(id, eventsPutDto);
 

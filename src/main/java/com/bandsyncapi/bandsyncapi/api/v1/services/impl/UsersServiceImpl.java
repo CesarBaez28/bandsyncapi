@@ -6,6 +6,9 @@ import java.util.NoSuchElementException;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -112,6 +115,11 @@ public class UsersServiceImpl implements UsersService {
     }
 
     return users;
+  }
+
+  @Override
+  public Page<UsersModel> find(UUID musicalBandId, String term, int page, int size) {
+    return usersRepository.find(musicalBandId, term, PageRequest.of(page, size, Sort.by("firstName")));
   }
 
   @Override

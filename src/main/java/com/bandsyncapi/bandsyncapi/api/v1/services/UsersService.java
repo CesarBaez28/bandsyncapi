@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.bandsyncapi.bandsyncapi.api.v1.dto.users.UserLoginPostDto;
@@ -46,6 +47,19 @@ public interface UsersService {
    * @return - A UsersModel List
    */
   List<UsersModel> getAllUsersByMusicalBandId(UUID musicalBandId); 
+
+
+  /**
+   * find all users that are part of a musical band and by
+   * username, email, firstname, lastanme and phone number
+   * 
+   * @param musicalBandId - musical band id
+   * @param term - search term
+   * @param page - page 
+   * @param size -  size
+   * @return Page of UsersModel
+   */
+  Page<UsersModel> find (UUID musicalBandId, String term, int page, int size);
 
   /**
    * Get user by Id
