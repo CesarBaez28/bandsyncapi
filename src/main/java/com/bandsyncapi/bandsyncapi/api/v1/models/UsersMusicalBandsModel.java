@@ -32,11 +32,16 @@ public class UsersMusicalBandsModel {
   @JoinColumn(name = "musical_band_id")
   private MusicalBandsModel musicalBand;
 
+  @ManyToOne
+  @JoinColumn(name = "user_musical_band_status", nullable = false)
+  private UsersMusicalBandsStatusModel userMusicalBandStatus;
+
   @Column(name = "status", nullable = false, columnDefinition = "BIT DEFAULT 1")
   private Boolean status;
   
-  public UsersMusicalBandsModel(UsersModel user, MusicalBandsModel musicalBand, Boolean status) {
+  public UsersMusicalBandsModel(UsersModel user, MusicalBandsModel musicalBand, UsersMusicalBandsStatusModel userMusicalBandStatus, Boolean status) {
     this.user = user;
+    this.userMusicalBandStatus = userMusicalBandStatus;
     this.musicalBand = musicalBand;
     this.status = status;
     this.id = new UsersMusicalBandsKey(user.getId(), musicalBand.getId());

@@ -49,11 +49,19 @@ CREATE TABLE musical_roles (
     status BIT NOT NULL DEFAULT 1
 );
 
+-- Table: users_status
+CREATE TABLE users_status (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(100) NOT NULL UNIQUE
+);
+
 -- Table: users
 CREATE TABLE users (
     id BINARY (16) PRIMARY KEY DEFAULT (UUID_TO_BIN(UUID())),
+    user_status INT NOT NULL,
+    FOREIGN KEY (user_status) REFERENCES users_status(id),
     username VARCHAR(100) NOT NULL UNIQUE,
-    password VARCHAR(255) NOT NULL,
+    password VARCHAR(255) NULL,
     firstname VARCHAR(100) NOT NULL DEFAULT '',
     lastname VARCHAR(100) NOT NULL DEFAULT '',
     phone VARCHAR(25) NOT NULL DEFAULT '',
@@ -86,12 +94,20 @@ CREATE TABLE musical_roles_users (
     status BIT NOT NULL DEFAULT 1
 );
 
+-- Table: musical_bands_status
+CREATE TABLE users_musical_bands_status (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(100) NOT NULL UNIQUE
+);
+
 -- Table: users_musical_bands
 CREATE TABLE users_musical_bands (
     user_id BINARY(16) NOT NULL,
     musical_band_id BINARY(16) NOT NULL,
+    user_musical_band_status INT NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users(id),
     FOREIGN KEY (musical_band_id) REFERENCES musical_bands(id),
+    FOREIGN KEY (user_musical_band_status) REFERENCES users_musical_bands_status(id),
     PRIMARY KEY (user_id, musical_band_id),
     status BIT NOT NULL DEFAULT 1
 );

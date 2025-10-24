@@ -62,9 +62,9 @@ public interface MusicalBandsService {
    * find a musical band by hyphenated name
    * 
    * @param name -  musical band name
-   * @return  - A Optional Object of type MusicalBandsModel
+   * @return  -  the musical band found
    */
-  public Optional<MusicalBandsModel> findByHyphenatedName (String name);
+  public MusicalBandsDto findByHyphenatedName (String name);
 
   /**
    * Update logo by id

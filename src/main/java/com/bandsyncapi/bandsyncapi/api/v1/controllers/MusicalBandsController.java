@@ -128,4 +128,21 @@ public class MusicalBandsController {
     return ResponseEntity.status(HttpStatus.OK)
         .body(new ApiResponse<>(true, "Musical bands found successfully", response, null));
   }
+
+  /**
+   * find a musical band by hyphenatedName
+   * 
+   * @param hyphenatedName - hyphenatedName of the musical band
+   * @return - The found musical band
+   */
+  @GetMapping("/findByHyphenatedName/{hyphenatedName}")
+  public ResponseEntity<ApiResponse<MusicalBandsDto>> findByHyphenatedName(@PathVariable String hyphenatedName) {
+
+    MusicalBandsDto musicalBand = musicalBandsService.findByHyphenatedName(hyphenatedName);
+
+    log.info("Musical band found successfully by hyphenatedName: {}", hyphenatedName);
+
+    return ResponseEntity.status(HttpStatus.OK)
+        .body(new ApiResponse<>(true, "Musical band found successfully.", musicalBand, null));
+  }
 }

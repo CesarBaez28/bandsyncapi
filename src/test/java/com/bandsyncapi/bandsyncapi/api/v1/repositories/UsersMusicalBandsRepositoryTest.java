@@ -12,6 +12,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import com.bandsyncapi.bandsyncapi.api.v1.models.MusicalBandsModel;
 import com.bandsyncapi.bandsyncapi.api.v1.models.UsersModel;
 import com.bandsyncapi.bandsyncapi.api.v1.models.UsersMusicalBandsModel;
+import com.bandsyncapi.bandsyncapi.api.v1.models.UsersMusicalBandsStatusModel;
 
 @DataJpaTest
 class UsersMusicalBandsRepositoryTest {
@@ -19,26 +20,26 @@ class UsersMusicalBandsRepositoryTest {
   @Autowired
   private UsersMusicalBandsRepository usersMusicalBandsRepository;
 
-  @Autowired 
+  @Autowired
   private UsersRepository usersRepository;
 
   @Autowired
   private MusicalBandsRepository musicalBandsRepository;
 
   @Test
-  void testFindByUser () {
+  void testFindByUser() {
 
     // Given
     var user = UsersModel.builder()
-         .username("testUsername")
-         .password("testPassword123#")
-         .email("Test email")
-         .firstName("test first name")
-         .lastName("test last name")
-         .phone("8094232343")
-         .photo("http://Test")
-         .status(true)
-         .build();
+        .username("testUsername")
+        .password("testPassword123#")
+        .email("Test email")
+        .firstName("test first name")
+        .lastName("test last name")
+        .phone("8094232343")
+        .photo("http://Test")
+        .status(true)
+        .build();
 
     usersRepository.save(user);
 
@@ -61,18 +62,23 @@ class UsersMusicalBandsRepositoryTest {
         .logo("http://test.com")
         .status(true)
         .build();
-    
+
+    var userMusicalBandStatus = UsersMusicalBandsStatusModel.builder()
+        .id(1)
+        .name("ACTIVE")
+        .build();
+        
     musicalBandsRepository.save(musicalBand);
     musicalBandsRepository.save(musicalBand2);
 
-    var usersMusicalBandsModel = new UsersMusicalBandsModel(user, musicalBand, true);
-    var usersMusicalBandsModel2 = new UsersMusicalBandsModel(user, musicalBand2, true);
+    var usersMusicalBandsModel = new UsersMusicalBandsModel(user, musicalBand, userMusicalBandStatus, true);
+    var usersMusicalBandsModel2 = new UsersMusicalBandsModel(user, musicalBand2, userMusicalBandStatus, true);
 
     List<UsersMusicalBandsModel> list = List.of(usersMusicalBandsModel, usersMusicalBandsModel2);
     usersMusicalBandsRepository.saveAll(list);
 
     // When
-    List<UsersMusicalBandsModel> result = usersMusicalBandsRepository.findByUser(user);   
+    List<UsersMusicalBandsModel> result = usersMusicalBandsRepository.findByUser(user);
 
     // Then
     assertFalse(result.isEmpty());

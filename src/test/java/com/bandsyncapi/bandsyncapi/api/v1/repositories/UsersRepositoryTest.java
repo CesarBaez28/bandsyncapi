@@ -16,6 +16,7 @@ import com.bandsyncapi.bandsyncapi.api.v1.dto.users.UsersPutDto;
 import com.bandsyncapi.bandsyncapi.api.v1.models.MusicalBandsModel;
 import com.bandsyncapi.bandsyncapi.api.v1.models.UsersModel;
 import com.bandsyncapi.bandsyncapi.api.v1.models.UsersMusicalBandsModel;
+import com.bandsyncapi.bandsyncapi.api.v1.models.UsersMusicalBandsStatusModel;
 
 @DataJpaTest
 class UsersRepositoryTest {
@@ -56,7 +57,12 @@ class UsersRepositoryTest {
             .status(true)
             .build());
 
-    usersMusicalBandsRepository.save(new UsersMusicalBandsModel(user, musicalBand, true));
+    var userMusicalBandStatus = UsersMusicalBandsStatusModel.builder()
+      .id(1)
+      .name("ACTIVE")
+      .build();
+
+    usersMusicalBandsRepository.save(new UsersMusicalBandsModel(user, musicalBand, userMusicalBandStatus, true));
 
     // When
     List<UsersModel> users = usersRepository.findAllByMusicalBandId(musicalBand.getId());

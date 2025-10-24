@@ -17,6 +17,7 @@ import com.bandsyncapi.bandsyncapi.api.v1.mappers.MusicalBandsMapper;
 import com.bandsyncapi.bandsyncapi.api.v1.models.MusicalBandsModel;
 import com.bandsyncapi.bandsyncapi.api.v1.models.RolesModel;
 import com.bandsyncapi.bandsyncapi.api.v1.models.RolesPermissionsModel;
+import com.bandsyncapi.bandsyncapi.api.v1.models.UsersMusicalBandsStatusModel;
 import com.bandsyncapi.bandsyncapi.api.v1.models.UsersRolesModel;
 import com.bandsyncapi.bandsyncapi.api.v1.repositories.MusicalBandsRepository;
 import com.bandsyncapi.bandsyncapi.api.v1.services.FilesService;
@@ -58,6 +59,8 @@ public class MusicalBandsServiceImpl implements MusicalBandsService {
   private String awsLogosDirectory;
 
   private static final String OWNER_ROLE_NAME = "Propietario";
+  private static final int ACTIVE_STATUS_ID = 1;
+  private static final String ACTIVE_STATUS_NAME = "ACTIVE";
 
   /**
    * Constructor
@@ -118,14 +121,19 @@ public class MusicalBandsServiceImpl implements MusicalBandsService {
 
     log.info("Saved musical band: {}", savedMusicalBandsModel);
 
+    var userMusicalBandStatus = UsersMusicalBandsStatusModel.builder()
+        .id(ACTIVE_STATUS_ID)
+        .name(ACTIVE_STATUS_NAME)
+        .build();
+
     // Save relationship between the user and the musical band
-    usersMusicalBandsService.save(musicalBandsPostDto.user(), savedMusicalBandsModel);
+    usersMusicalBandsService.save(musicalBandsPostDto.user(), savedMusicalBandsModel, userMusicalBandStatus);
 
     log.info("Saved relationship between user and musical band: {}", musicalBandsPostDto.user(),
         savedMusicalBandsModel);
 
     // Save the role of the user in the musical band
-    RolesModel role = rolesService.save(RolesModel.builder()
+    var role = rolesService.save(RolesModel.builder()
         .name(OWNER_ROLE_NAME)
         .musicalBand(savedMusicalBandsModel)
         .status(true).build());
@@ -198,8 +206,13 @@ public class MusicalBandsServiceImpl implements MusicalBandsService {
   }
 
   @Override
-  public Optional<MusicalBandsModel> findByHyphenatedName(String name) {
-    return musicalBandsRepository.findByHyphenatedName(name);
+  public MusicalBandsDto findByHyphenatedName(String name) {
+    log.info("Finding musical band by hyphenatedName");
+
+    MusicalBandsModel musicalBandsModel = musicalBandsRepository.findByHyphenatedName(name)
+        .orElseThrow(() -> new EntityNotFoundException("musical band not found"));
+
+    return musicalBandsMapper.toDto(musicalBandsModel);
   }
 
   @Override

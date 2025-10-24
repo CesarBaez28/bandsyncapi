@@ -19,6 +19,7 @@ import com.bandsyncapi.bandsyncapi.api.v1.dto.users.UserLoginPostDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.users.UsersPutDto;
 import com.bandsyncapi.bandsyncapi.api.v1.models.MusicalBandsModel;
 import com.bandsyncapi.bandsyncapi.api.v1.models.UsersModel;
+import com.bandsyncapi.bandsyncapi.api.v1.models.UsersMusicalBandsStatusModel;
 import com.bandsyncapi.bandsyncapi.api.v1.repositories.UsersRepository;
 import com.bandsyncapi.bandsyncapi.api.v1.services.FilesService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.UsersMusicalBandsService;
@@ -88,14 +89,14 @@ public class UsersServiceImpl implements UsersService {
 
   @Transactional
   @Override
-  public void joinUserToMusicalBand(UUID userId, UUID musicalBandId) {
+  public void joinUserToMusicalBand(UUID userId, UUID musicalBandId, UsersMusicalBandsStatusModel usersMusicalBandsStatus) {
     log.info("Joining user {} to musical band {}", userId, musicalBandId);
 
     var user = new UsersModel(userId);
     var musicalBand = new MusicalBandsModel(musicalBandId);
 
     // Save relationship between the user and the musical band
-    usersMusicalBandsService.save(user, musicalBand);
+    usersMusicalBandsService.save(user, musicalBand, usersMusicalBandsStatus);
   }
 
   @Override
@@ -109,10 +110,6 @@ public class UsersServiceImpl implements UsersService {
     log.info("Getting all users by musical band id {}", musicalBandId);
 
     List<UsersModel> users = usersRepository.findAllByMusicalBandId(musicalBandId);
-
-    if (users.isEmpty()) {
-      throw new NoSuchElementException("There are no users in this musical band");
-    }
 
     return users;
   }

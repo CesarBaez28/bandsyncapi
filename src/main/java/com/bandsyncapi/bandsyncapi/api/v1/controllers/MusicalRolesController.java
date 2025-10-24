@@ -9,9 +9,7 @@ import com.bandsyncapi.bandsyncapi.api.v1.dto.musicalroles.MusicalRolesPostDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.musicalroles.MusicalRolesPutDto;
 import com.bandsyncapi.bandsyncapi.api.v1.mappers.MusicalRolesMapper;
 import com.bandsyncapi.bandsyncapi.api.v1.models.MusicalRolesModel;
-import com.bandsyncapi.bandsyncapi.api.v1.projections.MusicalRolesSingleUserProjection;
 import com.bandsyncapi.bandsyncapi.api.v1.services.MusicalRolesService;
-import com.bandsyncapi.bandsyncapi.api.v1.services.MusicalRolesUsersService;
 import com.bandsyncapi.bandsyncapi.response.ApiResponse;
 import com.bandsyncapi.bandsyncapi.response.PagedData;
 

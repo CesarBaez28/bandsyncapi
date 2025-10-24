@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.bandsyncapi.bandsyncapi.api.v1.dto.musicalbands.MusicalBandsDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.users.UserLoginPostDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.users.UserRegisterPostDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.users.UserSessionDto;
@@ -20,8 +19,9 @@ import com.bandsyncapi.bandsyncapi.api.v1.dto.users.UsersDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.users.UsersPutDto;
 import com.bandsyncapi.bandsyncapi.api.v1.mappers.UsersMapper;
 import com.bandsyncapi.bandsyncapi.api.v1.models.UsersModel;
+import com.bandsyncapi.bandsyncapi.api.v1.models.UsersMusicalBandsStatusModel;
+import com.bandsyncapi.bandsyncapi.api.v1.models.UsersStatusModel;
 import com.bandsyncapi.bandsyncapi.api.v1.services.JWTService;
-import com.bandsyncapi.bandsyncapi.api.v1.services.UsersMusicalBandsService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.UsersService;
 import com.bandsyncapi.bandsyncapi.response.ApiResponse;
 import com.bandsyncapi.bandsyncapi.response.PagedData;
@@ -49,9 +49,11 @@ public class UsersController {
 
   private static final int PAGE_SIZE = 15;
 
-  private final UsersService usersService;
+  private static final int ACTIVE_STATUS_ID = 1;
 
-  private final UsersMusicalBandsService usersMusicalBandsService;
+  private static final String ACTIVE_STATUS_NAME = "ACTIVE";
+
+  private final UsersService usersService;
 
   private final JWTService jwtService;
 
@@ -63,12 +65,10 @@ public class UsersController {
    * @param usersService - Users Service
    * @param usersMapper  - Users mapper
    */
-  public UsersController(UsersService usersService, UsersMapper usersMapper, JWTService jwtService,
-      UsersMusicalBandsService usersMusicalBandsService) {
+  public UsersController(UsersService usersService, UsersMapper usersMapper, JWTService jwtService) {
     this.usersService = usersService;
     this.jwtService = jwtService;
     this.usersMapper = usersMapper;
-    this.usersMusicalBandsService = usersMusicalBandsService;
   }
 
   /**
@@ -89,9 +89,7 @@ public class UsersController {
 
     UsersModel userModel = usersService.getByUsername(userLoginPostDto.username());
 
-    List<MusicalBandsDto> musicalbands = usersMusicalBandsService.findByUser(userModel);
-
-    UserSessionDto userSessionDto = usersMapper.toSessionDto(userModel, token, musicalbands);
+    UserSessionDto userSessionDto = usersMapper.toSessionDto(userModel, token);
 
     return ResponseEntity.status(HttpStatus.OK)
         .body(new ApiResponse<>(true, "User authenticated successfully", userSessionDto, null));
@@ -112,7 +110,12 @@ public class UsersController {
           .body(new ApiResponse<>(false, "Passwords do not match", null, null));
     }
 
-    UsersModel usersModel = usersMapper.toModelFromRegisterDto(userRegisterPostDto);
+    var userStatus = UsersStatusModel.builder()
+        .id(ACTIVE_STATUS_ID)
+        .name(ACTIVE_STATUS_NAME)
+        .build();
+
+    UsersModel usersModel = usersMapper.toModelFromRegisterDto(userRegisterPostDto, userStatus);
     usersService.register(usersModel);
 
     log.info("User registered successfully: {}", userRegisterPostDto.username());
@@ -131,7 +134,14 @@ public class UsersController {
   @PostMapping(USERS_PATH + "/joinUserToMusicalBand/{musicalBandId}/{userId}")
   public ResponseEntity<ApiResponse<Void>> joinUserToMusicalBand(@PathVariable UUID userId,
       @PathVariable UUID musicalBandId) {
-    usersService.joinUserToMusicalBand(userId, musicalBandId);
+
+    // TODO: Change this to get this value from the request
+    var userMusicalBandStatus = UsersMusicalBandsStatusModel.builder()
+        .id(1)
+        .name("ACTIVE")
+        .build();
+
+    usersService.joinUserToMusicalBand(userId, musicalBandId, userMusicalBandStatus);
 
     log.info("User {} joined to musical band {}", userId, musicalBandId);
 
@@ -151,6 +161,10 @@ public class UsersController {
 
     List<UsersDto> usersResponse = usersMapper.toDtoList(users);
 
+    if (usersResponse.isEmpty()) {
+      return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(true, "Users not found", usersResponse, null));
+    }
+
     log.info("Users found: {}", usersResponse);
 
     return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(true, "Users found", usersResponse, null));
@@ -161,8 +175,8 @@ public class UsersController {
    * username, email, firstname, lastanme and phone number
    * 
    * @param musicalBandId - musical band id
-   * @param query - search term
-   * @param page - page number
+   * @param query         - search term
+   * @param page          - page number
    * @return A Page of type UsersDto
    */
   @GetMapping("/users/find/{musicalBandId}")

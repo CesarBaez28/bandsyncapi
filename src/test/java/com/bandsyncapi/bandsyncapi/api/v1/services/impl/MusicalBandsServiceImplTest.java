@@ -25,6 +25,7 @@ import com.bandsyncapi.bandsyncapi.api.v1.models.PermissionsModel;
 import com.bandsyncapi.bandsyncapi.api.v1.models.RolesModel;
 import com.bandsyncapi.bandsyncapi.api.v1.models.RolesPermissionsModel;
 import com.bandsyncapi.bandsyncapi.api.v1.models.UsersModel;
+import com.bandsyncapi.bandsyncapi.api.v1.models.UsersMusicalBandsStatusModel;
 import com.bandsyncapi.bandsyncapi.api.v1.models.UsersRolesModel;
 import com.bandsyncapi.bandsyncapi.api.v1.repositories.MusicalBandsRepository;
 import com.bandsyncapi.bandsyncapi.api.v1.services.FilesService;
@@ -136,6 +137,11 @@ class MusicalBandsServiceImplTest {
         "testEmail@gmail.com",
         true);
 
+    var userMusicalBandStatus = UsersMusicalBandsStatusModel.builder()
+        .id(1)
+        .name("ACTIVE")
+        .build();
+
     var role = RolesModel.builder()
         .musicalBand(musicalBand)
         .name("Propietario")
@@ -166,7 +172,7 @@ class MusicalBandsServiceImplTest {
     // Then
     verify(musicalBandsMapper).toModel(musicalBandPostDto);
     verify(musicalBandsRepository).save(musicalBand);
-    verify(usersMusicalBandsService).save(musicalBandPostDto.user(), musicalBand);
+    verify(usersMusicalBandsService).save(musicalBandPostDto.user(), musicalBand, userMusicalBandStatus);
     verify(rolesService).save(role);
     verify(usersRolesService).save(new UsersRolesModel(role, musicalBand, musicalBandPostDto.user(), true));
     verify(permissionsService).findAll();

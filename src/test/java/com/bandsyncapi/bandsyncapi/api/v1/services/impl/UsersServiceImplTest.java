@@ -27,6 +27,7 @@ import com.bandsyncapi.bandsyncapi.api.v1.dto.users.UserLoginPostDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.users.UsersPutDto;
 import com.bandsyncapi.bandsyncapi.api.v1.models.MusicalBandsModel;
 import com.bandsyncapi.bandsyncapi.api.v1.models.UsersModel;
+import com.bandsyncapi.bandsyncapi.api.v1.models.UsersMusicalBandsStatusModel;
 import com.bandsyncapi.bandsyncapi.api.v1.repositories.UsersRepository;
 import com.bandsyncapi.bandsyncapi.api.v1.services.UsersMusicalBandsService;
 import com.bandsyncapi.bandsyncapi.utils.Encrypt;
@@ -110,12 +111,16 @@ class UsersServiceImplTest {
     // Given
     UUID userId = UUID.randomUUID();
     UUID musicalBandId = UUID.randomUUID();
+    var userMusicalBandStatus = UsersMusicalBandsStatusModel.builder()
+        .id(1)
+        .name("ACTIVE")
+        .build();
 
     // When
-    usersServiceImpl.joinUserToMusicalBand(userId, musicalBandId);
+    usersServiceImpl.joinUserToMusicalBand(userId, musicalBandId, userMusicalBandStatus);
 
     // Then
-    verify(usersMusicalBandsService).save(new UsersModel(userId), new MusicalBandsModel(musicalBandId));
+    verify(usersMusicalBandsService).save(new UsersModel(userId), new MusicalBandsModel(musicalBandId), userMusicalBandStatus);
   }
 
   @Test
