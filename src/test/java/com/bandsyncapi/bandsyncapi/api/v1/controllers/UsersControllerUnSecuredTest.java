@@ -36,61 +36,61 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Import(TestBeansConfig.class)
 class UsersControllerUnSecuredTest {
 
-  private static final String BASE_URL = "/api/v1/users";
+    private static final String BASE_URL = "/api/v1/users";
 
-  @Autowired
-  private MockMvc mockMvc;
+    @Autowired
+    private MockMvc mockMvc;
 
-  @Autowired
-  protected ObjectMapper objectMapper;
+    @Autowired
+    protected ObjectMapper objectMapper;
 
-  @MockitoBean
-  private UsersService usersService;
+    @MockitoBean
+    private UsersService usersService;
 
-  @MockitoBean
-  private UsersMapper usersMapper;
+    @MockitoBean
+    private UsersMapper usersMapper;
 
-  @MockitoBean
-  private JWTService jwtService;
+    @MockitoBean
+    private JWTService jwtService;
 
-  @Test
-  void testLogin_Valid_Authentication() throws Exception {
-    // Given
-    var postRequest = new UserLoginPostDto("Test username", "test password");
-    var token = "token";
+    @Test
+    void testLogin_Valid_Authentication() throws Exception {
+        // Given
+        var postRequest = new UserLoginPostDto("Test username", "test password");
+        var token = "token";
 
-    given(usersService.verify(postRequest)).willReturn(true);
-    given(jwtService.generateToken(postRequest.username())).willReturn(token);
+        given(usersService.verify(postRequest)).willReturn(true);
+        given(jwtService.generateToken(postRequest.username())).willReturn(token);
 
-    // When
-    mockMvc.perform(
-        post(BASE_URL + "/auth/login")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(postRequest)))
-        // Then
-        .andExpect(MockMvcResultMatchers.status().isOk())
-        .andExpect(MockMvcResultMatchers.jsonPath("$.success").value(true))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("User authenticated successfully"))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.data.token").value(token));
-  }
+        // When
+        mockMvc.perform(
+                post(BASE_URL + "/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(postRequest)))
+                // Then
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.success").value(true))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("User authenticated successfully"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.token").value(token));
+    }
 
-  @Test
-  void testLogin_Bad_Credentials() throws Exception {
-    // Given
-    var postRequest = new UserLoginPostDto("Invalid username", "Invalid password");
+    @Test
+    void testLogin_Bad_Credentials() throws Exception {
+        // Given
+        var postRequest = new UserLoginPostDto("Invalid username", "Invalid password");
 
-    given(usersService.verify(postRequest)).willThrow(BadCredentialsException.class);
+        given(usersService.verify(postRequest)).willThrow(BadCredentialsException.class);
 
-    // When
-    mockMvc.perform(
-        post(BASE_URL + "/auth/login")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(postRequest)))
-        // Then
-        .andExpect(MockMvcResultMatchers.status().isUnauthorized())
-        .andExpect(MockMvcResultMatchers.jsonPath("$.success").value(false))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Bad credentials."));
-  }
+        // When
+        mockMvc.perform(
+                post(BASE_URL + "/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(postRequest)))
+                // Then
+                .andExpect(MockMvcResultMatchers.status().isUnauthorized())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.success").value(false))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Bad credentials."));
+    }
 
   @Test
   void testRegister_Valid_Request() throws Exception {
@@ -113,8 +113,13 @@ class UsersControllerUnSecuredTest {
         .photo("http://amazon.com")
         .status(true)
         .build();
+    
+    var userStatus = UsersStatusModel.builder()
+    .id(1)
+    .name("ACTIVE")
+    .build();
 
-    given(usersMapper.toModelFromRegisterDto(postRequest)).willReturn(userModel);
+    given(usersMapper.toModelFromRegisterDto(postRequest, userStatus)).willReturn(userModel);
 
     // When
     mockMvc.perform(
@@ -127,242 +132,240 @@ class UsersControllerUnSecuredTest {
         .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("User registered successfully"));
   }
 
-  @Test
-  void testRegister_Invalid_Request() throws Exception {
-    // Given
-    var postRequest = new UserRegisterPostDto(
-        "C",
-        "cesarbaez@.com",
-        "CesarBaez",
-        "CesarBaez");
+    @Test
+    void testRegister_Invalid_Request() throws Exception {
+        // Given
+        var postRequest = new UserRegisterPostDto(
+                "C",
+                "cesarbaez@.com",
+                "CesarBaez",
+                "CesarBaez");
 
-    // When
-    mockMvc.perform(
-        post(BASE_URL + "/register")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(postRequest)))
-        // Then
-        .andExpect(MockMvcResultMatchers.status().isBadRequest())
-        .andExpect(MockMvcResultMatchers.jsonPath("$.success").value(false))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.errors.username")
-            .value("El nombre de usuario debe tener al menos 3 caracteres"))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.errors.email").value("El correo electrónico no es válido"))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.errors.password").value(
-            "La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula, un número y un caracter especial"));
-  }
+        // When
+        mockMvc.perform(
+                post(BASE_URL + "/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(postRequest)))
+                // Then
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.success").value(false))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.errors.username")
+                        .value("El nombre de usuario debe tener al menos 3 caracteres"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.errors.email").value("El correo electrónico no es válido"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.errors.password").value(
+                        "La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula, un número y un caracter especial"));
+    }
 
-  @Test
-  void testRegister_Password_Not_Match() throws Exception {
-    // Given
-    var incorrectPassword = "incorrectPassword";
-    var postRequest = new UserRegisterPostDto(
-        "testUsername",
-        "cesarbaez@gmail.com",
-        "CesarBaez28#",
-        incorrectPassword);
+    @Test
+    void testRegister_Password_Not_Match() throws Exception {
+        // Given
+        var incorrectPassword = "incorrectPassword";
+        var postRequest = new UserRegisterPostDto(
+                "testUsername",
+                "cesarbaez@gmail.com",
+                "CesarBaez28#",
+                incorrectPassword);
 
-    // When
-    mockMvc.perform(
-        post(BASE_URL + "/register")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(postRequest)))
-        // Then
-        .andExpect(MockMvcResultMatchers.status().isBadRequest())
-        .andExpect(MockMvcResultMatchers.jsonPath("$.success").value(false))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Passwords do not match"));
-  }
+        // When
+        mockMvc.perform(
+                post(BASE_URL + "/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(postRequest)))
+                // Then
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.success").value(false))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Passwords do not match"));
+    }
 
-  @Test
-  void testJoinUserToMusicalBand_Valid_Request() throws Exception {
-    // Given
-    var userId = UUID.randomUUID();
-    var musicalBandId = UUID.randomUUID();
+    @Test
+    void testJoinUserToMusicalBand_Valid_Request() throws Exception {
+        // Given
+        var userId = UUID.randomUUID();
+        var musicalBandId = UUID.randomUUID();
 
-    // When
-    mockMvc.perform(
-        post(BASE_URL + "/joinUserToMusicalBand/" + musicalBandId + "/" + userId))
-        // Then
-        .andExpect(MockMvcResultMatchers.status().isOk())
-        .andExpect(MockMvcResultMatchers.jsonPath("$.success").value(true))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("User joined to musical band"));
-  }
+        // When
+        mockMvc.perform(
+                post(BASE_URL + "/joinUserToMusicalBand/" + musicalBandId + "/" + userId))
+                // Then
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.success").value(true))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("User joined to musical band"));
+    }
 
-  @Test
-  void testFindAllByMusicalBandId_Valid_Request() throws Exception {
-    // Given
-    var musicalBandId = UUID.randomUUID();
-    var userId = UUID.randomUUID();
+    @Test
+    void testFindAllByMusicalBandId_Valid_Request() throws Exception {
+        // Given
+        var musicalBandId = UUID.randomUUID();
+        var userId = UUID.randomUUID();
 
-    var userModel = UsersModel.builder()
-        .id(userId)
-        .userStatus(new UsersStatusModel(1, "ACTIVE"))
-        .username("username")
-        .password("cesarBaez23$A#s")
-        .email("cesar@gmail.com")
-        .firstName("test first name")
-        .lastName("test last name")
-        .phone("8983563234")
-        .photo("http://amazon.com")
-        .status(true)
-        .build();
+        var userModel = UsersModel.builder()
+                .id(userId)
+                .userStatus(new UsersStatusModel(1, "ACTIVE"))
+                .username("username")
+                .password("cesarBaez23$A#s")
+                .email("cesar@gmail.com")
+                .firstName("test first name")
+                .lastName("test last name")
+                .phone("8983563234")
+                .photo("http://amazon.com")
+                .status(true)
+                .build();
 
-    var userDto = new UsersDto(
-        userModel.getId(),
-        userModel.getUserStatus(),
-        userModel.getUsername(),
-        userModel.getEmail(),
-        userModel.getFirstName(),
-        userModel.getLastName(),
-        userModel.getPhone(),
-        userModel.getPhoto(),
-        userModel.getStatus());
+        var userDto = new UsersDto(
+                userModel.getId(),
+                userModel.getUserStatus(),
+                userModel.getUsername(),
+                userModel.getEmail(),
+                userModel.getFirstName(),
+                userModel.getLastName(),
+                userModel.getPhone(),
+                userModel.getPhoto(),
+                userModel.getStatus());
 
-    List<UsersModel> usersModelList = List.of(userModel);
-    List<UsersDto> usersDtoList = List.of(userDto);
+        List<UsersModel> usersModelList = List.of(userModel);
+        List<UsersDto> usersDtoList = List.of(userDto);
 
-    given(usersService.getAllUsersByMusicalBandId(musicalBandId)).willReturn(usersModelList);
-    given(usersMapper.toDtoList(usersModelList)).willReturn(usersDtoList);
+        given(usersService.getAllUsersByMusicalBandId(musicalBandId)).willReturn(usersModelList);
+        given(usersMapper.toDtoList(usersModelList)).willReturn(usersDtoList);
 
-    // When
-    mockMvc.perform(
-        get(BASE_URL + "/findAllByMusicalBandId/" + musicalBandId))
-        .andExpect(MockMvcResultMatchers.status().isOk())
-        .andExpect(MockMvcResultMatchers.jsonPath("$.success").value(true))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Users found"))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.data[0].username").value(userDto.username()))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.data[0].email").value(userDto.email()))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.data[0].firstName").value(userDto.firstName()))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.data[0].lastName").value(userDto.lastName()))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.data[0].phone").value(userDto.phone()))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.data[0].photo").value(userDto.photo()))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.data[0].status").value(userDto.status()));
-  }
+        // When
+        mockMvc.perform(
+                get(BASE_URL + "/findAllByMusicalBandId/" + musicalBandId))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.success").value(true))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Users found"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data[0].username").value(userDto.username()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data[0].email").value(userDto.email()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data[0].firstName").value(userDto.firstName()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data[0].lastName").value(userDto.lastName()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data[0].phone").value(userDto.phone()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data[0].photo").value(userDto.photo()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data[0].status").value(userDto.status()));
+    }
 
-  @Test
-  void testFindById_Valid_Request() throws Exception {
-    // Given
-    var userId = UUID.randomUUID();
+    @Test
+    void testFindById_Valid_Request() throws Exception {
+        // Given
+        var userId = UUID.randomUUID();
 
-    var userModel = UsersModel.builder()
-        .id(userId)
-        .userStatus(new UsersStatusModel(1, "ACTIVE"))
-        .username("username")
-        .password("cesarBaez23$A#s")
-        .email("cesar@gmail.com")
-        .firstName("test first name")
-        .lastName("test last name")
-        .phone("8983563234")
-        .photo("http://amazon.com")
-        .status(true)
-        .build();
+        var userModel = UsersModel.builder()
+                .id(userId)
+                .userStatus(new UsersStatusModel(1, "ACTIVE"))
+                .username("username")
+                .password("cesarBaez23$A#s")
+                .email("cesar@gmail.com")
+                .firstName("test first name")
+                .lastName("test last name")
+                .phone("8983563234")
+                .photo("http://amazon.com")
+                .status(true)
+                .build();
 
-    var userDto = new UsersDto(
-        userModel.getId(),
-        userModel.getUserStatus(),
-        userModel.getUsername(),
-        userModel.getEmail(),
-        userModel.getFirstName(),
-        userModel.getLastName(),
-        userModel.getPhone(),
-        userModel.getPhoto(),
-        userModel.getStatus());
+        var userDto = new UsersDto(
+                userModel.getId(),
+                userModel.getUserStatus(),
+                userModel.getUsername(),
+                userModel.getEmail(),
+                userModel.getFirstName(),
+                userModel.getLastName(),
+                userModel.getPhone(),
+                userModel.getPhoto(),
+                userModel.getStatus());
 
-    given(usersService.getById(userId)).willReturn(userModel);
-    given(usersMapper.toDto(userModel)).willReturn(userDto);
+        given(usersService.getById(userId)).willReturn(userModel);
+        given(usersMapper.toDto(userModel)).willReturn(userDto);
 
-    // When
-    mockMvc.perform(
-        get(BASE_URL + "/findById/" + userId))
-        // Then
-        .andExpect(MockMvcResultMatchers.status().isOk())
-        .andExpect(MockMvcResultMatchers.jsonPath("$.success").value(true))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("User found"))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.data.username").value(userDto.username()))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.data.email").value(userDto.email()))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.data.firstName").value(userDto.firstName()))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.data.lastName").value(userDto.lastName()))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.data.phone").value(userDto.phone()))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.data.photo").value(userDto.photo()))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.data.status").value(userDto.status()));
-  }
+        // When
+        mockMvc.perform(
+                get(BASE_URL + "/findById/" + userId))
+                // Then
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.success").value(true))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("User found"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.username").value(userDto.username()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.email").value(userDto.email()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.firstName").value(userDto.firstName()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.lastName").value(userDto.lastName()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.phone").value(userDto.phone()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.photo").value(userDto.photo()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.status").value(userDto.status()));
+    }
 
-  @Test
-  void testUpdateUser_Valid_Request() throws Exception {
-    // Given
-    var userId = UUID.randomUUID();
-    var putRequest = new UsersPutDto(
-        "Cesar",
-        "Baez",
-        "89798453542",
-        "correo@gmail.com",
-        "http://localhost"
-        );
+    @Test
+    void testUpdateUser_Valid_Request() throws Exception {
+        // Given
+        var userId = UUID.randomUUID();
+        var putRequest = new UsersPutDto(
+                "Cesar",
+                "Baez",
+                "89798453542",
+                "correo@gmail.com",
+                "http://localhost");
 
-    // When
-    mockMvc.perform(
-        put(BASE_URL + "/updateUser/" + userId)
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(putRequest)))
-        // Then
-        .andExpect(MockMvcResultMatchers.status().isOk())
-        .andExpect(MockMvcResultMatchers.jsonPath("$.success").value(true))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("User updated successfully"));
-  }
+        // When
+        mockMvc.perform(
+                put(BASE_URL + "/updateUser/" + userId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(putRequest)))
+                // Then
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.success").value(true))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("User updated successfully"));
+    }
 
-  @Test
-  void testUpdateUser_Invalid_Request() throws Exception {
-    // Given
-    var userId = UUID.randomUUID();
-    var putRequest = new UsersPutDto(
-        "Ce",
-        "Ba",
-        "89798453542",
-        "coreo@gmail.com",
-        "http://localhost"
-        );
+    @Test
+    void testUpdateUser_Invalid_Request() throws Exception {
+        // Given
+        var userId = UUID.randomUUID();
+        var putRequest = new UsersPutDto(
+                "Ce",
+                "Ba",
+                "89798453542",
+                "coreo@gmail.com",
+                "http://localhost");
 
-    // When
-    mockMvc.perform(
-        put(BASE_URL + "/updateUser/" + userId)
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(putRequest)))
-        // Then
-        .andExpect(MockMvcResultMatchers.status().isBadRequest())
-        .andExpect(MockMvcResultMatchers.jsonPath("$.success").value(false))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.errors.username")
-            .value("El nombre de usuario debe tener entre 3 y 100 caracteres."))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.errors.email").value("Correo electrónico no válido"));
-  }
+        // When
+        mockMvc.perform(
+                put(BASE_URL + "/updateUser/" + userId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(putRequest)))
+                // Then
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.success").value(false))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.errors.username")
+                        .value("El nombre de usuario debe tener entre 3 y 100 caracteres."))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.errors.email").value("Correo electrónico no válido"));
+    }
 
-  @Test
-  void testExistsByEmail_User_Found() throws Exception {
-    // Given
-    var email = "CesarBaez@gmail.com";
+    @Test
+    void testExistsByEmail_User_Found() throws Exception {
+        // Given
+        var email = "CesarBaez@gmail.com";
 
-    given(usersService.existsByEmail(email)).willReturn(true);
+        given(usersService.existsByEmail(email)).willReturn(true);
 
-    // When
-    mockMvc.perform(
-        get(BASE_URL + "/existsByEmail?email=" + email))
-        .andExpect(MockMvcResultMatchers.status().isOk())
-        .andExpect(MockMvcResultMatchers.jsonPath("$.success").value(true))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("User found by email"))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.data").value(true));
-  }
+        // When
+        mockMvc.perform(
+                get(BASE_URL + "/existsByEmail?email=" + email))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.success").value(true))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("User found by email"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data").value(true));
+    }
 
-  @Test
-  void testExistsByEmail_User_Not_Found() throws Exception {
-    // Given
-    var email = "CesarBaez@gmail.com";
+    @Test
+    void testExistsByEmail_User_Not_Found() throws Exception {
+        // Given
+        var email = "CesarBaez@gmail.com";
 
-    given(usersService.existsByEmail(email)).willReturn(false);
+        given(usersService.existsByEmail(email)).willReturn(false);
 
-    // When
-    mockMvc.perform(
-        get(BASE_URL + "/existsByEmail?email=" + email))
-        .andExpect(MockMvcResultMatchers.status().isNotFound())
-        .andExpect(MockMvcResultMatchers.jsonPath("$.success").value(false))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("User not found by email"))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.data").value(false));
-  }
+        // When
+        mockMvc.perform(
+                get(BASE_URL + "/existsByEmail?email=" + email))
+                .andExpect(MockMvcResultMatchers.status().isNotFound())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.success").value(false))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("User not found by email"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data").value(false));
+    }
 }
