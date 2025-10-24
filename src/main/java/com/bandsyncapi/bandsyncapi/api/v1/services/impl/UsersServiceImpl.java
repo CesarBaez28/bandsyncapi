@@ -2,7 +2,6 @@ package com.bandsyncapi.bandsyncapi.api.v1.services.impl;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;

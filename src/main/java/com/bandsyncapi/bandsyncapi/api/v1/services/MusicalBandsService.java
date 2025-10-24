@@ -1,7 +1,6 @@
 package com.bandsyncapi.bandsyncapi.api.v1.services;
 
 import java.io.IOException;
-import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.web.multipart.MultipartFile;

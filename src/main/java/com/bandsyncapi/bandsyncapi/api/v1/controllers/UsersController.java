@@ -137,8 +137,8 @@ public class UsersController {
 
     // TODO: Change this to get this value from the request
     var userMusicalBandStatus = UsersMusicalBandsStatusModel.builder()
-        .id(1)
-        .name("ACTIVE")
+        .id(ACTIVE_STATUS_ID)
+        .name(ACTIVE_STATUS_NAME)
         .build();
 
     usersService.joinUserToMusicalBand(userId, musicalBandId, userMusicalBandStatus);
