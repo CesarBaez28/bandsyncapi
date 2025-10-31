@@ -136,4 +136,14 @@ public class RolesServiceImpl implements RolesService {
       rolesPermissionsService.saveAll(newPermissions);
     }
   }
+
+  @Override
+  public void deleteRoleById(Integer roleId) {
+    rolesPermissionsService.deleteByRoleId(roleId);
+    
+    log.info("Deleting role with id: ",  roleId);
+    rolesRepository.deleteByRoleId(roleId);
+    
+    log.info("Role successfully deleted: ", roleId);
+  }
 }

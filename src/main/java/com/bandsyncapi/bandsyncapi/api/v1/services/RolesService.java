@@ -41,4 +41,12 @@ public interface RolesService {
    * @return A RolesModel List
    */
   List<RolesModel> findAll ();
+
+  /**
+   * Delete a role by id
+   * 
+   * @param roleId -  role id
+   * @return
+   */
+  void deleteRoleById (Integer roleId);
 }

@@ -10,9 +10,18 @@ CREATE TABLE roles (
     status BIT NOT NULL DEFAULT 1
 );
 
+-- table: types_permissions
+CREATE TABLE types_permissions (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(100) NOT NULL UNIQUE,
+    status BIT NOT NULL DEFAULT 1
+);
+
 -- Table: permissions
 CREATE TABLE permissions (
     id INT PRIMARY KEY AUTO_INCREMENT,
+    type_permission_id INT NOT NULL,
+    FOREIGN KEY (type_permission_id) REFERENCES types_permissions(id),
     name VARCHAR(100) NOT NULL UNIQUE,
     status BIT NOT NULL DEFAULT 1
 );

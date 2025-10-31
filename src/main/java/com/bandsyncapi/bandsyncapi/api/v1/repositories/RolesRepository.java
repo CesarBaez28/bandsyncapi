@@ -26,4 +26,9 @@ public interface RolesRepository extends JpaRepository<RolesModel, Integer>{
   @Modifying
   @Query("UPDATE RolesModel r SET r.name = :name WHERE r.id = :id")
   int updateRoleNameById(@Param("name") String name, @Param("id") Integer id);
+
+  @Transactional
+  @Modifying
+  @Query(value = "DELETE FROM roles where id = :roleId", nativeQuery = true)
+  void deleteByRoleId(@Param("roleId") Integer roleId);
 }

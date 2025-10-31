@@ -24,6 +24,7 @@ import com.bandsyncapi.bandsyncapi.api.v1.models.MusicalBandsModel;
 import com.bandsyncapi.bandsyncapi.api.v1.models.PermissionsModel;
 import com.bandsyncapi.bandsyncapi.api.v1.models.RolesModel;
 import com.bandsyncapi.bandsyncapi.api.v1.models.RolesPermissionsModel;
+import com.bandsyncapi.bandsyncapi.api.v1.models.TypeOfPermissionsModel;
 import com.bandsyncapi.bandsyncapi.api.v1.models.UsersModel;
 import com.bandsyncapi.bandsyncapi.api.v1.models.UsersMusicalBandsStatusModel;
 import com.bandsyncapi.bandsyncapi.api.v1.models.UsersRolesModel;
@@ -148,7 +149,7 @@ class MusicalBandsServiceImplTest {
         .status(true)
         .build();
 
-    var permissions = List.of(new PermissionsModel(1, "PERMISSION_1", true));
+    var permissions = List.of(new PermissionsModel(1, new TypeOfPermissionsModel(1) , "PERMISSION_1", true));
     var rolesPermissions = permissions.stream()
         .map(permission -> new RolesPermissionsModel(role, permission, true))
         .toList();
