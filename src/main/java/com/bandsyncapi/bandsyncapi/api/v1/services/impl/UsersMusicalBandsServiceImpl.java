@@ -9,7 +9,6 @@ import com.bandsyncapi.bandsyncapi.api.v1.mappers.MusicalBandsMapper;
 import com.bandsyncapi.bandsyncapi.api.v1.models.MusicalBandsModel;
 import com.bandsyncapi.bandsyncapi.api.v1.models.UsersModel;
 import com.bandsyncapi.bandsyncapi.api.v1.models.UsersMusicalBandsModel;
-import com.bandsyncapi.bandsyncapi.api.v1.models.UsersMusicalBandsStatusModel;
 import com.bandsyncapi.bandsyncapi.api.v1.repositories.UsersMusicalBandsRepository;
 import com.bandsyncapi.bandsyncapi.api.v1.services.UsersMusicalBandsService;
 
@@ -38,9 +37,9 @@ public class UsersMusicalBandsServiceImpl implements UsersMusicalBandsService {
   }
 
   @Override
-  public UsersMusicalBandsModel save(UsersModel user, MusicalBandsModel musicalBand, UsersMusicalBandsStatusModel userMusicalBandStatus) {
+  public UsersMusicalBandsModel save(UsersModel user, MusicalBandsModel musicalBand) {
     log.info("Saving user {} to musical band {}", user.getId(), musicalBand.getId());
-    return usersMusicalBandsRepository.save(new UsersMusicalBandsModel(user, musicalBand, userMusicalBandStatus, true));
+    return usersMusicalBandsRepository.save(new UsersMusicalBandsModel(user, musicalBand, true));
   }
 
   @Override

@@ -9,7 +9,6 @@ import com.bandsyncapi.bandsyncapi.api.v1.dto.users.UserRegisterPostDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.users.UserSessionDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.users.UsersDto;
 import com.bandsyncapi.bandsyncapi.api.v1.models.UsersModel;
-import com.bandsyncapi.bandsyncapi.api.v1.models.UsersStatusModel;
 
 @Mapper(componentModel = "spring")
 public interface UsersMapper {
@@ -22,7 +21,7 @@ public interface UsersMapper {
   @Mapping(target = "phone", constant = "")
   @Mapping(target = "photo", constant = "")  
   @Mapping(target = "status", constant = "true")
-  UsersModel toModelFromRegisterDto(UserRegisterPostDto userRegisterPostDto, UsersStatusModel userStatus);
+  UsersModel toModelFromRegisterDto(UserRegisterPostDto userRegisterPostDto);
 
   List<UsersDto> toDtoList (List<UsersModel> usersModelList);
 

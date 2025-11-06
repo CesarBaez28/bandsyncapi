@@ -10,7 +10,6 @@ import org.springframework.web.multipart.MultipartFile;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.users.UserLoginPostDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.users.UsersPutDto;
 import com.bandsyncapi.bandsyncapi.api.v1.models.UsersModel;
-import com.bandsyncapi.bandsyncapi.api.v1.models.UsersMusicalBandsStatusModel;
 
 /**
  * Interface that defines methods for UsersModel
@@ -38,9 +37,8 @@ public interface UsersService {
    * 
    * @param userId - User id
    * @param musicalBandId - Musical Band id
-   * @param usersMusicalBandsStatus status -> ACTIVE, PENDING_ACTIVATION...
    */
-  void joinUserToMusicalBand(UUID userId, UUID musicalBandId, UsersMusicalBandsStatusModel usersMusicalBandsStatus);
+  void joinUserToMusicalBand(UUID userId, UUID musicalBandId);
 
   /**
    * Get all users that are part of a musical band

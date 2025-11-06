@@ -58,12 +58,6 @@ CREATE TABLE musical_roles (
     status BIT NOT NULL DEFAULT 1
 );
 
--- Table: users_status
-CREATE TABLE users_status (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    name VARCHAR(100) NOT NULL UNIQUE
-);
-
 -- Table: users
 CREATE TABLE users (
     id BINARY (16) PRIMARY KEY DEFAULT (UUID_TO_BIN(UUID())),
@@ -101,12 +95,6 @@ CREATE TABLE musical_roles_users (
     FOREIGN KEY (musical_band_id) REFERENCES musical_bands(id),
     PRIMARY KEY (musical_role_id, user_id, musical_band_id),
     status BIT NOT NULL DEFAULT 1
-);
-
--- Table: musical_bands_status
-CREATE TABLE users_musical_bands_status (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    name VARCHAR(100) NOT NULL UNIQUE
 );
 
 -- Table: users_musical_bands

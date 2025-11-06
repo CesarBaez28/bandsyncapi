@@ -25,7 +25,6 @@ import com.bandsyncapi.bandsyncapi.api.v1.dto.users.UsersDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.users.UsersPutDto;
 import com.bandsyncapi.bandsyncapi.api.v1.mappers.UsersMapper;
 import com.bandsyncapi.bandsyncapi.api.v1.models.UsersModel;
-import com.bandsyncapi.bandsyncapi.api.v1.models.UsersStatusModel;
 import com.bandsyncapi.bandsyncapi.api.v1.services.JWTService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.UsersService;
 import com.bandsyncapi.bandsyncapi.config.TestBeansConfig;
@@ -114,12 +113,7 @@ class UsersControllerUnSecuredTest {
         .status(true)
         .build();
     
-    var userStatus = UsersStatusModel.builder()
-    .id(1)
-    .name("ACTIVE")
-    .build();
-
-    given(usersMapper.toModelFromRegisterDto(postRequest, userStatus)).willReturn(userModel);
+    given(usersMapper.toModelFromRegisterDto(postRequest)).willReturn(userModel);
 
     // When
     mockMvc.perform(
@@ -200,7 +194,6 @@ class UsersControllerUnSecuredTest {
 
         var userModel = UsersModel.builder()
                 .id(userId)
-                .userStatus(new UsersStatusModel(1, "ACTIVE"))
                 .username("username")
                 .password("cesarBaez23$A#s")
                 .email("cesar@gmail.com")
@@ -213,7 +206,6 @@ class UsersControllerUnSecuredTest {
 
         var userDto = new UsersDto(
                 userModel.getId(),
-                userModel.getUserStatus(),
                 userModel.getUsername(),
                 userModel.getEmail(),
                 userModel.getFirstName(),
@@ -250,7 +242,6 @@ class UsersControllerUnSecuredTest {
 
         var userModel = UsersModel.builder()
                 .id(userId)
-                .userStatus(new UsersStatusModel(1, "ACTIVE"))
                 .username("username")
                 .password("cesarBaez23$A#s")
                 .email("cesar@gmail.com")
@@ -263,7 +254,6 @@ class UsersControllerUnSecuredTest {
 
         var userDto = new UsersDto(
                 userModel.getId(),
-                userModel.getUserStatus(),
                 userModel.getUsername(),
                 userModel.getEmail(),
                 userModel.getFirstName(),

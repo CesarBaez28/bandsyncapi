@@ -18,7 +18,6 @@ import com.bandsyncapi.bandsyncapi.api.v1.dto.users.UserLoginPostDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.users.UsersPutDto;
 import com.bandsyncapi.bandsyncapi.api.v1.models.MusicalBandsModel;
 import com.bandsyncapi.bandsyncapi.api.v1.models.UsersModel;
-import com.bandsyncapi.bandsyncapi.api.v1.models.UsersMusicalBandsStatusModel;
 import com.bandsyncapi.bandsyncapi.api.v1.repositories.UsersRepository;
 import com.bandsyncapi.bandsyncapi.api.v1.services.FilesService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.UsersMusicalBandsService;
@@ -88,14 +87,14 @@ public class UsersServiceImpl implements UsersService {
 
   @Transactional
   @Override
-  public void joinUserToMusicalBand(UUID userId, UUID musicalBandId, UsersMusicalBandsStatusModel usersMusicalBandsStatus) {
+  public void joinUserToMusicalBand(UUID userId, UUID musicalBandId) {
     log.info("Joining user {} to musical band {}", userId, musicalBandId);
 
     var user = new UsersModel(userId);
     var musicalBand = new MusicalBandsModel(musicalBandId);
 
     // Save relationship between the user and the musical band
-    usersMusicalBandsService.save(user, musicalBand, usersMusicalBandsStatus);
+    usersMusicalBandsService.save(user, musicalBand);
   }
 
   @Override

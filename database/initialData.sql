@@ -45,15 +45,3 @@ INSERT INTO bandsync.types_permissions (name) VALUES
 ('Roles y permisos'),
 ('Géneros musicales'),
 ('Roles musicales');  
-
--- Users status
-INSERT INTO bandsync.users_status (name) VALUES 
-('ACTIVE'),
-('PLACEHOLDER'),
-('DEACTIVATED');
-
--- Users musical bands status
-INSERT INTO bandsync.users_musical_bands_status (name) VALUES 
-('ACTIVE'),
-('PENDING_ACTIVATION'),
-('INACTIVE');

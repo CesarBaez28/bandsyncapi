@@ -19,8 +19,6 @@ import com.bandsyncapi.bandsyncapi.api.v1.dto.users.UsersDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.users.UsersPutDto;
 import com.bandsyncapi.bandsyncapi.api.v1.mappers.UsersMapper;
 import com.bandsyncapi.bandsyncapi.api.v1.models.UsersModel;
-import com.bandsyncapi.bandsyncapi.api.v1.models.UsersMusicalBandsStatusModel;
-import com.bandsyncapi.bandsyncapi.api.v1.models.UsersStatusModel;
 import com.bandsyncapi.bandsyncapi.api.v1.services.JWTService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.UsersService;
 import com.bandsyncapi.bandsyncapi.response.ApiResponse;
@@ -48,10 +46,6 @@ public class UsersController {
   private static final String USERS_PATH = "/users";
 
   private static final int PAGE_SIZE = 15;
-
-  private static final int ACTIVE_STATUS_ID = 1;
-
-  private static final String ACTIVE_STATUS_NAME = "ACTIVE";
 
   private final UsersService usersService;
 
@@ -110,12 +104,7 @@ public class UsersController {
           .body(new ApiResponse<>(false, "Passwords do not match", null, null));
     }
 
-    var userStatus = UsersStatusModel.builder()
-        .id(ACTIVE_STATUS_ID)
-        .name(ACTIVE_STATUS_NAME)
-        .build();
-
-    UsersModel usersModel = usersMapper.toModelFromRegisterDto(userRegisterPostDto, userStatus);
+    UsersModel usersModel = usersMapper.toModelFromRegisterDto(userRegisterPostDto);
     usersService.register(usersModel);
 
     log.info("User registered successfully: {}", userRegisterPostDto.username());
@@ -135,13 +124,7 @@ public class UsersController {
   public ResponseEntity<ApiResponse<Void>> joinUserToMusicalBand(@PathVariable UUID userId,
       @PathVariable UUID musicalBandId) {
 
-    // TODO: Change this to get this value from the request
-    var userMusicalBandStatus = UsersMusicalBandsStatusModel.builder()
-        .id(ACTIVE_STATUS_ID)
-        .name(ACTIVE_STATUS_NAME)
-        .build();
-
-    usersService.joinUserToMusicalBand(userId, musicalBandId, userMusicalBandStatus);
+    usersService.joinUserToMusicalBand(userId, musicalBandId);
 
     log.info("User {} joined to musical band {}", userId, musicalBandId);
 

@@ -17,7 +17,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.bandsyncapi.bandsyncapi.api.v1.mappers.MusicalBandsMapper;
 import com.bandsyncapi.bandsyncapi.api.v1.models.MusicalBandsModel;
 import com.bandsyncapi.bandsyncapi.api.v1.models.UsersMusicalBandsModel;
-import com.bandsyncapi.bandsyncapi.api.v1.models.UsersMusicalBandsStatusModel;
 import com.bandsyncapi.bandsyncapi.api.v1.models.UsersModel;
 import com.bandsyncapi.bandsyncapi.api.v1.repositories.UsersMusicalBandsRepository;
 
@@ -38,13 +37,9 @@ class UsersMusicalBandsServiceImplTest {
     // Given
     var user = new UsersModel(UUID.randomUUID());
     var musicalBand = new MusicalBandsModel(UUID.randomUUID());
-    var userMusicalBandStatus = UsersMusicalBandsStatusModel.builder()
-        .id(1)
-        .name("ACTIVE")
-        .build();
 
     // When
-    usersMusicalBandsServiceImpl.save(user, musicalBand, userMusicalBandStatus);
+    usersMusicalBandsServiceImpl.save(user, musicalBand);
 
     // Then
     ArgumentCaptor<UsersMusicalBandsModel> captor = ArgumentCaptor.forClass(UsersMusicalBandsModel.class);
@@ -61,12 +56,9 @@ class UsersMusicalBandsServiceImplTest {
     // Given
     var user = new UsersModel(UUID.randomUUID());
     var musicalBand = new MusicalBandsModel(UUID.randomUUID());
-    var userMusicalBandStatus = UsersMusicalBandsStatusModel.builder()
-        .id(1)
-        .name("ACTIVE")
-        .build();
 
-    var userMusicalBand = new UsersMusicalBandsModel(user, musicalBand, userMusicalBandStatus, true);
+
+    var userMusicalBand = new UsersMusicalBandsModel(user, musicalBand, true);
     List<UsersMusicalBandsModel> list = List.of(userMusicalBand);
 
     given(usersMusicalBandsRepository.findByUser(user)).willReturn(list);
