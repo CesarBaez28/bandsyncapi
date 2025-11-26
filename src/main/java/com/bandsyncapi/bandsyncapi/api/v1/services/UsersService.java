@@ -2,6 +2,7 @@ package com.bandsyncapi.bandsyncapi.api.v1.services;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.data.domain.Page;
@@ -31,6 +32,15 @@ public interface UsersService {
    * @return - The new user
    */
   UsersModel register (UsersModel usersModel);
+
+  /**
+   * Register a user from an invitation
+   * 
+   * @param usersModel - A UsersModel object
+   * @param token - invitation token
+   * @return - The new user
+   */
+  UsersModel registerFromInvitation (UsersModel usersModel, String token);
 
   /**
    * Join a user to a musical band
@@ -94,4 +104,12 @@ public interface UsersService {
    * @return UsersModel object
    */
   UsersModel getByUsername(String username);
+
+  /**
+   * find user by email
+   * 
+   * @param email - email
+   * @return - Optional of type UsersModel
+   */
+  Optional<UsersModel> findByEmail (String email);
 }

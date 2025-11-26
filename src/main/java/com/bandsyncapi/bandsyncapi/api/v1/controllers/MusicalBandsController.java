@@ -5,14 +5,17 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.bandsyncapi.bandsyncapi.api.v1.dto.invitations.InviteRequestDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.musicalbands.MusicalBandPutDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.musicalbands.MusicalBandsDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.musicalbands.MusicalBandsPostDto;
 import com.bandsyncapi.bandsyncapi.api.v1.models.UsersModel;
+import com.bandsyncapi.bandsyncapi.api.v1.services.InvitationsService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.MusicalBandsService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.UsersMusicalBandsService;
 import com.bandsyncapi.bandsyncapi.response.ApiResponse;
 
+import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 
@@ -27,6 +30,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
+/**
+
+POST   /bands/{bandId}/invitations        // Enviar invitación
+GET    /invitations/validate?token=...    // Validar token
+POST   /invitations/accept                // Aceptar invitación
+POST   /auth/register-and-join            // Registrar y unirse con invitación
+
+ */
 
 /**
  * This is the controller to handle requests for the MusicalBandsModel.
@@ -40,6 +53,8 @@ public class MusicalBandsController {
 
   private final UsersMusicalBandsService usersMusicalBandsService;
 
+  private final InvitationsService invitationsService;
+
   /**
    * Constructor for the MusicalBandsController class.
    * 
@@ -47,11 +62,14 @@ public class MusicalBandsController {
    *                                 operations on the musical_bands table.
    * @param usersMusicalBandsService - Service with methods for performing CRUD
    *                                 operations on the users_musical_bands table.
+   * @param invitationsService       - Service to send invitation to join to a
+   *                                 musical band
    */
   public MusicalBandsController(MusicalBandsService musicalBandsService,
-      UsersMusicalBandsService usersMusicalBandsService) {
+      UsersMusicalBandsService usersMusicalBandsService, InvitationsService invitationsService) {
     this.musicalBandsService = musicalBandsService;
     this.usersMusicalBandsService = usersMusicalBandsService;
+    this.invitationsService = invitationsService;
   }
 
   /**
@@ -144,5 +162,23 @@ public class MusicalBandsController {
 
     return ResponseEntity.status(HttpStatus.OK)
         .body(new ApiResponse<>(true, "Musical band found successfully.", musicalBand, null));
+  }
+
+  /**
+   * send an invitation to join to a musical band
+   * 
+   * @param musicalBandId - musical band id
+   * @param inviteRequest - user who send the invitation
+   * @return - An ApiResponse object
+   * @throws MessagingException
+   */
+  @PostMapping("/{musicalBandId}/invite")
+  public ResponseEntity<ApiResponse<Void>> invite(@PathVariable UUID musicalBandId,
+      @Valid @RequestBody InviteRequestDto inviteRequest) throws MessagingException {
+
+    invitationsService.sendInvitation(musicalBandId, inviteRequest.email(), inviteRequest.invitedBy());
+
+    return ResponseEntity.status(HttpStatus.OK)
+        .body(new ApiResponse<>(true, "Invitation send successfully", null, null));
   }
 }

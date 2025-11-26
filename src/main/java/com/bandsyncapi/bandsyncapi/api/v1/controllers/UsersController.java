@@ -43,8 +43,6 @@ import org.springframework.web.bind.annotation.RequestPart;
 @Slf4j
 public class UsersController {
 
-  private static final String USERS_PATH = "/users";
-
   private static final int PAGE_SIZE = 15;
 
   private final UsersService usersService;
@@ -71,7 +69,7 @@ public class UsersController {
    * @param userLoginPostDto - Request body with the user data
    * @return - An ApiResponse object
    */
-  @PostMapping(USERS_PATH + "/auth/login")
+  @PostMapping("/users/auth/login")
   public ResponseEntity<ApiResponse<UserSessionDto>> login(@RequestBody UserLoginPostDto userLoginPostDto) {
     usersService.verify(userLoginPostDto);
 
@@ -95,7 +93,7 @@ public class UsersController {
    * @param userRegisterPostDto - Request body with the user data
    * @return - An ApiResponse object
    */
-  @PostMapping(USERS_PATH + "/register")
+  @PostMapping("/users/register")
   public ResponseEntity<ApiResponse<Void>> register(@Valid @RequestBody UserRegisterPostDto userRegisterPostDto) {
 
     if (!userRegisterPostDto.password().equals(userRegisterPostDto.repeatedPassword())) {
@@ -114,13 +112,39 @@ public class UsersController {
   }
 
   /**
+   * Register a user from an invitation
+   * 
+   * @param userRegisterPostDto - User registration data
+   * @param token               - invitation token
+   * @return - An ApiResponse object
+   */
+  @PostMapping("/users/register/{token}")
+  public ResponseEntity<ApiResponse<Void>> registerFromToken(
+      @Valid @RequestBody UserRegisterPostDto userRegisterPostDto, @PathVariable String token) {
+
+    log.info("Registering user from invitation with token: {}", token);
+
+    if (!userRegisterPostDto.password().equals(userRegisterPostDto.repeatedPassword())) {
+      log.info("Passwords do not match for user: {}", userRegisterPostDto.username());
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+          .body(new ApiResponse<>(false, "Passwords do not match", null, null));
+    }
+
+    UsersModel usersModel = usersMapper.toModelFromRegisterDto(userRegisterPostDto);
+    usersService.registerFromInvitation(usersModel, token);
+
+    return ResponseEntity.status(HttpStatus.CREATED)
+        .body(new ApiResponse<>(true, "User registered successfully from invitation", null, null));
+  }
+
+  /**
    * join user to a musical band
    * 
    * @param userId        - user id
    * @param musicalBandId - musical band id
    * @return - ApiResponse object
    */
-  @PostMapping(USERS_PATH + "/joinUserToMusicalBand/{musicalBandId}/{userId}")
+  @PostMapping("/users/joinUserToMusicalBand/{musicalBandId}/{userId}")
   public ResponseEntity<ApiResponse<Void>> joinUserToMusicalBand(@PathVariable UUID userId,
       @PathVariable UUID musicalBandId) {
 
@@ -138,7 +162,7 @@ public class UsersController {
    * @param musicalBandId - musical band id
    * @return ApiResponse object with the users
    */
-  @GetMapping(USERS_PATH + "/findAllByMusicalBandId/{musicalBandId}")
+  @GetMapping("/users/findAllByMusicalBandId/{musicalBandId}")
   public ResponseEntity<ApiResponse<List<UsersDto>>> findAllByMusicalBandId(@PathVariable UUID musicalBandId) {
     List<UsersModel> users = usersService.getAllUsersByMusicalBandId(musicalBandId);
 
@@ -188,7 +212,7 @@ public class UsersController {
    * @param userId - User id
    * @return - ApiResponse object with the user
    */
-  @GetMapping(USERS_PATH + "/findById/{userId}")
+  @GetMapping("/users/findById/{userId}")
   public ResponseEntity<ApiResponse<UsersDto>> findById(@PathVariable UUID userId) {
     UsersModel usersModel = usersService.getById(userId);
     UsersDto response = usersMapper.toDto(usersModel);
@@ -205,7 +229,7 @@ public class UsersController {
    * @param usersPutDto - user data to be updated
    * @return An ApiResponse object
    */
-  @PutMapping(path = USERS_PATH + "/updateUser/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  @PutMapping(path = "/users/updateUser/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public ResponseEntity<ApiResponse<UsersPutDto>> updateUser(@PathVariable UUID id,
       @Valid @RequestPart("user") UsersPutDto usersPutDto,
       @RequestPart(value = "image", required = false) MultipartFile imageFile) throws IOException {
@@ -224,7 +248,7 @@ public class UsersController {
    * @param email - email
    * @return An ApiResponse object
    */
-  @GetMapping(USERS_PATH + "/existsByEmail")
+  @GetMapping("/users/existsByEmail")
   public ResponseEntity<ApiResponse<Boolean>> existsByEmail(@RequestParam String email) {
     boolean exists = usersService.existsByEmail(email);
 

@@ -63,7 +63,7 @@ public class SecurityConfig {
         .csrf(AbstractHttpConfigurer::disable)
         .cors(cors -> cors.configurationSource(corsConfigurationSource()))
         .authorizeHttpRequests(request -> request
-            .requestMatchers("/api/v1/users/auth/**", "/api/v1/users/register").permitAll()
+            .requestMatchers("/api/v1/users/auth/**", "/api/v1/users/register/**", "/api/v1/invitations/accept/**").permitAll()
             .anyRequest().authenticated())
         .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class)
@@ -88,8 +88,7 @@ public class SecurityConfig {
    */
   @Bean
   AuthenticationProvider authenticationProvider() {
-    DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
-    authenticationProvider.setUserDetailsService(customUserDetailsService);
+    DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider(customUserDetailsService);
     authenticationProvider.setPasswordEncoder(passwordEncoder());
     return authenticationProvider;
   }

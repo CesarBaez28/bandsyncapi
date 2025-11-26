@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 import com.bandsyncapi.bandsyncapi.response.ApiResponse;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.persistence.EntityNotFoundException;
 
 /**
@@ -147,11 +148,50 @@ public class GlobalExceptionHandler {
    * @return An ApiResponse object with the error
    */
   @ExceptionHandler(MaxUploadSizeExceededException.class)
-    public ResponseEntity<ApiResponse<Void>> handleMaxUploadSizeExceededException(MaxUploadSizeExceededException ex) {
+  public ResponseEntity<ApiResponse<Void>> handleMaxUploadSizeExceededException(MaxUploadSizeExceededException ex) {
     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
         .body(new ApiResponse<>(false, "El archivo sobrepasó el tamaño máximo permitido", null, null));
   }
 
+  /**
+   * IllegalArgumentException
+   * 
+   * @param ex - IllegalArgumentException object
+   * @return - An ApiResponse object with the error
+   */
+  @ExceptionHandler(IllegalArgumentException.class)
+  public ResponseEntity<ApiResponse<Void>> handleIllegalArgumentException(IllegalArgumentException ex) {
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse<>(false, ex.getMessage(), null, null));
+  }
+
+  /**
+   * IllegalStateException
+   * 
+   * @param ex - IllegalStateException object
+   * @return - An ApiResponse object with the error
+   */
+  @ExceptionHandler(IllegalStateException.class)
+  public ResponseEntity<ApiResponse<Void>> handleIllegalStateException(IllegalStateException ex) {
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse<>(false, ex.getMessage(), null, null));
+  }
+
+  /**
+   * ExpiredJwtException
+   * 
+   * @param ex - ExpiredJwtException object
+   * @return - An ApiResponse object with the error
+   */
+  @ExceptionHandler(ExpiredJwtException.class)
+  public ResponseEntity<ApiResponse<Void>> handleExpiredJwtException(ExpiredJwtException ex) {
+    return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+        .body(new ApiResponse<>(false, "The token has expired.", null, null));
+  }
+
+  @ExceptionHandler(InvitationException.class)
+  public ResponseEntity<ApiResponse<Void>> handleInvitationException(InvitationException ex) {
+    return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+        .body(new ApiResponse<>(false, ex.getMessage(), null, null));
+  }
 
   /**
    * Extract the constrain name from the database

@@ -94,4 +94,12 @@ public interface UsersRepository extends JpaRepository<UsersModel, UUID> {
    * @return - UsersModel object
    */
   Optional<UsersModel> findByUsername(String username);
+
+  /**
+   * get user by email
+   * 
+   * @param email - email
+   * @return - Optional of type UsersModel
+   */
+  Optional<UsersModel> findByEmail(String email);
 }

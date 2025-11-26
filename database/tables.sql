@@ -101,13 +101,27 @@ CREATE TABLE musical_roles_users (
 CREATE TABLE users_musical_bands (
     user_id BINARY(16) NOT NULL,
     musical_band_id BINARY(16) NOT NULL,
-    user_musical_band_status INT NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users(id),
     FOREIGN KEY (musical_band_id) REFERENCES musical_bands(id),
-    FOREIGN KEY (user_musical_band_status) REFERENCES users_musical_bands_status(id),
     PRIMARY KEY (user_id, musical_band_id),
     status BIT NOT NULL DEFAULT 1
 );
+
+-- Table: invitations
+CREATE TABLE invitations (
+    id BINARY (16) PRIMARY KEY DEFAULT (UUID_TO_BIN(UUID())),
+    musical_band_id BINARY(16) NOT NULL,
+    invited_by BINARY(16) NOT NULL,
+    token VARCHAR(500) NOT NULL UNIQUE,
+    email VARCHAR(255) NOT NULL,
+    status VARCHAR(20) NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    expires_at TIMESTAMP NOT NULL,
+    FOREIGN KEY (musical_band_id) REFERENCES musical_bands(id)
+    FOREIGN KEY (invited_by) REFERENCES users(id)
+);
+CREATE INDEX idx_invitations_email_band_status 
+  ON invitations (email, musical_band_id, status);
 
 -- Table: Artists
 CREATE TABLE artists (

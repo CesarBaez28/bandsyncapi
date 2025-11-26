@@ -1,5 +1,6 @@
 package com.bandsyncapi.bandsyncapi.api.v1.services;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -32,19 +33,38 @@ public class JWTService {
    * @param username the username for which to generate the token
    * @return the generated JWT token
    */
-  public String generateToken (String username) {
+  public String generateToken(String username) {
 
     Map<String, Object> claims = new HashMap<>();
 
     return Jwts.builder()
-      .claims()
-      .add(claims)
-      .subject(username)
-      .issuedAt(new java.util.Date(System.currentTimeMillis()))
-      .expiration(new java.util.Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10)) // 10 hours
-      .and()
-      .signWith(getKey())
-      .compact();
+        .claims()
+        .add(claims)
+        .subject(username)
+        .issuedAt(new java.util.Date(System.currentTimeMillis()))
+        .expiration(new java.util.Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10)) // 10 hours
+        .and()
+        .signWith(getKey())
+        .compact();
+  }
+
+  /**
+   * Generates a JWT token for a band invitation.
+   *
+   * @param claims    the claims to include in the token (e.g., bandId, email,
+   *                  invitationId)
+   * @param expiresAt the expiration date of the token
+   * @return the generated JWT token
+   */
+  public String generateInvitationToken(Map<String, Object> claims, LocalDateTime expiresAt) {
+    return Jwts.builder()
+        .claims()
+        .add(claims)
+        .issuedAt(new java.util.Date(System.currentTimeMillis()))
+        .expiration(java.sql.Timestamp.valueOf(expiresAt))
+        .and()
+        .signWith(getKey())
+        .compact();
   }
 
   /**
@@ -70,9 +90,9 @@ public class JWTService {
   /**
    * Gets the claim from the given JWT token.
    *
-   * @param token the JWT token
+   * @param token          the JWT token
    * @param claimsFunction the function to extract the claim
-   * @param <T> the type of the claim
+   * @param <T>            the type of the claim
    * @return the extracted claim
    */
   public <T> T getClaim(String token, Function<Claims, T> claimsFunction) {
@@ -97,7 +117,7 @@ public class JWTService {
   /**
    * Validates the given JWT token.
    *
-   * @param token the JWT token
+   * @param token    the JWT token
    * @param username the username to validate against
    * @return true if the token is valid, false otherwise
    */
