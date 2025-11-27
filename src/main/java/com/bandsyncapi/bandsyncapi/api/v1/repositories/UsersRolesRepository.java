@@ -74,4 +74,16 @@ public interface UsersRolesRepository extends JpaRepository<UsersRolesModel, Use
       """)
   int updateUserRolec(@Param("role") RolesModel role, @Param("userId") UUID userId,
       @Param("musicalBandId") UUID musicalBandId);
+
+
+  /**
+   * Delete a user from a musical band
+   * 
+   * @param userId - UUID of the user
+   * @param musicalBandId - UUID of the musical band
+   */    
+  @Transactional
+  @Modifying
+  @Query("DELETE FROM UsersRolesModel ur WHERE ur.user.id = :userId AND ur.musicalBand.id = :musicalBandId")
+  void deleteByUserIdAndMusicalBandId(UUID userId, UUID musicalBandId);
 }

@@ -20,6 +20,8 @@ import com.bandsyncapi.bandsyncapi.api.v1.dto.users.UsersPutDto;
 import com.bandsyncapi.bandsyncapi.api.v1.mappers.UsersMapper;
 import com.bandsyncapi.bandsyncapi.api.v1.models.UsersModel;
 import com.bandsyncapi.bandsyncapi.api.v1.services.JWTService;
+import com.bandsyncapi.bandsyncapi.api.v1.services.UsersMusicalBandsService;
+import com.bandsyncapi.bandsyncapi.api.v1.services.UsersRolesService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.UsersService;
 import com.bandsyncapi.bandsyncapi.response.ApiResponse;
 import com.bandsyncapi.bandsyncapi.response.PagedData;
@@ -47,6 +49,10 @@ public class UsersController {
 
   private final UsersService usersService;
 
+  private final UsersMusicalBandsService usersMusicalBandsService;
+
+  private final UsersRolesService usersRolesService;
+
   private final JWTService jwtService;
 
   private UsersMapper usersMapper;
@@ -54,11 +60,18 @@ public class UsersController {
   /**
    * Constructor of the class
    * 
-   * @param usersService - Users Service
-   * @param usersMapper  - Users mapper
+   * @param usersService             - Users Servic
+   * @param usersMusicalBandsService - UsersMusicalBands Service
+   * @param jwtService               - JWT Service
+   * @param usersMapper              - Users mapper
+   * @param usersRolesService        - UsersRoles Service
    */
-  public UsersController(UsersService usersService, UsersMapper usersMapper, JWTService jwtService) {
+  public UsersController(UsersService usersService, UsersMusicalBandsService usersMusicalBandsService,
+      UsersRolesService usersRolesService,
+      UsersMapper usersMapper, JWTService jwtService) {
     this.usersService = usersService;
+    this.usersMusicalBandsService = usersMusicalBandsService;
+    this.usersRolesService = usersRolesService;
     this.jwtService = jwtService;
     this.usersMapper = usersMapper;
   }
@@ -154,6 +167,27 @@ public class UsersController {
 
     return ResponseEntity.status(HttpStatus.OK)
         .body(new ApiResponse<>(true, "User joined to musical band", null, null));
+  }
+
+  /**
+   * leave user from a musical band
+   * 
+   * @param userId        - user id
+   * @param musicalBandId - musical band id
+   * @return - ApiResponse object
+   */
+  @PostMapping("/users/leaveMusicalBand/{musicalBandId}/{userId}")
+  public ResponseEntity<ApiResponse<Void>> leaveMusicalBand(@PathVariable UUID userId,
+      @PathVariable UUID musicalBandId) {
+
+    usersMusicalBandsService.deleteByUserIdAndMusicalBandId(userId, musicalBandId);
+
+    usersRolesService.deleteByUserIdAndMusicalBandId(userId, musicalBandId);
+
+    log.info("User {} left musical band {}", userId, musicalBandId);
+
+    return ResponseEntity.status(HttpStatus.OK)
+        .body(new ApiResponse<>(true, "User left musical band", null, null));
   }
 
   /**

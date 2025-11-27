@@ -152,4 +152,10 @@ public class UsersRolesServiceImpl implements UsersRolesService {
 
     return usersRolesMapper.toDtoList(usersRolesModel);
   }
+
+  @Override
+  public void deleteByUserIdAndMusicalBandId(UUID userId, UUID musicalBandId) {
+    log.info("Deleting user {} from musical band {}", userId, musicalBandId);
+    usersRolesRepository.deleteByUserIdAndMusicalBandId(userId, musicalBandId);
+  }
 }

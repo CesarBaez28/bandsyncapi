@@ -1,6 +1,7 @@
 package com.bandsyncapi.bandsyncapi.api.v1.services.impl;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
@@ -47,4 +48,10 @@ public class UsersMusicalBandsServiceImpl implements UsersMusicalBandsService {
     log.info("Finding musical bands by user: {} ", usersModel);
     return musicalBandsMapper.toDtoListFromUsersMusicalBand(usersMusicalBandsRepository.findByUser(usersModel));
   }  
+
+  @Override
+  public void deleteByUserIdAndMusicalBandId(UUID userId, UUID musicalBandId) {
+    log.info("Deleting user {} from musical band {}", userId, musicalBandId);
+    usersMusicalBandsRepository.deleteByUserIdAndMusicalBandId(userId, musicalBandId);
+  }
 }

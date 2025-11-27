@@ -65,4 +65,12 @@ public interface UsersRolesService {
    * @param musicalBandId - musicalBand id
    */
   void updateUserRole (RolesModel role, UUID userId, UUID musicalBandId);
+
+  /**
+   * Delete a user from a musical band
+   * 
+   * @param userId - UUID of the user
+   * @param musicalBandId - UUID of the musical band
+   */
+  void deleteByUserIdAndMusicalBandId(UUID userId, UUID musicalBandId);
 }
