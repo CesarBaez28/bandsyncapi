@@ -117,7 +117,6 @@ public class MusicalBandsServiceImpl implements MusicalBandsService {
 
     log.info("Saved musical band: {}", savedMusicalBandsModel);
 
-
     // Save relationship between the user and the musical band
     usersMusicalBandsService.save(musicalBandsPostDto.user(), savedMusicalBandsModel);
 

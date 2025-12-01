@@ -72,7 +72,7 @@ public interface UsersRolesRepository extends JpaRepository<UsersRolesModel, Use
       SET ur.role = :role
       WHERE ur.user.id = :userId AND ur.musicalBand.id = :musicalBandId
       """)
-  int updateUserRolec(@Param("role") RolesModel role, @Param("userId") UUID userId,
+  int updateUserRole(@Param("role") RolesModel role, @Param("userId") UUID userId,
       @Param("musicalBandId") UUID musicalBandId);
 
 

@@ -80,7 +80,7 @@ public class UsersRolesServiceImpl implements UsersRolesService {
   public void updateUserRole(RolesModel role, UUID userId, UUID musicalBandId) {
     log.info("Updating user {} in musicalband {} with role {}", userId, musicalBandId, role.getId());
     
-    int row = usersRolesRepository.updateUserRolec(role, userId, musicalBandId);
+    int row = usersRolesRepository.updateUserRole(role, userId, musicalBandId);
 
     if (row == 0) {
       log.error("user role not found with userId: {} and musicalBandId: {}", userId, musicalBandId);

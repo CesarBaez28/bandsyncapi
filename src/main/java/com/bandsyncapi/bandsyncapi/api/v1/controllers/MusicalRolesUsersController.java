@@ -44,7 +44,7 @@ public class MusicalRolesUsersController {
    * 
    * @param musicalRolesUsersService - MusicalRolesUsers service
    * @param musicalRolesUsersMapper  - MusicalRolesUsers mapper
-   * @param musicalRolesMapper - MusicalRolesMapper mapper
+   * @param musicalRolesMapper       - MusicalRolesMapper mapper
    */
   public MusicalRolesUsersController(MusicalRolesUsersService musicalRolesUsersService,
       MusicalRolesUsersMapper musicalRolesUsersMapper, MusicalRolesMapper musicalRolesMapper) {
@@ -70,7 +70,8 @@ public class MusicalRolesUsersController {
 
     if (response.isEmpty()) {
       log.warn("Users musical roles not found: {}", musicalBandId);
-      return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(false, "Users musical roles not found", null, null));
+      return ResponseEntity.status(HttpStatus.OK)
+          .body(new ApiResponse<>(false, "Users musical roles not found", null, null));
     }
 
     log.info("Users musical roles found: {}", response);
@@ -95,7 +96,8 @@ public class MusicalRolesUsersController {
 
     if (response.isEmpty()) {
       log.warn("Musical roles not found for user: {}", userId);
-      return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(false, "Musical roles not found", response, null));
+      return ResponseEntity.status(HttpStatus.OK)
+          .body(new ApiResponse<>(false, "Musical roles not found", response, null));
     }
 
     log.info("Musical roles found for user: {}", response);
@@ -106,8 +108,8 @@ public class MusicalRolesUsersController {
    * Assign musical roles to a user in a specific musical band
    * 
    * @param musicalBandId - musical band id
-   * @param userId - user id
-   * @param musicalRoles - MusicalRolesDto List
+   * @param userId        - user id
+   * @param musicalRoles  - MusicalRolesDto List
    * @return An ApiResponse object
    */
   @PostMapping("/assignMusicalRoles/{musicalBandId}/{userId}")
@@ -116,16 +118,18 @@ public class MusicalRolesUsersController {
 
     if (musicalRoles.isEmpty()) {
       log.warn("Musical roles list is empty. Cannot assign roles to user: {}", userId);
-      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse<>(false, "Musical roles list is empty", null, null));
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+          .body(new ApiResponse<>(false, "Musical roles list is empty", null, null));
     }
 
     List<MusicalRolesModel> musicalRolesModelList = musicalRolesMapper.toModelList(musicalRoles);
-    
+
     musicalRolesUsersService.assignMusicalRolesUser(userId, musicalBandId, musicalRolesModelList);
 
-    log.info("Musical roles assigned to user: {}", userId); 
+    log.info("Musical roles assigned to user: {}", userId);
 
-    return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(true, "Musical roles assigned to user", null, null));
+    return ResponseEntity.status(HttpStatus.OK)
+        .body(new ApiResponse<>(true, "Musical roles assigned to user", null, null));
   }
 
 }
