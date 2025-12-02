@@ -256,4 +256,23 @@ public class RolesController {
     return ResponseEntity.status(HttpStatus.OK)
         .body(new ApiResponse<>(true, "Role deleted successfully.", List.of(), null));
   }
+
+  /**
+   * Delete a user role from a musical band
+   * 
+   * @param userId        - user id
+   * @param musicalBandId - musical band id
+   * @return - ApiResponse indicating the user role was deleted from the musical
+   *         band
+   */
+  @DeleteMapping("/delete/user/{userId}/musicalBand/{musicalBandId}")
+  public ResponseEntity<ApiResponse<Void>> deleteUserRoleFromMusicalBand(@PathVariable UUID userId,
+      @PathVariable UUID musicalBandId) {
+    usersRolesService.deleteByUserIdAndMusicalBandId(userId, musicalBandId);
+
+    log.info("User {} deleted from musical band {}", userId, musicalBandId);
+
+    return ResponseEntity.status(HttpStatus.OK)
+        .body(new ApiResponse<>(true, "User deleted from musical band successfully", null, null));
+  }
 }
