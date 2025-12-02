@@ -95,11 +95,30 @@ public class RolesController {
   }
 
   /**
+   * Assign a role to a user in a musical band
+   * 
+   * @param roleId        - role id
+   * @param userId        - user id
+   * @param musicalBandId - musical band id
+   * @return ApiResponse indicating the role was assigned
+   */
+  @PostMapping("/assign/role/{roleId}/user/{userId}/musicalBand/{musicalBandId}")
+  public ResponseEntity<ApiResponse<Void>> assignRoleToUserInBand(@PathVariable Integer roleId,
+      @PathVariable UUID userId, @PathVariable UUID musicalBandId) {
+    usersRolesService.assignRoleToUserInBand(roleId, userId, musicalBandId);
+
+    log.info("Role assigned to user successfully");
+
+    return ResponseEntity.status(HttpStatus.CREATED)
+        .body(new ApiResponse<>(true, "Role assigned to user successfully.", null, null));
+  }
+
+  /**
    * Update user role in a musical band
    * 
-   * @param userId - user id
+   * @param userId        - user id
    * @param musicalBandId - musical band id
-   * @param newRole - new role
+   * @param newRole       - new role
    * @return - ApiResponse indicating the user role was updated
    */
   @PutMapping("/user/{userId}/musicalBand/{musicalBandId}")

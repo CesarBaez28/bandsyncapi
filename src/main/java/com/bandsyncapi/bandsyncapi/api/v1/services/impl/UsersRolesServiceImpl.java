@@ -77,9 +77,22 @@ public class UsersRolesServiceImpl implements UsersRolesService {
   }
 
   @Override
+  public void assignRoleToUserInBand(Integer roleId, UUID userId, UUID musicalBandId) {
+    log.info("Assigning role {} to user {} in band {}", roleId, userId, musicalBandId);
+
+    var userRolesModel = new UsersRolesModel(
+        new RolesModel(roleId),
+        new MusicalBandsModel(musicalBandId),
+        new UsersModel(userId),
+        true);
+
+    usersRolesRepository.save(userRolesModel);
+  }
+
+  @Override
   public void updateUserRole(RolesModel role, UUID userId, UUID musicalBandId) {
     log.info("Updating user {} in musicalband {} with role {}", userId, musicalBandId, role.getId());
-    
+
     int row = usersRolesRepository.updateUserRole(role, userId, musicalBandId);
 
     if (row == 0) {

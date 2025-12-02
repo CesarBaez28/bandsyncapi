@@ -58,10 +58,25 @@ public interface UsersRolesRepository extends JpaRepository<UsersRolesModel, Use
   List<UsersRolesModel> findByMusicalBand(MusicalBandsModel musicalBand);
 
   /**
+   * Assign role to a user in a musical band
+   * 
+   * @param roleId        - role id
+   * @param userId        - user id
+   * @param musicalBandId - musical band id
+   */
+  @Transactional
+  @Query(value = """
+      INSERT INTO users_roles (role_id, user_id, musical_band_id)
+      VALUES (:roleId, :userId, :musicalBandId)
+      """, nativeQuery = true)
+  void assignRoleToUserInBand(@Param("roleId") Integer roleId, @Param("userId") UUID userId,
+      @Param("musicalBandId") UUID musicalBandId);
+
+  /**
    * Update role of a user in a musical band
    * 
-   * @param role - new role
-   * @param userId - user id
+   * @param role          - new role
+   * @param userId        - user id
    * @param musicalBandId - musical band id
    * @return - row affected
    */
@@ -75,13 +90,12 @@ public interface UsersRolesRepository extends JpaRepository<UsersRolesModel, Use
   int updateUserRole(@Param("role") RolesModel role, @Param("userId") UUID userId,
       @Param("musicalBandId") UUID musicalBandId);
 
-
   /**
    * Delete a user from a musical band
    * 
-   * @param userId - UUID of the user
+   * @param userId        - UUID of the user
    * @param musicalBandId - UUID of the musical band
-   */    
+   */
   @Transactional
   @Modifying
   @Query("DELETE FROM UsersRolesModel ur WHERE ur.user.id = :userId AND ur.musicalBand.id = :musicalBandId")
