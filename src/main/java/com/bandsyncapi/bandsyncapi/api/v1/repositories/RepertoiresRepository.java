@@ -72,4 +72,14 @@ public interface RepertoiresRepository extends JpaRepository<RepertoiresModel, U
       """)
   int updateRepertoire(@Param("id") UUID id, @Param("name") String name,
       @Param("description") String description, @Param("link") String link, @Param("status") Boolean status);
+
+  /**
+   * Delete repertoires by musical band id
+   * 
+   * @param musicalBandId - musical band id
+   */    
+  @Transactional
+  @Modifying
+  @Query(value = "DELETE FROM repertoires WHERE musical_band_id = :musicalBandId", nativeQuery = true)
+  void deleteByMusicalBandId(@Param("musicalBandId") UUID musicalBandId);
 }

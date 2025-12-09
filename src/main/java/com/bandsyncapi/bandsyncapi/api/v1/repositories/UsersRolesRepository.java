@@ -100,4 +100,15 @@ public interface UsersRolesRepository extends JpaRepository<UsersRolesModel, Use
   @Modifying
   @Query("DELETE FROM UsersRolesModel ur WHERE ur.user.id = :userId AND ur.musicalBand.id = :musicalBandId")
   void deleteByUserIdAndMusicalBandId(UUID userId, UUID musicalBandId);
+
+
+  /**
+   * delete by musical band id
+   * 
+   * @param musicalBandId - musical band id
+   */
+  @Transactional
+  @Modifying
+  @Query(value = "DELETE FROM users_roles WHERE musical_band_id = :musicalBandId", nativeQuery = true)
+  void deleteByMusicalBandId(@Param("musicalBandId") UUID musicalBandId);
 }

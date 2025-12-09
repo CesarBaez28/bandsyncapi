@@ -58,4 +58,14 @@ public interface EventsRepository extends JpaRepository<EventsModel, UUID> {
   @Transactional
   @Query(value = "DELETE FROM events WHERE repertoire_id = :repertoireId", nativeQuery = true)
   void deleteByRepertoireId(UUID repertoireId);
+
+  /**
+   * Deletes all events associated with a musical band
+   * 
+   * @param musicalBandId - musical band id
+   */
+  @Modifying
+  @Transactional
+  @Query(value = "DELETE FROM events WHERE musical_band_id = :musicalBandId", nativeQuery = true)
+  void deleteByMusicalBandId(UUID musicalBandId);
 }

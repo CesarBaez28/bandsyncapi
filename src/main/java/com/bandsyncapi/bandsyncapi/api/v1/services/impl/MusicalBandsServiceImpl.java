@@ -59,6 +59,21 @@ public class MusicalBandsServiceImpl implements MusicalBandsService {
   private static final String OWNER_ROLE_NAME = "Propietario";
 
   /**
+   * Hyphenate a name
+   * 
+   * @param name - name
+   * @return - hyphenated name
+   */
+  private String hyphenateName(String name) {
+    if (name == null || name.trim().isEmpty()) {
+      return "";
+    }
+
+    String[] words = name.trim().split("\\s+");
+    return String.join("-", words);
+  }
+
+  /**
    * Constructor
    * 
    * @param musicalBandsRepository   - Repository for MusicalBandsModel
@@ -211,19 +226,20 @@ public class MusicalBandsServiceImpl implements MusicalBandsService {
     musicalBandsRepository.updateLogoById(musicalBandId, logo);
   }
 
-  /**
-   * Hyphenate a name
-   * 
-   * @param name - name
-   * @return - hyphenated name
-   */
-  private String hyphenateName(String name) {
-    if (name == null || name.trim().isEmpty()) {
-      return "";
+  @Override
+  public void deleteById(UUID musicalBandId) {
+    log.info("Deleting musical band with id: {}", musicalBandId);
+
+    MusicalBandsModel band = musicalBandsRepository.findById(musicalBandId)
+        .orElseThrow(() -> new EntityNotFoundException("Musical band not found with id: " + musicalBandId));
+
+    if (band.getLogo() != null && !band.getLogo().isEmpty()) {
+      log.info("Deleting logo in aws of musical band with id: {}", musicalBandId);
+      String fileName = AwsUtils.getFileNameFromAwsUrl(band.getLogo());
+      String fileLocation = (awsLogosDirectory + "/" + fileName).trim();
+      filesService.deleteFile(fileLocation);
     }
 
-    String[] words = name.trim().split("\\s+");
-    return String.join("-", words);
+    musicalBandsRepository.deleteByBandId(musicalBandId);
   }
-
 }

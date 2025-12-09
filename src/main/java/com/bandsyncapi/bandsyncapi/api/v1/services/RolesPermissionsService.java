@@ -59,4 +59,11 @@ public interface RolesPermissionsService {
    * @param roleId - role id
    */
   void deleteByRoleId(Integer roleId);
+
+  /**
+   * Delete a list of roles 
+   * 
+   * @param roleIds - role ids
+   */
+  void deleteByRoleIdIn(Set<Integer> roleIds);
 }

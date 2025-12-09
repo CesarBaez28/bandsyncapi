@@ -39,8 +39,8 @@ public interface MusicalRolesRepository extends JpaRepository<MusicalRolesModel,
    * finds all musical roles by musical band id with pagination
    * 
    * @param musicalBandId - musical band id
-   * @param name - name
-   * @param pageable - parameter for pagination
+   * @param name          - name
+   * @param pageable      - parameter for pagination
    * @return A Page List of MusicalRolesModel
    */
   @Query("""
@@ -62,4 +62,14 @@ public interface MusicalRolesRepository extends JpaRepository<MusicalRolesModel,
   @Transactional
   @Query("UPDATE MusicalRolesModel mr SET mr.name = :musicalRoleName WHERE mr.id = :id")
   int updateMusicalRoleName(@Param("id") Integer id, @Param("musicalRoleName") String musicalRoleName);
+
+  /**
+   * Delete by musical band id
+   * 
+   * @param musicalBandId - musical band id
+   */
+  @Modifying
+  @Transactional
+  @Query(value = "DELETE FROM musical_roles WHERE musical_band_id = :musicalBandId", nativeQuery = true)
+  void deleteByMusicalBandId(@Param("musicalBandId") UUID musicalBandId);
 }

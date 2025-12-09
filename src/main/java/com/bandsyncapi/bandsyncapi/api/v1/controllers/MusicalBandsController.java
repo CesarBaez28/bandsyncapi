@@ -11,6 +11,7 @@ import com.bandsyncapi.bandsyncapi.api.v1.dto.musicalbands.MusicalBandsDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.musicalbands.MusicalBandsPostDto;
 import com.bandsyncapi.bandsyncapi.api.v1.models.UsersModel;
 import com.bandsyncapi.bandsyncapi.api.v1.services.InvitationsService;
+import com.bandsyncapi.bandsyncapi.api.v1.services.MusicalBandDeletionService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.MusicalBandsService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.UsersMusicalBandsService;
 import com.bandsyncapi.bandsyncapi.response.ApiResponse;
@@ -27,19 +28,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-
-/**
-
-POST   /bands/{bandId}/invitations        // Enviar invitación
-GET    /invitations/validate?token=...    // Validar token
-POST   /invitations/accept                // Aceptar invitación
-POST   /auth/register-and-join            // Registrar y unirse con invitación
-
- */
 
 /**
  * This is the controller to handle requests for the MusicalBandsModel.
@@ -55,21 +48,27 @@ public class MusicalBandsController {
 
   private final InvitationsService invitationsService;
 
+  private final MusicalBandDeletionService musicalBandDeletionService;
+
   /**
    * Constructor for the MusicalBandsController class.
    * 
-   * @param musicalBandsService      - Service with methods for performing CRUD
-   *                                 operations on the musical_bands table.
-   * @param usersMusicalBandsService - Service with methods for performing CRUD
-   *                                 operations on the users_musical_bands table.
-   * @param invitationsService       - Service to send invitation to join to a
-   *                                 musical band
+   * @param musicalBandsService        - Service with methods for performing CRUD
+   *                                   operations on the musical_bands table.
+   * @param usersMusicalBandsService   - Service with methods for performing CRUD
+   *                                   operations on the users_musical_bands
+   *                                   table.
+   * @param invitationsService         - Service to send invitation to join to a
+   *                                   musical band
+   * @param musicalBandDeletionService - Service to delete a musical band
    */
   public MusicalBandsController(MusicalBandsService musicalBandsService,
-      UsersMusicalBandsService usersMusicalBandsService, InvitationsService invitationsService) {
+      UsersMusicalBandsService usersMusicalBandsService, InvitationsService invitationsService,
+      MusicalBandDeletionService musicalBandDeletionService) {
     this.musicalBandsService = musicalBandsService;
     this.usersMusicalBandsService = usersMusicalBandsService;
     this.invitationsService = invitationsService;
+    this.musicalBandDeletionService = musicalBandDeletionService;
   }
 
   /**
@@ -180,5 +179,19 @@ public class MusicalBandsController {
 
     return ResponseEntity.status(HttpStatus.OK)
         .body(new ApiResponse<>(true, "Invitation send successfully", null, null));
+  }
+
+  /**
+   * Deletes a musical band
+   * 
+   * @param id - musical band id
+   * @return An ApiResponse object
+   */
+  @DeleteMapping("/delete/{id}")
+  public ResponseEntity<ApiResponse<Void>> delete(@PathVariable UUID id) {
+    musicalBandDeletionService.deleteMusuicalBand(id);
+
+    return ResponseEntity.status(HttpStatus.OK)
+        .body(new ApiResponse<>(true, "Musical band deleted successfully", null, null));
   }
 }

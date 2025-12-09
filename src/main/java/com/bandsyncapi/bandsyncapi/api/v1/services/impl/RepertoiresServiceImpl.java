@@ -83,7 +83,7 @@ public class RepertoiresServiceImpl implements RepertoiresService {
       throw new EntityNotFoundException("Repertoire not found with id: " + id);
     }
 
-    log.info("Repertoire with id {} updated successfully", id); 
+    log.info("Repertoire with id {} updated successfully", id);
     repertoiresSongsService.updateRepertoireSongs(id, repertoiresPutDto.songs());
 
     log.info("Repertoire songs with id {} updated successfully", id);
@@ -112,5 +112,22 @@ public class RepertoiresServiceImpl implements RepertoiresService {
   public RepertoiresModel findById(UUID id) {
     return repertoiresRepository.findById(id)
         .orElseThrow(() -> new EntityNotFoundException("Repertoire not found with id: " + id));
+  }
+
+  @Override
+  public void deleteByMusicalBandId(UUID musicalBandId) {
+    log.info("Deleting repertoires and repertoires song in band: {}", musicalBandId);
+
+    List<UUID> repertoiresId = repertoiresRepository
+        .findByMusicalBandId(musicalBandId)
+        .stream()
+        .map(RepertoiresModel::getId)
+        .toList();
+
+    log.info("Deleting repertoires songs in band: {}", musicalBandId);
+    repertoiresSongsRepository.deleteByReperoiresIds(repertoiresId);
+
+    log.info("Deleting repertoires in band: {}", musicalBandId);
+    repertoiresRepository.deleteByMusicalBandId(musicalBandId);
   }
 }

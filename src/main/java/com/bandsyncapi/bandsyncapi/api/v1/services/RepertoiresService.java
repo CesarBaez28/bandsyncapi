@@ -59,4 +59,11 @@ public interface RepertoiresService {
    * @param id - repertoire id
    */
   public void deleteById(UUID id);
+
+  /**
+   * deletes repertoires by musical band id and repertoires songs
+   * 
+   * @param musicalBandId
+   */
+  public void deleteByMusicalBandId(UUID musicalBandId);
 }

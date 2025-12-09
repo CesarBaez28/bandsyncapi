@@ -80,4 +80,11 @@ public interface SongsService {
    * @param genreId
    */
   void deleteByGenreId (Integer genreId);
+
+  /**
+   * delete songs by musical band id
+   * 
+   * @param musicalBandId - musical band id
+   */
+  void deleteSongsByMusicalBandId(UUID musicalBandId);
 }

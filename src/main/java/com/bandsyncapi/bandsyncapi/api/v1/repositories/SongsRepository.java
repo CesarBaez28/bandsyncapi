@@ -35,18 +35,17 @@ public interface SongsRepository extends JpaRepository<SongsModel, Integer> {
       """)
   List<SongsModel> findByMusicalBandId(@Param("musicalBandId") UUID musicalBandId);
 
-
   /**
    * Finds song by musical band id and name, artist name, genre name and tonality
    * 
-   * @param term - search term
+   * @param term     - search term
    * @param pageable - Pageable object for pagination
    * @return A list of SongsModel
    */
   @Query("""
       SELECT s FROM SongsModel s
       JOIN s.musicalBand mb
-      WHERE mb.id = :musicalBandId AND 
+      WHERE mb.id = :musicalBandId AND
       (
         s.name LIKE %:term% OR
         s.artist.name LIKE %:term% OR
@@ -107,16 +106,16 @@ public interface SongsRepository extends JpaRepository<SongsModel, Integer> {
   /**
    * Update sheetMusic of a song
    * 
-   * @param id -  song id
+   * @param id         - song id
    * @param sheetMusic - sheetMusic url
    */
   @Transactional
   @Modifying
   @Query("""
-    UPDATE SongsModel s
-    SET s.sheetMusic = :sheetMusic WHERE s.id = :id
-    """)
-  void updateSheetMusicById (@Param("id") Integer id, @Param("sheetMusic") String sheetMusic);
+      UPDATE SongsModel s
+      SET s.sheetMusic = :sheetMusic WHERE s.id = :id
+      """)
+  void updateSheetMusicById(@Param("id") Integer id, @Param("sheetMusic") String sheetMusic);
 
   /**
    * Deletes songs by artist id
@@ -137,4 +136,14 @@ public interface SongsRepository extends JpaRepository<SongsModel, Integer> {
   @Modifying
   @Query(value = "DELETE FROM songs WHERE musical_genre_id = :genreId", nativeQuery = true)
   void deleteByGenreId(@Param("genreId") Integer genreId);
+
+  /**
+   * Deletes songs by musical band id
+   * 
+   * @param musicalBandId - musicalBandId
+   */
+  @Transactional
+  @Modifying
+  @Query(value = "DELETE FROM songs WHERE musical_band_id = :musicalBandId", nativeQuery = true)
+  void deleteByMusicalBandId(@Param("musicalBandId") UUID musicalBandId);
 }

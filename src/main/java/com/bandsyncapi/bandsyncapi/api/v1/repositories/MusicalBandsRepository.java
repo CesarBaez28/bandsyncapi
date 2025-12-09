@@ -67,5 +67,16 @@ public interface MusicalBandsRepository extends JpaRepository<MusicalBandsModel,
           mb.logo = :logo
       WHERE mb.id = :musicalBandId
       """)
-  int update(@Param("musicalBandId") UUID musicalBandId, @Param("newData") MusicalBandPutDto newData, @Param("logo") String logo);
+  int update(@Param("musicalBandId") UUID musicalBandId, @Param("newData") MusicalBandPutDto newData,
+      @Param("logo") String logo);
+
+  /**
+   * Delete a musical band by id
+   * 
+   * @param id - musical band id
+   */
+  @Transactional
+  @Modifying
+  @Query(value = "DELETE FROM musical_bands WHERE id = :id", nativeQuery = true)
+  void deleteByBandId(@Param("id") UUID id);
 }

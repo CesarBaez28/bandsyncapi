@@ -89,7 +89,7 @@ public class MusicalRolesController {
     List<MusicalRolesDto> musicalRolesDtoListResponse = musicalRolesMapper.toDtoList(musicalRolesModels);
 
     if (musicalRolesDtoListResponse.isEmpty()) {
-      return ResponseEntity.status(HttpStatus.NOT_FOUND)
+      return ResponseEntity.status(HttpStatus.OK)
           .body(new ApiResponse<>(false, "No musical roles found", null, null));
     }
 

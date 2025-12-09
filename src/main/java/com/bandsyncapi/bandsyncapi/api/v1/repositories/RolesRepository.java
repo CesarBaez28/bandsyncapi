@@ -1,5 +1,8 @@
 package com.bandsyncapi.bandsyncapi.api.v1.repositories;
 
+import java.util.List;
+import java.util.UUID;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -12,8 +15,7 @@ import com.bandsyncapi.bandsyncapi.api.v1.models.RolesModel;
  * This interface is a repository for the roles table in the database.
  * Provides methods for performing CRUD operations on the roles table.
  */
-public interface RolesRepository extends JpaRepository<RolesModel, Integer>{
-
+public interface RolesRepository extends JpaRepository<RolesModel, Integer> {
 
   /**
    * This method updates the name of a role by its id.
@@ -27,8 +29,25 @@ public interface RolesRepository extends JpaRepository<RolesModel, Integer>{
   @Query("UPDATE RolesModel r SET r.name = :name WHERE r.id = :id")
   int updateRoleNameById(@Param("name") String name, @Param("id") Integer id);
 
+  /**
+   * delete role by id
+   * 
+   * @param roleId - role id
+   */
   @Transactional
   @Modifying
   @Query(value = "DELETE FROM roles where id = :roleId", nativeQuery = true)
   void deleteByRoleId(@Param("roleId") Integer roleId);
+
+  /**
+   * find roles by musical band id
+   * 
+   * @param musicalBandId - musical band id
+   * @return - List of roles
+   */
+  @Query("""
+      SELECT r FROM RolesModel r
+      WHERE r.musicalBand.id = :musicalBandId
+      """)
+  List<RolesModel> findByMusicalBandId(@Param("musicalBandId") UUID musicalBandId);
 }

@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -27,7 +28,7 @@ import lombok.extern.slf4j.Slf4j;
  * Implementation of RolesService
  */
 @Service
-@Slf4j  
+@Slf4j
 public class RolesServiceImpl implements RolesService {
 
   private final RolesRepository rolesRepository;
@@ -39,9 +40,9 @@ public class RolesServiceImpl implements RolesService {
   /**
    * Constructor
    * 
-   * @param rolesRepository          - RolesRepository object
-   * @param rolesMapper              - RolesMapper object
-   * @param rolesPermissionsService  - RolesPermissionsService object
+   * @param rolesRepository         - RolesRepository object
+   * @param rolesMapper             - RolesMapper object
+   * @param rolesPermissionsService - RolesPermissionsService object
    */
   public RolesServiceImpl(RolesRepository rolesRepository, RolesMapper rolesMapper,
       RolesPermissionsService rolesPermissionsService) {
@@ -130,7 +131,7 @@ public class RolesServiceImpl implements RolesService {
     // Add new permissions
     if (!permissionsToAdd.isEmpty()) {
       log.info("Adding permissions of the role {}", permissionsToAdd);
-      
+
       List<RolesPermissionsModel> newPermissions = permissionsToAdd.stream()
           .map(id -> new RolesPermissionsModel(updatedRole, new PermissionsModel(id), true)).toList();
       rolesPermissionsService.saveAll(newPermissions);
@@ -140,10 +141,25 @@ public class RolesServiceImpl implements RolesService {
   @Override
   public void deleteRoleById(Integer roleId) {
     rolesPermissionsService.deleteByRoleId(roleId);
-    
-    log.info("Deleting role with id: ",  roleId);
+
+    log.info("Deleting role with id: ", roleId);
     rolesRepository.deleteByRoleId(roleId);
-    
+
     log.info("Role successfully deleted: ", roleId);
+  }
+
+  @Override
+  public void deleteRoleAndRolesPermissionsByMusicalBandId(UUID musicalBandId) {
+    log.info("Deleting roles and roles permissions related to musical band: {}", musicalBandId);
+
+    List<RolesModel> roles = rolesRepository.findByMusicalBandId(musicalBandId);
+
+    Set<Integer> roleIds = roles.stream()
+        .map(RolesModel::getId)
+        .collect(Collectors.toSet());
+
+    rolesPermissionsService.deleteByRoleIdIn(roleIds);
+
+    rolesRepository.deleteAll(roles);
   }
 }

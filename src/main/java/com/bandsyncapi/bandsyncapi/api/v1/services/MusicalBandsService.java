@@ -72,4 +72,11 @@ public interface MusicalBandsService {
    * @param logo - Logo
    */
   void updateLogoById (UUID musicalBandId, String logo);
+
+  /**
+   * deletes a musical band by id
+   * 
+   * @param musicalBandId = musical band id
+   */
+  void deleteById(UUID musicalBandId);
 }

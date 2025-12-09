@@ -1,6 +1,7 @@
 package com.bandsyncapi.bandsyncapi.api.v1.services;
 
 import java.util.List;
+import java.util.UUID;
 
 import com.bandsyncapi.bandsyncapi.api.v1.dto.roles.RolesPermissionsDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.roles.RolesPermissionsPutDto;
@@ -49,4 +50,11 @@ public interface RolesService {
    * @return
    */
   void deleteRoleById (Integer roleId);
+
+  /**
+   * delete roles and roles permissions by musical band id
+   * 
+   * @param musicalBandId - musical band id
+   */
+  void deleteRoleAndRolesPermissionsByMusicalBandId(UUID musicalBandId);
 }

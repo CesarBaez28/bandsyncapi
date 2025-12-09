@@ -71,4 +71,14 @@ public interface ArtistsRepository extends JpaRepository<ArtistsModel, Integer> 
   @Modifying
   @Query(value = "DELETE FROM artists WHERE id = :id", nativeQuery = true)
   void deleteArtistById(@Param("id") Integer id);
+
+  /**
+   * Deletes by musical band id
+   * 
+   * @param musicalBandId - musical band id
+   */
+  @Transactional
+  @Modifying
+  @Query(value = "DELETE FROM artists WHERE musical_band_id = :musicalBandId", nativeQuery = true)
+  void deleteByMusicalBandId(@Param("musicalBandId") UUID musicalBandId);
 }

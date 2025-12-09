@@ -123,4 +123,10 @@ public class ArtistsServiceImpl implements ArtistsService {
     return artistsRepository.findByMusicalBandIdAndName(musicalBandId, name,
         PageRequest.of(page, size, Sort.by("name")));
   }
+
+  @Override
+  public void deleteArtistsByMusicalBandId(UUID musicalBandId) {
+    log.info("Deleting artists by musical band id: {}", musicalBandId);
+    artistsRepository.deleteByMusicalBandId(musicalBandId);
+  }
 }

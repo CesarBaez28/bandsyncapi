@@ -3,6 +3,7 @@ package com.bandsyncapi.bandsyncapi.api.v1.repositories;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.bandsyncapi.bandsyncapi.api.v1.models.UsersModel;
@@ -28,11 +29,21 @@ public interface UsersMusicalBandsRepository extends JpaRepository<UsersMusicalB
   /**
    * Delete a user from a musical band
    * 
-   * @param userId - UUID of the user
+   * @param userId        - UUID of the user
    * @param musicalBandId - UUID of the musical band
    */
   @Transactional
   @Modifying
   @Query("DELETE FROM UsersMusicalBandsModel umb WHERE umb.user.id = :userId AND umb.musicalBand.id = :musicalBandId")
   void deleteByUserIdAndMusicalBandId(UUID userId, UUID musicalBandId);
+
+  /**
+   * Delete by musical band id
+   * 
+   * @param musicalBandId - musical band id
+   */
+  @Transactional
+  @Modifying
+  @Query(value = "DELETE FROM users_musical_bands WHERE musical_band_id = :musicalBandId", nativeQuery = true)
+  void deleteByMusicalBandId(@Param("musicalBandId") UUID musicalBandId);
 }

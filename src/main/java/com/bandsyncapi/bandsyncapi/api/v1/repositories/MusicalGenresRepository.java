@@ -72,4 +72,14 @@ public interface MusicalGenresRepository extends JpaRepository<MusicalGenresMode
   @Modifying
   @Query(value = "DELETE FROM musical_genres WHERE id = :id", nativeQuery = true)
   void deleteMusicalGenreById(@Param("id") Integer id);
+
+  /**
+   * Delete musical genres by musical band id
+   * 
+   * @param musicalBandId - musical band id
+   */
+  @Transactional
+  @Modifying
+  @Query(value = "DELETE FROM musical_genres WHERE musical_band_id = :musicalBandId", nativeQuery = true)
+  void deleteByMusicalBandId(@Param("musicalBandId") UUID musicalBandId);
 }

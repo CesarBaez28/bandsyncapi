@@ -102,4 +102,10 @@ public class RolesPermissionsServiceImpl implements RolesPermissionsService {
     log.info("Deleting role and permissions by role id: {}", roleId);
     rolesPermissionsRepository.deleteByRoleId(roleId);
   }
+
+  @Override
+  public void deleteByRoleIdIn(Set<Integer> roleIds) {
+    log.info("Deleting a list of role using ids: {}", roleIds);
+    rolesPermissionsRepository.deleteByRoleIdIn(roleIds);
+  }
 }

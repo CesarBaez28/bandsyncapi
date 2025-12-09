@@ -64,13 +64,23 @@ public interface MusicalRolesUsersRepository extends JpaRepository<MusicalRolesU
   @Modifying
   @Transactional
   @Query("""
-      DELETE FROM MusicalRolesUsersModel mru 
-      WHERE mru.user.id = :userId 
-      AND mru.musicalBand.id = :musicalBandId 
+      DELETE FROM MusicalRolesUsersModel mru
+      WHERE mru.user.id = :userId
+      AND mru.musicalBand.id = :musicalBandId
       AND mru.musicalRole.id
       IN :roleIds
       """)
   void deleteByUserIdAndBandIdAndRoleIds(@Param("userId") UUID userId,
       @Param("musicalBandId") UUID musicalBandId,
       @Param("roleIds") Set<Integer> roleIds);
+
+  /**
+   * Delete by musical band id
+   * 
+   * @param musicalBandId - musical band id
+   */
+  @Modifying
+  @Transactional
+  @Query(value = "DELETE FROM musical_roles_users WHERE musical_band_id = :musicalBandId", nativeQuery = true)
+  void deleteByMusicalBandId(@Param("musicalBandId") UUID musicalBandId);
 }

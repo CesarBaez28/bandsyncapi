@@ -44,9 +44,9 @@ public class SongsServiceImpl implements SongsService {
   /**
    * Constructor
    * 
-   * @param songsRepository - Songs repository
+   * @param songsRepository            - Songs repository
    * @param repertoiresSongsRepository - repository for repertoires_songs table
-   * @param filesService    - Service to upload files
+   * @param filesService               - Service to upload files
    */
   public SongsServiceImpl(SongsRepository songsRepository, RepertoiresSongsRepository repertoiresSongsRepository,
       FilesService filesService) {
@@ -145,6 +145,31 @@ public class SongsServiceImpl implements SongsService {
     songsRepository.deleteById(id);
 
     log.info("Song successfully deleted by id: {}", id);
+  }
+
+  @Override
+  public void deleteSongsByMusicalBandId(UUID musicalBandId) {
+    log.info("Deleting songs by musical band: {}", musicalBandId);
+
+    List<SongsModel> songs = songsRepository.findByMusicalBandId(musicalBandId);
+
+    CompletableFuture.runAsync(() -> {
+      for (SongsModel songModel : songs) {
+        if (!songModel.getSheetMusic().isEmpty()) {
+          String fileName = AwsUtils.getFileNameFromAwsUrl(songModel.getSheetMusic());
+          String fileLocation = (awsSongsDirectory + "/" + fileName).trim();
+          try {
+            filesService.deleteFile(fileLocation);
+            log.info("Deleted file: {}", fileLocation);
+          } catch (Exception e) {
+            log.error("Error deleting file {}: {}", fileLocation, e.getMessage(), e);
+          }
+          log.info("Files deleted in background (parallel execution)");
+        }
+      }
+    });
+
+    songsRepository.deleteByMusicalBandId(musicalBandId);
   }
 
   @Override

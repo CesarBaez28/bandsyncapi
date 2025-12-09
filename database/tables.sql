@@ -198,16 +198,3 @@ CREATE TABLE events (
     location VARCHAR(255) NOT NULL DEFAULT '',
     status BIT NOT NULL DEFAULT 1
 );
-
--- Table: Absences
-CREATE TABLE absences (
-    id BINARY (16) PRIMARY KEY DEFAULT (UUID_TO_BIN(UUID())),
-    user_id BINARY(16) NOT NULL,
-    musical_band_id BINARY(16) NOT NULL,
-    FOREIGN KEY (musical_band_id) REFERENCES musical_bands(id),
-    FOREIGN KEY (user_id) REFERENCES users(id),
-    date_from DATETIME NOT NULL,
-    date_to DATETIME NOT NULL,
-    description TEXT,
-    status BIT NOT NULL DEFAULT 1
-);

@@ -55,4 +55,11 @@ public interface ArtistsService {
    * @param id - Id of the artist to be deleted.
    */
   public void deleteById(Integer id);
+
+  /**
+   * Deletes artists by musical band id
+   * 
+   * @param musicalBandId - musical band id
+   */
+  public void deleteArtistsByMusicalBandId(UUID musicalBandId);
 }
