@@ -2,8 +2,10 @@ package com.bandsyncapi.bandsyncapi.api.v1.services.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import com.bandsyncapi.bandsyncapi.api.v1.dto.musicalbands.MusicalBandsDto;
@@ -79,6 +81,12 @@ public class UsersRolesServiceImpl implements UsersRolesService {
   @Override
   public void assignRoleToUserInBand(Integer roleId, UUID userId, UUID musicalBandId) {
     log.info("Assigning role {} to user {} in band {}", roleId, userId, musicalBandId);
+
+    boolean userExist = usersRolesRepository.findByUserIdAndMusicalBandId(userId, musicalBandId).isPresent();
+
+    if (userExist) {
+      throw new DataIntegrityViolationException("Ya ese usuario tiene un role asignado");
+    }
 
     var userRolesModel = new UsersRolesModel(
         new RolesModel(roleId),

@@ -80,7 +80,7 @@ public class GlobalExceptionHandler {
     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
         .body(new ApiResponse<>(false,
             constraintMessages.getOrDefault(key,
-                "Ha ocurrido un error al violar una restricción de integridad de la base de datos."),
+                ex.getMessage()),
             null, null));
   }
 
@@ -187,6 +187,12 @@ public class GlobalExceptionHandler {
         .body(new ApiResponse<>(false, "The token has expired.", null, null));
   }
 
+  /**
+   * InvitationException
+   * 
+   * @param ex - InvitationException object 
+   * @return An ApiResponse object with the error
+   */
   @ExceptionHandler(InvitationException.class)
   public ResponseEntity<ApiResponse<Void>> handleInvitationException(InvitationException ex) {
     return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
