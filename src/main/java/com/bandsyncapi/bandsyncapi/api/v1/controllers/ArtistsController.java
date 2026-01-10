@@ -4,6 +4,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.bandsyncapi.bandsyncapi.api.v1.constants.UserPermissions;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.artists.ArtistsDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.artists.ArtistsPostDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.artists.ArtistsPutDto;
@@ -22,6 +23,7 @@ import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -63,6 +65,7 @@ public class ArtistsController {
    * @return - An ApiResponse object with the new artist
    */
   @PostMapping("/save")
+  @PreAuthorize("hasRole('" + UserPermissions.ADD_ARTIST + "')")
   public ResponseEntity<ApiResponse<ArtistsDto>> save(@Valid @RequestBody ArtistsPostDto artistsPostDto) {
     ArtistsModel artistsModel = artistsMapper.toModel(artistsPostDto);
     ArtistsModel artistsModelSaved = artistsService.save(artistsModel);
@@ -127,6 +130,7 @@ public class ArtistsController {
    *         updated
    */
   @PutMapping("/updateArtistName/{id}")
+  @PreAuthorize("hasRole('" + UserPermissions.UPDATE_ARTIST + "')")
   public ResponseEntity<ApiResponse<Void>> updateArtistName(@PathVariable Integer id,
       @Valid @RequestBody ArtistsPutDto artistsPutDto) {
     artistsService.updateArtist(id, artistsPutDto.name());
@@ -144,6 +148,7 @@ public class ArtistsController {
    * @return An ApiResponse object indicating that the musical genre was deleted
    */
   @DeleteMapping("/delete/{id}")
+  @PreAuthorize("hasRole('" + UserPermissions.DELETE_ARTIST + "')")
   public ResponseEntity<ApiResponse<Void>> deleteById(@PathVariable Integer id) {
     artistsService.deleteById(id);
 

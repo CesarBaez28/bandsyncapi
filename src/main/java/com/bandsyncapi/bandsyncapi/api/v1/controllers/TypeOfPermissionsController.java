@@ -3,6 +3,7 @@ package com.bandsyncapi.bandsyncapi.api.v1.controllers;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.bandsyncapi.bandsyncapi.api.v1.constants.UserPermissions;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.permissions.TypeOfPermissionDto;
 import com.bandsyncapi.bandsyncapi.api.v1.mappers.TypeOfPermissionsMapper;
 import com.bandsyncapi.bandsyncapi.api.v1.models.TypeOfPermissionsModel;
@@ -14,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 
 /**
@@ -46,6 +48,7 @@ public class TypeOfPermissionsController {
    * @return - A ApiResponse Object with the list of type of permissions
    */
   @GetMapping("/findAll")
+  @PreAuthorize("hasRole('" + UserPermissions.VIEW_ROLES_AND_PERMISSIONS + "')")
   public ResponseEntity<ApiResponse<List<TypeOfPermissionDto>>> findAll() {
     List<TypeOfPermissionsModel> typeOfPermissions = typeOfPermissionsService.findAll();
     List<TypeOfPermissionDto> typeOfPermissionsDto = typeOfPermissionsMapper.toDtoList(typeOfPermissions);

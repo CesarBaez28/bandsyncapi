@@ -8,10 +8,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.bandsyncapi.bandsyncapi.api.v1.constants.UserPermissions;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.users.UserLoginPostDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.users.UserRegisterPostDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.users.UserSessionDto;
@@ -158,6 +160,7 @@ public class UsersController {
    * @return - ApiResponse object
    */
   @PostMapping("/users/joinUserToMusicalBand/{musicalBandId}/{userId}")
+  @PreAuthorize("hasRole('" + UserPermissions.ADD_MEMBER + "')")
   public ResponseEntity<ApiResponse<Void>> joinUserToMusicalBand(@PathVariable UUID userId,
       @PathVariable UUID musicalBandId) {
 
@@ -177,6 +180,7 @@ public class UsersController {
    * @return - ApiResponse object
    */
   @PostMapping("/users/leaveMusicalBand/{musicalBandId}/{userId}")
+  @PreAuthorize("hasRole('" + UserPermissions.DELETE_MEMBER + "')")
   public ResponseEntity<ApiResponse<Void>> leaveMusicalBand(@PathVariable UUID userId,
       @PathVariable UUID musicalBandId) {
 
@@ -213,7 +217,7 @@ public class UsersController {
 
   /**
    * finds users by musical band id and by
-   * username, email, firstname, lastanme and phone number
+   * username, email, firstname, lastname and phone number
    * 
    * @param musicalBandId - musical band id
    * @param query         - search term
@@ -221,6 +225,7 @@ public class UsersController {
    * @return A Page of type UsersDto
    */
   @GetMapping("/users/find/{musicalBandId}")
+  @PreAuthorize("hasRole('" + UserPermissions.VIEW_MEMBERS + "')")
   public ResponseEntity<ApiResponse<PagedData<UsersDto>>> find(
       @PathVariable UUID musicalBandId,
       @RequestParam String query,

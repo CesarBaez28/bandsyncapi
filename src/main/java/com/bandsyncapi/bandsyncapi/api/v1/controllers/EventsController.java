@@ -3,6 +3,7 @@ package com.bandsyncapi.bandsyncapi.api.v1.controllers;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.bandsyncapi.bandsyncapi.api.v1.constants.UserPermissions;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.events.EventsDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.events.EventsPutDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.events.EventsPostDto;
@@ -19,6 +20,7 @@ import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -56,6 +58,7 @@ public class EventsController {
    * @return - The new event @see EventsDto
    */
   @PostMapping("/save")
+  @PreAuthorize("hasRole('" + UserPermissions.ADD_EVENT + "')")
   public ResponseEntity<ApiResponse<EventsDto>> save(@Valid @RequestBody EventsPostDto eventsPostDto) {
     EventsModel eventsModel = eventsMapper.toModel(eventsPostDto);
     EventsModel savedEvent = eventsService.save(eventsModel);
@@ -97,6 +100,7 @@ public class EventsController {
    * @return - An ApiResponse object
    */
   @PutMapping("/update/{id}")
+  @PreAuthorize("hasRole('" + UserPermissions.UPDATE_EVENT + "')")
   public ResponseEntity<ApiResponse<Void>> updateEvent(@Valid @PathVariable UUID id, @Valid @RequestBody EventsPutDto eventsPutDto) {
     eventsService.updateEvent(id, eventsPutDto);
 
@@ -112,6 +116,7 @@ public class EventsController {
    * @return - An ApiResponse object 
    */
   @DeleteMapping("/delete/{id}")
+  @PreAuthorize("hasRole('" + UserPermissions.DELETE_EVENT + "')")
   public ResponseEntity<ApiResponse<Void>> deleteEvent(@PathVariable UUID id) {
     eventsService.deleteEvent(id);
 

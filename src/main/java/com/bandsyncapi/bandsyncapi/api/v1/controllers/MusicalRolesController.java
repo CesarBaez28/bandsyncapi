@@ -4,6 +4,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.bandsyncapi.bandsyncapi.api.v1.constants.UserPermissions;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.musicalroles.MusicalRolesDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.musicalroles.MusicalRolesPostDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.musicalroles.MusicalRolesPutDto;
@@ -22,6 +23,7 @@ import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -65,6 +67,7 @@ public class MusicalRolesController {
    * @return -An object ApiResponse with the new musical role
    */
   @PostMapping("/save")
+  @PreAuthorize("hasRole('" + UserPermissions.ADD_MUSICAL_ROLE + "')")
   public ResponseEntity<ApiResponse<MusicalRolesDto>> save(
       @Valid @RequestBody MusicalRolesPostDto musicalRolesPostDto) {
     MusicalRolesModel musicalRolesModel = musicalRolesMapper.toModel(musicalRolesPostDto);
@@ -138,6 +141,7 @@ public class MusicalRolesController {
    *         updated
    */
   @PutMapping("/updateMusicalRoleName/{id}")
+  @PreAuthorize("hasRole('" + UserPermissions.UPDATE_MUSICAL_ROLE + "')")
   public ResponseEntity<ApiResponse<Void>> updateMusicalRoleName(@PathVariable Integer id,
       @Valid @RequestBody MusicalRolesPutDto musicalRolesPutDto) {
     musicalRolesService.updateMusicalRoleName(id, musicalRolesPutDto.name());
@@ -155,6 +159,7 @@ public class MusicalRolesController {
    * @return - An ApiResponse object indicating that the musical role was deleted
    */
   @DeleteMapping("/delete/{id}")
+  @PreAuthorize("hasRole('" + UserPermissions.DELETE_MUSICAL_ROLE + "')")
   public ResponseEntity<ApiResponse<Void>> deleteMusicalRole(@PathVariable Integer id) {
     musicalRolesService.deleteById(id);
 

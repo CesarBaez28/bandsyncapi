@@ -8,6 +8,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -190,12 +191,24 @@ public class GlobalExceptionHandler {
   /**
    * InvitationException
    * 
-   * @param ex - InvitationException object 
+   * @param ex - InvitationException object
    * @return An ApiResponse object with the error
    */
   @ExceptionHandler(InvitationException.class)
   public ResponseEntity<ApiResponse<Void>> handleInvitationException(InvitationException ex) {
     return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+        .body(new ApiResponse<>(false, ex.getMessage(), null, null));
+  }
+
+  /**
+   * AuthorizationDeniedException
+   * 
+   * @param ex - AuthorizationDeniedException object
+   * @return - An ApiResponse object with the error
+   */
+  @ExceptionHandler(AuthorizationDeniedException.class)
+  public ResponseEntity<ApiResponse<Void>> handleAuthorizationDeniedException(AuthorizationDeniedException ex) {
+    return ResponseEntity.status(HttpStatus.FORBIDDEN)
         .body(new ApiResponse<>(false, ex.getMessage(), null, null));
   }
 

@@ -4,6 +4,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.bandsyncapi.bandsyncapi.api.v1.constants.UserPermissions;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.songs.SongsDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.songs.SongsPostDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.songs.SongsPutDto;
@@ -24,6 +25,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -62,6 +64,7 @@ public class SongsController {
    * @return - SongsDto @see SongsDto
    */
   @PostMapping(path = "/save", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  @PreAuthorize("hasRole('" + UserPermissions.ADD_SONG + "')")
   public ResponseEntity<ApiResponse<SongsDto>> save(
       @Valid @RequestPart("song") SongsPostDto songsPostDto,
       @RequestPart(value = "file", required = false) MultipartFile file) throws IOException {
@@ -146,6 +149,7 @@ public class SongsController {
    * @return
    */
   @PutMapping(path = "/update/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  @PreAuthorize("hasRole('" + UserPermissions.UPDATE_SONG + "')")
   public ResponseEntity<ApiResponse<Void>> update(
       @PathVariable Integer id,
       @Valid @RequestPart("song") SongsPutDto songsPutDto,
@@ -165,6 +169,7 @@ public class SongsController {
    * @return An ApiResponse object
    */
   @DeleteMapping("/delete/{id}")
+  @PreAuthorize("hasRole('" + UserPermissions.DELETE_SONG + "')")
   public ResponseEntity<ApiResponse<Void>> delete(@PathVariable Integer id) {
     songsService.deleteById(id);
 

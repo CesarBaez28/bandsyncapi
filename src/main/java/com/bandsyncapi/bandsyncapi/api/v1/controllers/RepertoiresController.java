@@ -3,6 +3,7 @@ package com.bandsyncapi.bandsyncapi.api.v1.controllers;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.bandsyncapi.bandsyncapi.api.v1.constants.UserPermissions;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.repertoires.RepertoiresDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.repertoires.RepertoiresPostDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.repertoires.RepertoiresPutDto;
@@ -25,6 +26,7 @@ import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -73,6 +75,7 @@ public class RepertoiresController {
    * @return - An ApiResponse object
    */
   @PostMapping("/save")
+  @PreAuthorize("hasRole('" + UserPermissions.ADD_REPERTOIRE + "')")
   public ResponseEntity<ApiResponse<Void>> save(@Valid @RequestBody RepertoiresPostDto repertoiresPostDto) {
     RepertoiresModel repertoiresModel = repertoiresMapper.toModel(repertoiresPostDto);
     RepertoiresModel repertoiresModelSaved = repertoiresService.save(repertoiresModel);
@@ -177,6 +180,7 @@ public class RepertoiresController {
    * @return - An ApiResponse object
    */
   @PutMapping("/updateRepertoire/{id}")
+  @PreAuthorize("hasRole('" + UserPermissions.UPDATE_REPERTOIRE + "')")
   public ResponseEntity<ApiResponse<Void>> updateRepertoire(@PathVariable UUID id,
       @Valid @RequestBody RepertoiresPutDto repertoiresPutDto) {
     repertoiresService.updateRepertoire(id, repertoiresPutDto);
@@ -194,6 +198,7 @@ public class RepertoiresController {
    * @return - An ApiResponse object
    */
   @DeleteMapping("/delete/{id}")
+  @PreAuthorize("hasRole('" + UserPermissions.DELETE_REPERTOIRE + "')")
   public ResponseEntity<ApiResponse<Void>> deleteById(@PathVariable UUID id) {
     repertoiresService.deleteById(id);
 

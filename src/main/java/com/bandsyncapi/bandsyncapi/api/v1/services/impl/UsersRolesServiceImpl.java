@@ -2,7 +2,6 @@ package com.bandsyncapi.bandsyncapi.api.v1.services.impl;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.dao.DataIntegrityViolationException;

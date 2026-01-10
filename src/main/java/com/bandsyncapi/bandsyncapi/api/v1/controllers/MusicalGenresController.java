@@ -3,6 +3,7 @@ package com.bandsyncapi.bandsyncapi.api.v1.controllers;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.bandsyncapi.bandsyncapi.api.v1.constants.UserPermissions;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.musicalgenres.MusicalGenreDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.musicalgenres.MusicalGenrePostDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.musicalgenres.MusicalGenrePutDto;
@@ -21,6 +22,7 @@ import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -61,6 +63,7 @@ public class MusicalGenresController {
    * @return - An object ApiResponse with the new musical genre
    */
   @PostMapping(path = "/save")
+  @PreAuthorize("hasRole('" + UserPermissions.ADD_MUSICAL_GENRE + "')")
   public ResponseEntity<ApiResponse<MusicalGenreDto>> saveMusicalGenre(
       @Valid @RequestBody MusicalGenrePostDto musicalGenrePostDto) {
     MusicalGenresModel musicalGenre = musicalGenresMapper.toModel(musicalGenrePostDto);
@@ -127,6 +130,7 @@ public class MusicalGenresController {
    *         updated
    */
   @PutMapping("/updateMusicalGenreName/{id}")
+  @PreAuthorize("hasRole('" + UserPermissions.UPDATE_MUSICAL_GENRE + "')")
   public ResponseEntity<ApiResponse<Void>> updateMusicalGenreName(@PathVariable Integer id,
       @Valid @RequestBody MusicalGenrePutDto musicalGenrePutDto) {
     musicalGenresService.updateGenreName(id, musicalGenrePutDto.name());
@@ -144,6 +148,7 @@ public class MusicalGenresController {
    * @return - An object ApiResponse indicating that the musical genre was deleted
    */
   @DeleteMapping("/delete/{id}")
+  @PreAuthorize("hasRole('" + UserPermissions.DELETE_MUSICAL_GENRE + "')")
   public ResponseEntity<ApiResponse<Void>> deleteMusicalGenre(@PathVariable Integer id) {
     musicalGenresService.deleteById(id);
 

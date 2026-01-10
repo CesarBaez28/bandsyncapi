@@ -3,6 +3,7 @@ package com.bandsyncapi.bandsyncapi.api.v1.controllers;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.bandsyncapi.bandsyncapi.api.v1.constants.UserPermissions;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.roles.RoleAndPermissionsDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.roles.RolesDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.roles.RolesPermissionsDto;
@@ -30,6 +31,7 @@ import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -84,6 +86,7 @@ public class RolesController {
    * @return RolesPermissionsDto object
    */
   @PostMapping("/save")
+  @PreAuthorize("hasRole('" + UserPermissions.ADD_ROLE + "')")
   public ResponseEntity<ApiResponse<RolesPermissionsDto>> save(@Valid @RequestBody RolesPostDto rolesPostDto) {
 
     RolesPermissionsDto response = rolesService.saveRoleAndPermissions(rolesPostDto);
@@ -103,6 +106,7 @@ public class RolesController {
    * @return ApiResponse indicating the role was assigned
    */
   @PostMapping("/assign/role/{roleId}/user/{userId}/musicalBand/{musicalBandId}")
+  @PreAuthorize("hasRole('" + UserPermissions.ASSIGN_ROLE + "')")
   public ResponseEntity<ApiResponse<Void>> assignRoleToUserInBand(@PathVariable Integer roleId,
       @PathVariable UUID userId, @PathVariable UUID musicalBandId) {
     usersRolesService.assignRoleToUserInBand(roleId, userId, musicalBandId);
@@ -122,6 +126,7 @@ public class RolesController {
    * @return - ApiResponse indicating the user role was updated
    */
   @PutMapping("/user/{userId}/musicalBand/{musicalBandId}")
+  @PreAuthorize("hasRole('" + UserPermissions.UPDATE_ROLE + "')")
   public ResponseEntity<ApiResponse<Void>> updateUserRole(@PathVariable UUID userId, @PathVariable UUID musicalBandId,
       @RequestBody RolesModel newRole) {
 
@@ -155,6 +160,7 @@ public class RolesController {
    * @return - A ApiResponse Object with the roles permissions
    */
   @GetMapping("/findByMusicalBandId/{musicalBandId}")
+  @PreAuthorize("hasRole('" + UserPermissions.VIEW_ROLES_AND_PERMISSIONS + "')")
   public ResponseEntity<ApiResponse<List<RoleAndPermissionsDto>>> findByMusicalBandId(
       @PathVariable("musicalBandId") UUID musicalBandId) {
     List<RoleAndPermissionsDto> rolesPermissions = rolesPermissionsService.findByMusicalBandId(musicalBandId);
@@ -173,6 +179,7 @@ public class RolesController {
    * @return Role and permissions of ther user in the musical band
    */
   @GetMapping("/findByUserIdAndMusicalBandId/{userId}/{musicalBandId}")
+  @PreAuthorize("hasRole('" + UserPermissions.VIEW_ROLES_AND_PERMISSIONS + "')")
   public ResponseEntity<ApiResponse<RoleAndPermissionsDto>> findByUserIdAndMusicalBandId(@PathVariable UUID userId,
       @PathVariable UUID musicalBandId) {
     RoleAndPermissionsDto userRoles = usersRolesService.findByUserIdAndMusicalBandId(userId, musicalBandId);
@@ -207,6 +214,7 @@ public class RolesController {
    * @return - List of users and his roles in the musical band
    */
   @GetMapping("/users/musicalBand/{musicalBandId}")
+  @PreAuthorize("hasRole('" + UserPermissions.VIEW_ROLES_AND_PERMISSIONS + "')")
   public ResponseEntity<ApiResponse<List<UserRoleDto>>> findUsersRolesByMusicalBandId(
       @PathVariable UUID musicalBandId) {
     List<UserRoleDto> usersRoles = usersRolesService.findByMusicalBand(new MusicalBandsModel(musicalBandId));
@@ -224,6 +232,7 @@ public class RolesController {
    * @return ApiResponse Object
    */
   @PutMapping("/update")
+  @PreAuthorize("hasRole('" + UserPermissions.UPDATE_ROLE + "')")
   public ResponseEntity<ApiResponse<Void>> update(@Valid @RequestBody RolesPermissionsPutDto rolesPermissionsPutDto) {
     rolesService.updateRolesPermissions(rolesPermissionsPutDto);
 
@@ -241,6 +250,7 @@ public class RolesController {
    *         not.
    */
   @DeleteMapping("/delete/{roleId}")
+  @PreAuthorize("hasRole('" + UserPermissions.DELETE_ROLE + "')")
   public ResponseEntity<ApiResponse<List<UsersDto>>> delete(@PathVariable Integer roleId) {
     List<UsersRolesModel> usersRole = usersRolesService.findByRoleId(roleId);
 
@@ -266,6 +276,7 @@ public class RolesController {
    *         band
    */
   @DeleteMapping("/delete/user/{userId}/musicalBand/{musicalBandId}")
+  @PreAuthorize("hasRole('" + UserPermissions.DELETE_ROLE + "')")
   public ResponseEntity<ApiResponse<Void>> deleteUserRoleFromMusicalBand(@PathVariable UUID userId,
       @PathVariable UUID musicalBandId) {
     usersRolesService.deleteByUserIdAndMusicalBandId(userId, musicalBandId);
