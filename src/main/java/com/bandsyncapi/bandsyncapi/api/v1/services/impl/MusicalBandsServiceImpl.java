@@ -56,7 +56,7 @@ public class MusicalBandsServiceImpl implements MusicalBandsService {
   @Value("${aws.bucket.logos.directory}")
   private String awsLogosDirectory;
 
-  private static final String OWNER_ROLE_NAME = "Propietario";
+  private static final String ADMIN_ROLE_NAME = "Administrador";
 
   /**
    * Hyphenate a name
@@ -140,7 +140,7 @@ public class MusicalBandsServiceImpl implements MusicalBandsService {
 
     // Save the role of the user in the musical band
     var role = rolesService.save(RolesModel.builder()
-        .name(OWNER_ROLE_NAME)
+        .name(ADMIN_ROLE_NAME)
         .musicalBand(savedMusicalBandsModel)
         .status(true).build());
 
