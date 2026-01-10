@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.bandsyncapi.bandsyncapi.api.v1.constants.UserPermissions;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.invitations.InviteRequestDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.musicalbands.MusicalBandPutDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.musicalbands.MusicalBandsDto;
@@ -27,6 +28,7 @@ import java.util.UUID;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -100,6 +102,7 @@ public class MusicalBandsController {
    * @throws IOException
    */
   @PutMapping(path = "/update/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  @PreAuthorize("hasRole('" + UserPermissions.UPDATE_BAND + "')")
   public ResponseEntity<ApiResponse<MusicalBandPutDto>> update(
       @PathVariable UUID id,
       @Valid @RequestPart("musicalBand") MusicalBandPutDto musicalBandPutDto,
@@ -188,6 +191,7 @@ public class MusicalBandsController {
    * @return An ApiResponse object
    */
   @DeleteMapping("/delete/{id}")
+  @PreAuthorize("hasRole('" + UserPermissions.DELETE_BAND + "')")
   public ResponseEntity<ApiResponse<Void>> delete(@PathVariable UUID id) {
     musicalBandDeletionService.deleteMusuicalBand(id);
 

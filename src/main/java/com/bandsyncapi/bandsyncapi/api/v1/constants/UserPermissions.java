@@ -68,4 +68,10 @@ public final class UserPermissions {
   public static final String ADD_MUSICAL_ROLE = "Agregar rol musical";
   public static final String UPDATE_MUSICAL_ROLE = "Modificar rol musical";
   public static final String DELETE_MUSICAL_ROLE = "Eliminar rol musical";
+
+  // =========================
+  // Musical Bands (Bandas musicales)
+  // =========================
+  public static final String UPDATE_BAND = "Editar Banda";
+  public static final String DELETE_BAND = "Eliminar Banda";
 }
