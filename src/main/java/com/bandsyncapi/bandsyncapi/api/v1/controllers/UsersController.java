@@ -94,7 +94,7 @@ public class UsersController {
 
     log.info("Generated token for user: {}", userLoginPostDto.username());
 
-    UsersModel userModel = usersService.getByUsername(userLoginPostDto.username());
+    UsersModel userModel = usersService.getByUsername(userLoginPostDto.username());  
 
     UserSessionDto userSessionDto = usersMapper.toSessionDto(userModel, token);
 
