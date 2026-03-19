@@ -47,6 +47,7 @@ class RolesPermissionsRepositoryTest {
     var savedMusicalBand = musicalBandsRepository.save(musicalBand);
 
     var role = RolesModel.builder()
+        .id(1)
         .name("Role Test")
         .musicalBand(savedMusicalBand)
         .status(true)
@@ -63,7 +64,7 @@ class RolesPermissionsRepositoryTest {
     rolesPermissionsRepository.save(new RolesPermissionsModel(savedRole, permission, true));
 
     // When
-    List<RolesPermissionsModel> rolesPermissionsList = rolesPermissionsRepository.findAllByRole(savedRole);
+    List<RolesPermissionsModel> rolesPermissionsList = rolesPermissionsRepository.findAllByRole(savedRole.getId());
 
     // Then
     assertNotNull(rolesPermissionsList);
@@ -86,6 +87,7 @@ class RolesPermissionsRepositoryTest {
     var savedMusicalBand = musicalBandsRepository.save(musicalBand);
 
     var role = RolesModel.builder()
+        .id(1)
         .name("Role Test")
         .musicalBand(savedMusicalBand)
         .status(true)
@@ -104,7 +106,7 @@ class RolesPermissionsRepositoryTest {
     // When
     rolesPermissionsRepository.deleteByRoleIdAndPermissionIdIn(savedRole.getId(), Set.of(permission.getId())); 
 
-    List<RolesPermissionsModel> rolesPermissionsList = rolesPermissionsRepository.findAllByRole(savedRole);
+    List<RolesPermissionsModel> rolesPermissionsList = rolesPermissionsRepository.findAllByRole(savedRole.getId());
 
     // Then
     assertTrue(rolesPermissionsList.isEmpty());

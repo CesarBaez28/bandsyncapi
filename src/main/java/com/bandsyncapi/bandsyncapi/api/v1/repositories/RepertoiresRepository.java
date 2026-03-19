@@ -30,7 +30,7 @@ public interface RepertoiresRepository extends JpaRepository<RepertoiresModel, U
    */
   @Query("""
       SELECT rp FROM RepertoiresModel rp
-      JOIN rp.musicalBand mb
+      JOIN FETCH rp.musicalBand mb
       WHERE mb.id = :musicalBandId
         """)
   List<RepertoiresModel> findByMusicalBandId(@Param("musicalBandId") UUID musicalBandId);
@@ -45,7 +45,7 @@ public interface RepertoiresRepository extends JpaRepository<RepertoiresModel, U
    */
   @Query("""
       SELECT rp FROM RepertoiresModel rp
-      JOIN rp.musicalBand mb
+      JOIN FETCH rp.musicalBand mb
       WHERE mb.id = :musicalBandId AND
       (
         rp.name LIKE %:term% OR

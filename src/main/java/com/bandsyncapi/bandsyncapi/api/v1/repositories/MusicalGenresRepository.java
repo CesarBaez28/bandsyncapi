@@ -30,7 +30,7 @@ public interface MusicalGenresRepository extends JpaRepository<MusicalGenresMode
    */
   @Query("""
         SELECT mr FROM MusicalGenresModel mr
-        JOIN mr.musicalBand mb
+        JOIN FETCH mr.musicalBand mb
         WHERE mb.id = :musicalBandId
       """)
   List<MusicalGenresModel> findByMusicalBandId(@Param("musicalBandId") UUID musicalBandId);
@@ -45,7 +45,7 @@ public interface MusicalGenresRepository extends JpaRepository<MusicalGenresMode
    */
   @Query("""
       SELECT mr FROM MusicalGenresModel mr
-      JOIN mr.musicalBand mb
+      JOIN FETCH mr.musicalBand mb
       WHERE mb.id = :musicalBandId AND mr.name LIKE %:name%
         """)
   Page<MusicalGenresModel> findByMusicalBandIdAndName(@Param("musicalBandId") UUID musicalBandId,

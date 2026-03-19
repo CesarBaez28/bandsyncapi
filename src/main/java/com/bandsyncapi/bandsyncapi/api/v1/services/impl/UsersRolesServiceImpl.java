@@ -111,7 +111,7 @@ public class UsersRolesServiceImpl implements UsersRolesService {
   @Override
   public List<UsersRolesModel> findByRoleId(Integer roleId) {
     log.info("Finding users with role id: {} ", roleId);
-    return usersRolesRepository.findByRole(new RolesModel(roleId));
+    return usersRolesRepository.findByRole(roleId);
   }
 
   @Override
@@ -123,7 +123,7 @@ public class UsersRolesServiceImpl implements UsersRolesService {
             "Role not found by user " + userId + " and musicalBand " + musicalBandId));
 
     List<RolesPermissionsModel> rolesPermissionsModel = rolesPermissionsRepository
-        .findAllByRole(usersRolesModel.getRole());
+        .findAllByRole(usersRolesModel.getRole().getId());
 
     List<PermissionDto> permissions = rolesPermissionsModel.stream()
         .map(RolesPermissionsModel::getPermission)
@@ -139,14 +139,18 @@ public class UsersRolesServiceImpl implements UsersRolesService {
   public List<UserRolesAndPermissionsDto> findByUser(UsersModel user) {
     log.info("Finding all of a user's roles in the different bands they belong to ");
 
-    List<UsersRolesModel> userRolesModel = usersRolesRepository.findByUser(user);
+    List<UsersRolesModel> userRolesModel = usersRolesRepository.findByUser(user.getId());
 
     List<RolesModel> roles = userRolesModel.stream()
         .map(UsersRolesModel::getRole)
         .distinct()
         .toList();
 
-    List<RolesPermissionsModel> rolesPermissions = rolesPermissionsRepository.findAllByRoleIn(roles);
+    List<Integer> roleIds = roles.stream()
+        .map(RolesModel::getId)
+        .toList();
+
+    List<RolesPermissionsModel> rolesPermissions = rolesPermissionsRepository.findAllByRoleIn(roleIds);
 
     List<UserRolesAndPermissionsDto> userRolesAndPermissions = new ArrayList<>();
     for (RolesModel role : roles) {
@@ -168,7 +172,7 @@ public class UsersRolesServiceImpl implements UsersRolesService {
   public List<UserRoleDto> findByMusicalBand(MusicalBandsModel musicalBand) {
     log.info("Finding all users roles in the musical band: {} ", musicalBand.getId());
 
-    List<UsersRolesModel> usersRolesModel = usersRolesRepository.findByMusicalBand(musicalBand);
+    List<UsersRolesModel> usersRolesModel = usersRolesRepository.findByMusicalBand(musicalBand.getId());
 
     return usersRolesMapper.toDtoList(usersRolesModel);
   }

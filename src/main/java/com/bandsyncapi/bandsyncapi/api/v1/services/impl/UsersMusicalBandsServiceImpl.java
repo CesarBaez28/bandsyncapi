@@ -46,7 +46,7 @@ public class UsersMusicalBandsServiceImpl implements UsersMusicalBandsService {
   @Override
   public List<MusicalBandsDto> findByUser(UsersModel usersModel) {
     log.info("Finding musical bands by user: {} ", usersModel);
-    return musicalBandsMapper.toDtoListFromUsersMusicalBand(usersMusicalBandsRepository.findByUser(usersModel));
+    return musicalBandsMapper.toDtoListFromUsersMusicalBand(usersMusicalBandsRepository.findByUser(usersModel.getId()));
   }  
 
   @Override

@@ -30,7 +30,7 @@ public interface MusicalRolesRepository extends JpaRepository<MusicalRolesModel,
    */
   @Query("""
       SELECT mr FROM MusicalRolesModel mr
-      JOIN mr.musicalBand mb
+      JOIN FETCH mr.musicalBand mb
       WHERE mb.id = :musicalBandId
       """)
   List<MusicalRolesModel> findByMusicalBandId(@Param("musicalBandId") UUID musicalBandId);
@@ -45,7 +45,7 @@ public interface MusicalRolesRepository extends JpaRepository<MusicalRolesModel,
    */
   @Query("""
       SELECT mr FROM MusicalRolesModel mr
-      JOIN mr.musicalBand mb
+      JOIN FETCH mr.musicalBand mb
       WHERE mb.id = :musicalBandId AND mr.name LIKE %:name%
         """)
   Page<MusicalRolesModel> findAllByMusicalBandId(@Param("musicalBandId") UUID musicalBandId, @Param("name") String name,

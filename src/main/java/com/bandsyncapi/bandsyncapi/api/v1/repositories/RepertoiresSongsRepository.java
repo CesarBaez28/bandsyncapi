@@ -27,7 +27,8 @@ public interface RepertoiresSongsRepository extends JpaRepository<RepertoiresSon
    */
   @Query("""
       SELECT rs FROM RepertoiresSongsModel rs
-      JOIN rs.repertoire r
+      JOIN FETCH rs.repertoire r
+      JOIN FETCH rs.song s
       WHERE r.id = :repertoireId
       """)
   List<RepertoiresSongsModel>findByRepertoireId(UUID repertoireId); 

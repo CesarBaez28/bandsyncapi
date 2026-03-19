@@ -48,7 +48,7 @@ public class RolesPermissionsServiceImpl implements RolesPermissionsService {
   @Override
   public List<RolesPermissionsModel> findAllByRole(RolesModel role) {
     log.info("Finding all permissions for role {}", role.getId());
-    return rolesPermissionsRepository.findAllByRole(role);
+    return rolesPermissionsRepository.findAllByRole(role.getId());
   }
 
   @Override

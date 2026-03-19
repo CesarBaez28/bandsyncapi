@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.bandsyncapi.bandsyncapi.api.v1.models.UsersModel;
 import com.bandsyncapi.bandsyncapi.api.v1.models.UsersMusicalBandsKey;
 import com.bandsyncapi.bandsyncapi.api.v1.models.UsersMusicalBandsModel;
 import java.util.List;
@@ -24,7 +23,13 @@ public interface UsersMusicalBandsRepository extends JpaRepository<UsersMusicalB
    * @param user - UsersModel object
    * @return - A List of UsersMusicalBandsModel
    */
-  List<UsersMusicalBandsModel> findByUser(UsersModel user);
+  @Query("""
+      SELECT umb FROM UsersMusicalBandsModel umb
+      JOIN FETCH umb.musicalBand mb
+      JOIN FETCH umb.user u
+      WHERE u.id = :userId
+        """)
+  List<UsersMusicalBandsModel> findByUser(@Param("userId") UUID userId);
 
   /**
    * Delete a user from a musical band

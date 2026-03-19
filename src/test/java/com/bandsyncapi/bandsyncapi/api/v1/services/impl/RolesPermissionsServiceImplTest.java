@@ -30,28 +30,29 @@ class RolesPermissionsServiceImplTest {
   private RolesPermissionsServiceImpl rolesPermissionsServiceImpl;
 
   @Test
-  void testFindAllByRole () {
+  void testFindAllByRole() {
     // Given
     var role = RolesModel.builder()
-    .name("Test name")
-      .musicalBand(new MusicalBandsModel(UUID.randomUUID()))
-      .status(true)
-      .build();
+        .id(1)
+        .name("Test name")
+        .musicalBand(new MusicalBandsModel(UUID.randomUUID()))
+        .status(true)
+        .build();
 
     // When
     rolesPermissionsServiceImpl.findAllByRole(role);
 
     // Then
-    verify(rolesPermissionsRepository).findAllByRole(role);
+    verify(rolesPermissionsRepository).findAllByRole(role.getId());
   }
 
   @Test
-  void testSave () {
+  void testSave() {
     // Given
     var role = new RolesModel(1);
     var permissions = new PermissionsModel(1);
     var rolesPermissions = new RolesPermissionsModel(role, permissions, true);
-    
+
     // When
     rolesPermissionsServiceImpl.save(rolesPermissions);
 
@@ -66,12 +67,12 @@ class RolesPermissionsServiceImplTest {
   }
 
   @Test
-  void testSaveAll () {
+  void testSaveAll() {
     // Given
     var role = new RolesModel(1);
     var permissions = new PermissionsModel(1);
     var rolesPermissions = new RolesPermissionsModel(role, permissions, true);
-    
+
     List<RolesPermissionsModel> list = List.of(rolesPermissions);
 
     // When
@@ -82,7 +83,7 @@ class RolesPermissionsServiceImplTest {
   }
 
   @Test
-  void TestDeleteByRoleIdAndPermissionIds () {
+  void TestDeleteByRoleIdAndPermissionIds() {
     // Given
     Integer roleId = 1;
     Set<Integer> permissionsId = Set.of(1, 2, 3);

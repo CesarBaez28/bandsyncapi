@@ -95,7 +95,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     UsersRolesModel usersRolesModel = optionalUserRole.get();
 
     // Retrieve permissions and map to GrantedAuthority
-    Collection<GrantedAuthority> authorities = rolesPermissionsRepository.findAllByRole(usersRolesModel.getRole())
+    Collection<GrantedAuthority> authorities = rolesPermissionsRepository.findAllByRole(usersRolesModel.getRole().getId())
         .stream()
         .map(permission -> new SimpleGrantedAuthority("ROLE_" + permission.getPermission().getName()))
         .collect(Collectors.toSet());

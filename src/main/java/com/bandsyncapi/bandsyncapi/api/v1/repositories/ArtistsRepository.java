@@ -30,7 +30,7 @@ public interface ArtistsRepository extends JpaRepository<ArtistsModel, Integer> 
    */
   @Query("""
         SELECT art FROM ArtistsModel art
-        JOIN art.musicalBand mb
+        JOIN FETCH art.musicalBand mb
         WHERE mb.id = :musicalBandId
       """)
   List<ArtistsModel> findByMusicalBandId(@Param("musicalBandId") UUID musicalBandId);
@@ -44,7 +44,7 @@ public interface ArtistsRepository extends JpaRepository<ArtistsModel, Integer> 
    */
   @Query("""
         SELECT art FROM ArtistsModel art
-        JOIN art.musicalBand mb
+        JOIN FETCH art.musicalBand mb
         WHERE mb.id = :musicalBandId AND art.name LIKE %:name%
       """)
   Page<ArtistsModel> findByMusicalBandIdAndName(@Param("musicalBandId") UUID musicalBandId, @Param("name") String name,

@@ -61,12 +61,12 @@ class UsersMusicalBandsServiceImplTest {
     var userMusicalBand = new UsersMusicalBandsModel(user, musicalBand, true);
     List<UsersMusicalBandsModel> list = List.of(userMusicalBand);
 
-    given(usersMusicalBandsRepository.findByUser(user)).willReturn(list);
+    given(usersMusicalBandsRepository.findByUser(user.getId())).willReturn(list);
 
     // When
     usersMusicalBandsServiceImpl.findByUser(user);
 
     // Then
-    verify(usersMusicalBandsRepository).findByUser(user);
+    verify(usersMusicalBandsRepository).findByUser(user.getId());
   }
 }

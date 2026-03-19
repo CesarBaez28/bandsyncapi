@@ -47,7 +47,8 @@ public interface RolesRepository extends JpaRepository<RolesModel, Integer> {
    */
   @Query("""
       SELECT r FROM RolesModel r
-      WHERE r.musicalBand.id = :musicalBandId
+      JOIN FETCH r.musicalBand mb
+      WHERE mb.id = :musicalBandId
       """)
   List<RolesModel> findByMusicalBandId(@Param("musicalBandId") UUID musicalBandId);
 }

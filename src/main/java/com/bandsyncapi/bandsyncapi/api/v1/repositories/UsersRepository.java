@@ -29,7 +29,7 @@ public interface UsersRepository extends JpaRepository<UsersModel, UUID> {
    */
   @Query("""
       SELECT u FROM UsersModel u
-      JOIN UsersMusicalBandsModel um
+      JOIN FETCH UsersMusicalBandsModel um
       ON u.id = um.user.id
       WHERE um.musicalBand.id = :musicalBandId
       """)
@@ -46,7 +46,7 @@ public interface UsersRepository extends JpaRepository<UsersModel, UUID> {
    */
   @Query("""
       SELECT u FROM UsersModel u
-      JOIN UsersMusicalBandsModel um
+      JOIN FETCH UsersMusicalBandsModel um
       ON u.id = um.user.id
       WHERE um.musicalBand.id = :musicalBandId AND
       (

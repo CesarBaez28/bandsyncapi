@@ -7,7 +7,6 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.bandsyncapi.bandsyncapi.api.v1.models.RolesModel;
 import com.bandsyncapi.bandsyncapi.api.v1.models.RolesPermissionsKey;
 import com.bandsyncapi.bandsyncapi.api.v1.models.RolesPermissionsModel;
 
@@ -28,7 +27,15 @@ public interface RolesPermissionsRepository extends JpaRepository<RolesPermissio
    * @param role - the role to find the roles_permissions by.
    * @return - A list of RolesPermissionsModel.
    */
-  List<RolesPermissionsModel> findAllByRole(RolesModel role);
+  @Query("""
+      SELECT rp
+      FROM RolesPermissionsModel rp
+      JOIN FETCH rp.role r
+      JOIN FETCH rp.permission p
+      JOIN FETCH p.typeOfPermission
+      WHERE r.id = :roleId
+      """)
+  List<RolesPermissionsModel> findAllByRole(@Param("roleId") Integer roleId);
 
   /**
    * This method finds all the roles_permissions by roles.
@@ -36,7 +43,15 @@ public interface RolesPermissionsRepository extends JpaRepository<RolesPermissio
    * @param roles - list of roles
    * @return - A list of RolesPermissionsModel.
    */
-  List<RolesPermissionsModel> findAllByRoleIn(List<RolesModel> roles);
+  @Query("""
+      SELECT rp
+      FROM RolesPermissionsModel rp
+      JOIN FETCH rp.role r
+      JOIN FETCH rp.permission p
+      JOIN FETCH p.typeOfPermission
+      WHERE r.id IN :roleIds
+      """)
+  List<RolesPermissionsModel> findAllByRoleIn(List<Integer> roleIds);
 
   /**
    * This method finds all the roles_permissions by musical band id.
@@ -44,7 +59,15 @@ public interface RolesPermissionsRepository extends JpaRepository<RolesPermissio
    * @param musicalBandId - the musical band id to find the roles_permissions by.
    * @return - A list of RolesPermissionsModel.
    */
-  @Query("SELECT rpm FROM RolesPermissionsModel rpm WHERE rpm.role.musicalBand.id = :musicalBandId")
+  @Query("""
+      SELECT rp
+      FROM RolesPermissionsModel rp
+      JOIN FETCH rp.role r
+      JOIN FETCH rp.permission p
+      JOIN FETCH p.typeOfPermission
+      JOIN FETCH r.musicalBand mb
+      WHERE mb.id = :musicalBandId
+      """)
   List<RolesPermissionsModel> findByMusicalBandId(@Param("musicalBandId") UUID musicalBandId);
 
   /**

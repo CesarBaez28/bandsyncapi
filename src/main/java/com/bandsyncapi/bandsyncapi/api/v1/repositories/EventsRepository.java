@@ -24,7 +24,13 @@ public interface EventsRepository extends JpaRepository<EventsModel, UUID> {
    * @param musicalBandId - musical band id
    * @return
    */
-  @Query("SELECT e FROM EventsModel e WHERE e.musicalBand.id = :musicalBandId")
+  @Query("""
+      SELECT e
+      FROM EventsModel e
+      JOIN FETCH e.musicalBand mb
+      JOIN FETCH e.repertoire r
+      WHERE mb.id = :musicalBandId
+      """)
   List<EventsModel> findByMusicalBandId(UUID musicalBandId);
 
   /**

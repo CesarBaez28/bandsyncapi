@@ -11,9 +11,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.bandsyncapi.bandsyncapi.api.v1.models.UsersRolesModel;
-import com.bandsyncapi.bandsyncapi.api.v1.models.MusicalBandsModel;
 import com.bandsyncapi.bandsyncapi.api.v1.models.RolesModel;
-import com.bandsyncapi.bandsyncapi.api.v1.models.UsersModel;
 import com.bandsyncapi.bandsyncapi.api.v1.models.UsersRolesKey;
 import java.util.List;
 
@@ -31,6 +29,15 @@ public interface UsersRolesRepository extends JpaRepository<UsersRolesModel, Use
    * @param musicalBandId - the ID of the musical band
    * @return
    */
+  @Query("""
+      SELECT ur
+      FROM UsersRolesModel ur
+      JOIN FETCH ur.role r
+      JOIN FETCH ur.musicalBand mb
+      JOIN FETCH r.musicalBand
+      JOIN FETCH ur.user u
+      WHERE u.id = :userId AND mb.id = :musicalBandId
+      """)
   Optional<UsersRolesModel> findByUserIdAndMusicalBandId(UUID userId, UUID musicalBandId);
 
   /**
@@ -39,7 +46,16 @@ public interface UsersRolesRepository extends JpaRepository<UsersRolesModel, Use
    * @param role - role
    * @return - List of UsersRolesModel
    */
-  List<UsersRolesModel> findByRole(RolesModel role);
+  @Query("""
+      SELECT ur
+      FROM UsersRolesModel ur
+      JOIN FETCH ur.role r
+      JOIN FETCH ur.musicalBand mb
+      JOIN FETCH r.musicalBand
+      JOIN FETCH ur.user u
+      WHERE r.id = :roleId
+      """)
+  List<UsersRolesModel> findByRole(@Param("roleId") Integer roleId);
 
   /**
    * Find all of a user's roles in the different bands they belong to
@@ -47,7 +63,16 @@ public interface UsersRolesRepository extends JpaRepository<UsersRolesModel, Use
    * @param user - UsersModel
    * @return - All user roles
    */
-  List<UsersRolesModel> findByUser(UsersModel user);
+  @Query("""
+    SELECT ur
+    FROM UsersRolesModel ur
+    JOIN FETCH ur.role r
+    JOIN FETCH ur.musicalBand
+    JOIN FETCH r.musicalBand
+    JOIN FETCH ur.user u
+    WHERE ur.user.id = :userId
+    """)
+  List<UsersRolesModel> findByUser(@Param("userId") UUID userId);
 
   /**
    * find user's roles of a musical band
@@ -55,7 +80,16 @@ public interface UsersRolesRepository extends JpaRepository<UsersRolesModel, Use
    * @param musicalBand
    * @return
    */
-  List<UsersRolesModel> findByMusicalBand(MusicalBandsModel musicalBand);
+  @Query("""
+    SELECT ur
+    FROM UsersRolesModel ur
+    JOIN FETCH ur.role r
+    JOIN FETCH ur.musicalBand mb
+    JOIN FETCH r.musicalBand
+    JOIN FETCH ur.user u
+    WHERE mb.id = :musicalBandId
+    """)
+  List<UsersRolesModel> findByMusicalBand(@Param("musicalBandId") UUID musicalBandId);
 
   /**
    * Assign role to a user in a musical band
@@ -98,7 +132,7 @@ public interface UsersRolesRepository extends JpaRepository<UsersRolesModel, Use
    */
   @Transactional
   @Modifying
-  @Query("DELETE FROM UsersRolesModel ur WHERE ur.user.id = :userId AND ur.musicalBand.id = :musicalBandId")
+  @Query(value = "DELETE FROM users_roles WHERE user_id = :userId AND musical_band_id = :musicalBandId", nativeQuery = true)
   void deleteByUserIdAndMusicalBandId(UUID userId, UUID musicalBandId);
 
 

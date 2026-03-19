@@ -30,7 +30,9 @@ public interface SongsRepository extends JpaRepository<SongsModel, Integer> {
    */
   @Query("""
       SELECT s FROM SongsModel s
-      JOIN s.musicalBand mb
+      JOIN FETCH s.musicalBand mb
+      JOIN FETCH s.artist a
+      JOIN FETCH s.genre g
       WHERE mb.id = :musicalBandId
       """)
   List<SongsModel> findByMusicalBandId(@Param("musicalBandId") UUID musicalBandId);
@@ -44,12 +46,14 @@ public interface SongsRepository extends JpaRepository<SongsModel, Integer> {
    */
   @Query("""
       SELECT s FROM SongsModel s
-      JOIN s.musicalBand mb
+      JOIN FETCH s.musicalBand mb
+      JOIN FETCH s.artist a
+      JOIN FETCH s.genre g
       WHERE mb.id = :musicalBandId AND
       (
         s.name LIKE %:term% OR
-        s.artist.name LIKE %:term% OR
-        s.genre.name LIKE %:term% OR
+        a.name LIKE %:term% OR
+        g.name LIKE %:term% OR
         s.tonality LIKE %:term%
       )
         """)
@@ -63,7 +67,9 @@ public interface SongsRepository extends JpaRepository<SongsModel, Integer> {
    */
   @Query("""
       SELECT s FROM SongsModel s
-      JOIN s.artist a
+      JOIN FETCH s.artist a
+      JOIN FETCH s.musicalBand mb
+      JOIN FETCH s.genre g
       WHERE a.id = :artistId
             """)
   List<SongsModel> findByArtistId(@Param("artistId") Integer artistId);
@@ -76,7 +82,9 @@ public interface SongsRepository extends JpaRepository<SongsModel, Integer> {
    */
   @Query("""
       SELECT s FROM SongsModel s
-      JOIN s.genre g
+      JOIN FETCH s.genre g
+      JOIN FETCH s.musicalBand mb
+      JOIN FETCH s.artist a
       WHERE g.id = :genreId
             """)
   List<SongsModel> findByGenreId(@Param("genreId") Integer genreId);
