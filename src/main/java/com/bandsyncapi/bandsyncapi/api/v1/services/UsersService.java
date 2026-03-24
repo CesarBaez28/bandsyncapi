@@ -8,6 +8,7 @@ import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.bandsyncapi.bandsyncapi.api.v1.dto.users.ChangePasswordDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.users.UserLoginPostDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.users.UsersPutDto;
 import com.bandsyncapi.bandsyncapi.api.v1.models.UsersModel;
@@ -23,7 +24,7 @@ public interface UsersService {
    * @param userLoginPostDto - A UserLoginPostDto object
    * @return - true if the user is authenticated, false otherwise
    */
-  boolean verify (UserLoginPostDto userLoginPostDto);
+  boolean verify(UserLoginPostDto userLoginPostDto);
 
   /**
    * register a user
@@ -31,21 +32,29 @@ public interface UsersService {
    * @param usersModel - A UsersModel object
    * @return - The new user
    */
-  UsersModel register (UsersModel usersModel);
+  UsersModel register(UsersModel usersModel);
 
   /**
    * Register a user from an invitation
    * 
    * @param usersModel - A UsersModel object
-   * @param token - invitation token
+   * @param token      - invitation token
    * @return - The new user
    */
-  UsersModel registerFromInvitation (UsersModel usersModel, String token);
+  UsersModel registerFromInvitation(UsersModel usersModel, String token);
+
+  /**
+   * Change the user password
+   * 
+   * @param changePasswordDto - A ChangePasswordDto object with the data to change
+   *                          the password
+   */
+  void changePassword(ChangePasswordDto changePasswordDto);
 
   /**
    * Join a user to a musical band
    * 
-   * @param userId - User id
+   * @param userId        - User id
    * @param musicalBandId - Musical Band id
    */
   void joinUserToMusicalBand(UUID userId, UUID musicalBandId);
@@ -56,20 +65,19 @@ public interface UsersService {
    * @param musicalBandId - Musical Band id
    * @return - A UsersModel List
    */
-  List<UsersModel> getAllUsersByMusicalBandId(UUID musicalBandId); 
-
+  List<UsersModel> getAllUsersByMusicalBandId(UUID musicalBandId);
 
   /**
    * find all users that are part of a musical band and by
    * username, email, firstname, lastanme and phone number
    * 
    * @param musicalBandId - musical band id
-   * @param term - search term
-   * @param page - page 
-   * @param size -  size
+   * @param term          - search term
+   * @param page          - page
+   * @param size          - size
    * @return Page of UsersModel
    */
-  Page<UsersModel> find (UUID musicalBandId, String term, int page, int size);
+  Page<UsersModel> find(UUID musicalBandId, String term, int page, int size);
 
   /**
    * Get user by Id
@@ -77,8 +85,8 @@ public interface UsersService {
    * @param userId - user id
    * @return UsersModel object
    */
-  UsersModel getById (UUID userId);
-  
+  UsersModel getById(UUID userId);
+
   /**
    * Check if the user exists by email
    * 
@@ -90,12 +98,12 @@ public interface UsersService {
   /**
    * Update a user info
    * 
-   * @param userId - user id
+   * @param userId      - user id
    * @param usersPutDto - A UsersPutDto with the data to be updated
-   * @param image - User image
+   * @param image       - User image
    * @return updated user info
    */
-  UsersPutDto updateUser (UUID userId, UsersPutDto usersPutDto, MultipartFile image) throws IOException;
+  UsersPutDto updateUser(UUID userId, UsersPutDto usersPutDto, MultipartFile image) throws IOException;
 
   /**
    * Get user by username
@@ -111,5 +119,5 @@ public interface UsersService {
    * @param email - email
    * @return - Optional of type UsersModel
    */
-  Optional<UsersModel> findByEmail (String email);
+  Optional<UsersModel> findByEmail(String email);
 }

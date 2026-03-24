@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.bandsyncapi.bandsyncapi.api.v1.constants.UserPermissions;
+import com.bandsyncapi.bandsyncapi.api.v1.dto.users.ChangePasswordDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.users.UserLoginPostDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.users.UserRegisterPostDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.users.UserSessionDto;
@@ -94,7 +95,7 @@ public class UsersController {
 
     log.info("Generated token for user: {}", userLoginPostDto.username());
 
-    UsersModel userModel = usersService.getByUsername(userLoginPostDto.username());  
+    UsersModel userModel = usersService.getByUsername(userLoginPostDto.username());
 
     UserSessionDto userSessionDto = usersMapper.toSessionDto(userModel, token);
 
@@ -124,6 +125,19 @@ public class UsersController {
 
     return ResponseEntity.status(HttpStatus.CREATED)
         .body(new ApiResponse<>(true, "User registered successfully", null, null));
+  }
+
+  /**
+   * Change the user password
+   * 
+   * @param changePasswordDto - Request body with the user data (username, oldpassword, newpassword) to change the password
+   * @return - An ApiResponse object
+   */
+  @PostMapping("/users/change-password")
+  public ResponseEntity<ApiResponse<Void>> changePassword(@RequestBody ChangePasswordDto changePasswordDto) {
+    usersService.changePassword(changePasswordDto);
+
+    return ResponseEntity.ok(new ApiResponse<>(true, "Password changed successfully", null, null));
   }
 
   /**

@@ -16,6 +16,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.bandsyncapi.bandsyncapi.api.v1.dto.users.ChangePasswordDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.users.UserLoginPostDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.users.UsersPutDto;
 import com.bandsyncapi.bandsyncapi.api.v1.enums.InvitationStatus;
@@ -125,6 +126,24 @@ public class UsersServiceImpl implements UsersService {
 
     log.info("User registered from invitation successfully: {}", usersModel.getUsername());
     return newUser;
+  }
+
+  @Override
+  public void changePassword(ChangePasswordDto changePasswordDto) {
+    log.info("Changing password for user: {}", changePasswordDto.username());
+
+    UsersModel user = usersRepository.findByUsername(changePasswordDto.username())
+        .orElseThrow(
+            () -> new EntityNotFoundException("User not found with username: " + changePasswordDto.username()));
+
+    if (!encrypt.checkPassword(changePasswordDto.oldPassword(), user.getPassword())) {
+      log.error("Old password does not match for user: {}", changePasswordDto.username());
+      throw new IllegalStateException("La contraseña actual no coincide");
+    }
+
+    user.setPassword(encrypt.encryptPassword(changePasswordDto.newPassword()));
+    usersRepository.save(user);
+    log.info("Password changed successfully for user: {}", changePasswordDto.username());
   }
 
   @Transactional
