@@ -17,8 +17,17 @@ public interface EmailService {
    * @param invitedBy      - the person who send the invitation
    * @param invitationLink - invitation link to join a musical band
    * @param expirationDate - expiration date of invitation
-   * @throws MessagingException 
+   * @throws MessagingException
    */
   void sendInvitationEmail(String to, String bandName, String invitedBy, String invitationLink,
       LocalDateTime expirationDate) throws MessagingException;
+
+  /**
+   * Send an email to reset the user's password
+   * 
+   * @param to        - email to send the reset password email
+   * @param resetLink - reset password link
+   * @throws MessagingException
+   */
+  void sendResetPasswordEmail(String to, String resetLink) throws MessagingException;
 }

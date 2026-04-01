@@ -213,6 +213,18 @@ public class GlobalExceptionHandler {
   }
 
   /**
+   * Handle ResetPasswordException
+   * 
+   * @param ex - ResetPasswordException object
+   * @return - An ApiResponse object with the error
+   */
+  @ExceptionHandler(ResetPasswordException.class)
+  public ResponseEntity<ApiResponse<Void>> handleResetPasswordException(ResetPasswordException ex) {
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+        .body(new ApiResponse<>(false, ex.getMessage(), null, null));
+  }
+
+  /**
    * Extract the constrain name from the database
    * 
    * @param errorMessage - The error message from the exception

@@ -60,11 +60,32 @@ public class EmailServiceImpl implements EmailService {
     helper.setSubject("Invitación para unirte a la banda " + bandName);
     helper.setText(htmlContent, true);
 
-    //TODO: Change the email address
+    // TODO: Change the email address
     helper.setFrom("baezcesar329@gmail.com");
 
     javaMailSender.send(message);
     log.info("Invitation email send successfully to email: {}", to);
   }
 
+  @Override
+  public void sendResetPasswordEmail(String to, String resetLink) throws MessagingException {
+    log.info("Sending reset password email to: {}", to);
+
+    MimeMessage message = javaMailSender.createMimeMessage();
+    MimeMessageHelper helper = new MimeMessageHelper(message, "utf-8");
+
+    Context context = new Context();
+    context.setVariable("resetLink", resetLink);
+
+    String htmlContent = templateEngine.process("emails/reset-password", context);
+
+    helper.setTo(to);
+    helper.setSubject("Recuperación de contraseña");
+    helper.setText(htmlContent, true);
+
+    helper.setFrom("baezcesar329@gmail.com");
+
+    javaMailSender.send(message);
+    log.info("Reset password email send successfully to email: {}", to);
+  }
 }

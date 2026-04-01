@@ -15,6 +15,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.bandsyncapi.bandsyncapi.api.v1.constants.UserPermissions;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.users.ChangePasswordDto;
+import com.bandsyncapi.bandsyncapi.api.v1.dto.users.ForgotPasswordRequestDto;
+import com.bandsyncapi.bandsyncapi.api.v1.dto.users.ResetPasswordRequestDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.users.UserLoginPostDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.users.UserRegisterPostDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.users.UserSessionDto;
@@ -23,12 +25,14 @@ import com.bandsyncapi.bandsyncapi.api.v1.dto.users.UsersPutDto;
 import com.bandsyncapi.bandsyncapi.api.v1.mappers.UsersMapper;
 import com.bandsyncapi.bandsyncapi.api.v1.models.UsersModel;
 import com.bandsyncapi.bandsyncapi.api.v1.services.JWTService;
+import com.bandsyncapi.bandsyncapi.api.v1.services.PasswordResetTokenService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.UsersMusicalBandsService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.UsersRolesService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.UsersService;
 import com.bandsyncapi.bandsyncapi.response.ApiResponse;
 import com.bandsyncapi.bandsyncapi.response.PagedData;
 
+import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 
@@ -58,24 +62,28 @@ public class UsersController {
 
   private final JWTService jwtService;
 
+  private final PasswordResetTokenService passwordResetTokenService;
+
   private UsersMapper usersMapper;
 
   /**
    * Constructor of the class
    * 
-   * @param usersService             - Users Servic
-   * @param usersMusicalBandsService - UsersMusicalBands Service
-   * @param jwtService               - JWT Service
-   * @param usersMapper              - Users mapper
-   * @param usersRolesService        - UsersRoles Service
+   * @param usersService              - Users Servic
+   * @param usersMusicalBandsService  - UsersMusicalBands Service
+   * @param jwtService                - JWT Service
+   * @param usersMapper               - Users mapper
+   * @param usersRolesService         - UsersRoles Service
+   * @param passwordResetTokenService - PasswordResetToken Service
    */
   public UsersController(UsersService usersService, UsersMusicalBandsService usersMusicalBandsService,
-      UsersRolesService usersRolesService,
+      UsersRolesService usersRolesService, PasswordResetTokenService passwordResetTokenService,
       UsersMapper usersMapper, JWTService jwtService) {
     this.usersService = usersService;
     this.usersMusicalBandsService = usersMusicalBandsService;
     this.usersRolesService = usersRolesService;
     this.jwtService = jwtService;
+    this.passwordResetTokenService = passwordResetTokenService;
     this.usersMapper = usersMapper;
   }
 
@@ -130,7 +138,8 @@ public class UsersController {
   /**
    * Change the user password
    * 
-   * @param changePasswordDto - Request body with the user data (username, oldpassword, newpassword) to change the password
+   * @param changePasswordDto - Request body with the user data (username,
+   *                          oldpassword, newpassword) to change the password
    * @return - An ApiResponse object
    */
   @PostMapping("/users/change-password")
@@ -314,5 +323,34 @@ public class UsersController {
 
     return ResponseEntity.status(HttpStatus.NOT_FOUND)
         .body(new ApiResponse<>(false, "User not found by email", exists, null));
+  }
+
+  /**
+   * Handle forgot password request. This will generate a password reset token and
+   * send an email to the user with the reset link.
+   * 
+   * @param request - forgot password request data (email)
+   * @return - An ApiResponse object
+   * @throws MessagingException - if there is an error sending the email
+   */
+  @PostMapping("/users/auth/forgot-password")
+  public ResponseEntity<ApiResponse<Void>> forgotPassword(@RequestBody ForgotPasswordRequestDto request)
+      throws MessagingException {
+    passwordResetTokenService.forgotPassword(request.email());
+    return ResponseEntity.ok().body(new ApiResponse<>(true, "Password reset email sent", null, null));
+  }
+
+  /**
+   * Handle reset password request. This will reset the user's password using the
+   * provided token and new password.
+   * 
+   * @param request - reset password request data (token and new password)
+   * @return - An ApiResponse object
+   */
+  @PostMapping("/users/auth/reset-password")
+  public ResponseEntity<ApiResponse<Void>> resetPassword(@RequestBody ResetPasswordRequestDto request) {
+    passwordResetTokenService.resetPassword(request.token(), request.newPassword());
+
+    return ResponseEntity.ok().body(new ApiResponse<>(true, "Password reset successfully", null, null));
   }
 }

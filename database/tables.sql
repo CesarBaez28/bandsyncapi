@@ -198,3 +198,12 @@ CREATE TABLE events (
     location VARCHAR(255) NOT NULL DEFAULT '',
     status BIT NOT NULL DEFAULT 1
 );
+
+-- Table: password_reset_tokens
+CREATE TABLE password_reset_tokens (
+    token BINARY (16) PRIMARY KEY DEFAULT (UUID_TO_BIN(UUID())),
+    user_id BINARY(16) NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    expiration_date DATETIME NOT NULL,
+    used BIT NOT NULL DEFAULT 0
+);
