@@ -9,11 +9,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.bandsyncapi.bandsyncapi.api.v1.constants.UserPermissions;
+import com.bandsyncapi.bandsyncapi.api.v1.dto.twofa.SetUp2FADto;
+import com.bandsyncapi.bandsyncapi.api.v1.dto.twofa.Verify2FADto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.users.ChangePasswordDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.users.ForgotPasswordRequestDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.users.ResetPasswordRequestDto;
@@ -26,6 +30,7 @@ import com.bandsyncapi.bandsyncapi.api.v1.mappers.UsersMapper;
 import com.bandsyncapi.bandsyncapi.api.v1.models.UsersModel;
 import com.bandsyncapi.bandsyncapi.api.v1.services.JWTService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.PasswordResetTokenService;
+import com.bandsyncapi.bandsyncapi.api.v1.services.TwoFactorService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.UsersMusicalBandsService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.UsersRolesService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.UsersService;
@@ -64,6 +69,8 @@ public class UsersController {
 
   private final PasswordResetTokenService passwordResetTokenService;
 
+  private final TwoFactorService twoFactorService;
+
   private UsersMapper usersMapper;
 
   /**
@@ -75,15 +82,18 @@ public class UsersController {
    * @param usersMapper               - Users mapper
    * @param usersRolesService         - UsersRoles Service
    * @param passwordResetTokenService - PasswordResetToken Service
+   * @param twoFactorService          - TwoFactor Service
    */
   public UsersController(UsersService usersService, UsersMusicalBandsService usersMusicalBandsService,
       UsersRolesService usersRolesService, PasswordResetTokenService passwordResetTokenService,
+      TwoFactorService twoFactorService,
       UsersMapper usersMapper, JWTService jwtService) {
     this.usersService = usersService;
     this.usersMusicalBandsService = usersMusicalBandsService;
     this.usersRolesService = usersRolesService;
     this.jwtService = jwtService;
     this.passwordResetTokenService = passwordResetTokenService;
+    this.twoFactorService = twoFactorService;
     this.usersMapper = usersMapper;
   }
 
@@ -352,5 +362,56 @@ public class UsersController {
     passwordResetTokenService.resetPassword(request.token(), request.newPassword());
 
     return ResponseEntity.ok().body(new ApiResponse<>(true, "Password reset successfully", null, null));
+  }
+
+  /**
+   * Set up two factor authentication for the authenticated user. This will
+   * generate
+   * a secret key, save it to the user's record, and return a QR code URL for the
+   * user to scan with their 2FA app.
+   * 
+   * @param userDetails - the details of the authenticated user
+   * @return - An ApiResponse object containing the QR code URL
+   */
+  @PostMapping("/users/auth/2fa/setup")
+  public ResponseEntity<ApiResponse<SetUp2FADto>> setUp2FA(@AuthenticationPrincipal UserDetails userDetails) {
+
+    SetUp2FADto setUp2FADto = twoFactorService.setUp2FA(userDetails);
+
+    return ResponseEntity.ok().body(new ApiResponse<>(true, "2FA setup completed", setUp2FADto, null));
+  }
+
+  /**
+   * Verify a two factor authentication code for the authenticated user. This will
+   * check if the provided code is valid for the user's secret key and, if valid,
+   * enable 2FA for the user's account.
+   * 
+   * @param userDetails - the details of the authenticated user
+   * @param code        - the 2FA code to verify
+   * @return - An ApiResponse object indicating whether verification was
+   *         successful
+   */
+  @PostMapping("/users/auth/2fa/verify")
+  public ResponseEntity<ApiResponse<Void>> verify2FA(@AuthenticationPrincipal UserDetails userDetails,
+      @RequestBody Verify2FADto verify2FADto) {
+    twoFactorService.verify2FA(userDetails, verify2FADto.code(), verify2FADto.secret());
+
+    return ResponseEntity.ok().body(new ApiResponse<>(true, "2FA verified successfully", null, null));
+  }
+
+  /**
+   * Disable two factor authentication for the authenticated user. This will
+   * remove
+   * the user's secret key and disable 2FA for their account.
+   * 
+   * @param userDetails - the details of the authenticated user
+   * @return - An ApiResponse object indicating whether 2FA was disabled
+   *         successfully
+   */
+  @PostMapping("/users/auth/2fa/disable")
+  public ResponseEntity<ApiResponse<Void>> disable2FA(@AuthenticationPrincipal UserDetails userDetails) {
+    twoFactorService.disable2FA(userDetails);
+
+    return ResponseEntity.ok().body(new ApiResponse<>(true, "2FA disabled successfully", null, null));
   }
 }

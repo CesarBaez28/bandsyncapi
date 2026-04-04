@@ -21,20 +21,20 @@ public class Encrypt {
   }
 
   /**
-   * Encrypts the password
+   * Encrypts the given text
    * 
-   * @param password - the password to be encrypted
-   * @return the encrypted password
+   * @param text - the text to be encrypted
+   * @return the encrypted text
    */
-  public String encryptPassword(String password) {
-    return encoder.encode(password);
+  public String encrypt(String text) {
+    return encoder.encode(text);
   }
 
   /**
    * Checks if the password matches the hash
    * 
    * @param password - the password to be checked
-   * @param hash - the hash to be checked against
+   * @param hash     - the hash to be checked against
    * @return true if the password matches the hash, false otherwise
    */
   public boolean checkPassword(String password, String hash) {

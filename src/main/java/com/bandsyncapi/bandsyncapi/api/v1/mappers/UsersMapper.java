@@ -21,6 +21,8 @@ public interface UsersMapper {
   @Mapping(target = "phone", constant = "")
   @Mapping(target = "photo", constant = "")  
   @Mapping(target = "status", constant = "true")
+  @Mapping(target = "secret2FA", ignore = true)
+  @Mapping(target = "is2FAEnabled", ignore = true)
   UsersModel toModelFromRegisterDto(UserRegisterPostDto userRegisterPostDto);
 
   List<UsersDto> toDtoList (List<UsersModel> usersModelList);

@@ -97,7 +97,7 @@ public class PasswordResetTokenServiceImpl implements PasswordResetTokenService 
 
     UsersModel user = resetToken.getUser();
 
-    user.setPassword(encrypt.encryptPassword(newPassword));
+    user.setPassword(encrypt.encrypt(newPassword));
     usersRepository.save(user);
 
     // Marcar token como usado

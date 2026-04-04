@@ -202,6 +202,8 @@ class UsersControllerUnSecuredTest {
                 .phone("8983563234")
                 .photo("http://amazon.com")
                 .status(true)
+                .is2FAEnabled(true)
+                .secret2FA("secret")
                 .build();
 
         var userDto = new UsersDto(
@@ -212,7 +214,9 @@ class UsersControllerUnSecuredTest {
                 userModel.getLastName(),
                 userModel.getPhone(),
                 userModel.getPhoto(),
-                userModel.getStatus());
+                userModel.getStatus(),
+                userModel.getSecret2FA(),
+                userModel.getIs2FAEnabled());
 
         List<UsersModel> usersModelList = List.of(userModel);
         List<UsersDto> usersDtoList = List.of(userDto);
@@ -250,6 +254,8 @@ class UsersControllerUnSecuredTest {
                 .phone("8983563234")
                 .photo("http://amazon.com")
                 .status(true)
+                .secret2FA("secret")
+                .is2FAEnabled(true)
                 .build();
 
         var userDto = new UsersDto(
@@ -260,7 +266,9 @@ class UsersControllerUnSecuredTest {
                 userModel.getLastName(),
                 userModel.getPhone(),
                 userModel.getPhoto(),
-                userModel.getStatus());
+                userModel.getStatus(),
+                userModel.getSecret2FA(),
+                userModel.getIs2FAEnabled());
 
         given(usersService.getById(userId)).willReturn(userModel);
         given(usersMapper.toDto(userModel)).willReturn(userDto);

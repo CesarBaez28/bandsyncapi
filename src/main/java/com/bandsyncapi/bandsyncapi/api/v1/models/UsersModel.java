@@ -52,7 +52,13 @@ public class UsersModel {
   @Column(name = "status", nullable = false, columnDefinition = "BIT DEFAULT 1")
   private Boolean status;
 
-  public UsersModel (UUID id) {
+  @Column(name = "secret_2fa", length = 255)
+  private String secret2FA;
+
+  @Column(name = "is_2fa_enabled", nullable = false, columnDefinition = "BIT DEFAULT 0")
+  private Boolean is2FAEnabled;
+
+  public UsersModel(UUID id) {
     this.id = id;
   }
 }

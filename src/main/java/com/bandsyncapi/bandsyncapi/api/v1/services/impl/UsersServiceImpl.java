@@ -92,7 +92,7 @@ public class UsersServiceImpl implements UsersService {
   public UsersModel register(UsersModel usersModel) {
     log.info("Registering user: {}", usersModel.getUsername());
 
-    String encryptedPassword = encrypt.encryptPassword(usersModel.getPassword());
+    String encryptedPassword = encrypt.encrypt(usersModel.getPassword());
     usersModel.setPassword(encryptedPassword);
 
     return usersRepository.save(usersModel);
@@ -110,7 +110,7 @@ public class UsersServiceImpl implements UsersService {
       throw new IllegalStateException("El correo no coincide con la invitación");
     }
 
-    String encryptedPassword = encrypt.encryptPassword(usersModel.getPassword());
+    String encryptedPassword = encrypt.encrypt(usersModel.getPassword());
     usersModel.setPassword(encryptedPassword);
 
     log.info("Saving new user");
@@ -141,7 +141,7 @@ public class UsersServiceImpl implements UsersService {
       throw new IllegalStateException("La contraseña actual no coincide");
     }
 
-    user.setPassword(encrypt.encryptPassword(changePasswordDto.newPassword()));
+    user.setPassword(encrypt.encrypt(changePasswordDto.newPassword()));
     usersRepository.save(user);
     log.info("Password changed successfully for user: {}", changePasswordDto.username());
   }

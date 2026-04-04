@@ -13,5 +13,7 @@ public record UsersDto(
   String lastName, 
   String phone, 
   String photo, 
-  Boolean status
+  Boolean status,
+  String secret2FA,
+  Boolean is2FAEnabled
 ) {}
