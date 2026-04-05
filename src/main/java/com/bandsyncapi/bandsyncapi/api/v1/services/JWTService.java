@@ -37,12 +37,36 @@ public class JWTService {
 
     Map<String, Object> claims = new HashMap<>();
 
+    claims.put("type", "ACCESS");
+
     return Jwts.builder()
         .claims()
         .add(claims)
         .subject(username)
         .issuedAt(new java.util.Date(System.currentTimeMillis()))
         .expiration(new java.util.Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10)) // 10 hours
+        .and()
+        .signWith(getKey())
+        .compact();
+  }
+
+  /**
+   * Generates a temp JWT token for the given username.
+   * 
+   * @param username - username
+   * @return the generated temp JWT token
+   */
+  public String generateTempToken(String username) {
+    Map<String, Object> claims = new HashMap<>();
+
+    claims.put("type", "TEMP_2FA");
+
+    return Jwts.builder()
+        .claims()
+        .add(claims)
+        .subject(username)
+        .issuedAt(new java.util.Date(System.currentTimeMillis()))
+        .expiration(new Date(System.currentTimeMillis() + 5 * 60 * 1000)) // 5 min
         .and()
         .signWith(getKey())
         .compact();

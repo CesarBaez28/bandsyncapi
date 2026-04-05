@@ -16,8 +16,10 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.bandsyncapi.bandsyncapi.api.v1.constants.UserPermissions;
+import com.bandsyncapi.bandsyncapi.api.v1.dto.twofa.Required2FADto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.twofa.SetUp2FADto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.twofa.Verify2FADto;
+import com.bandsyncapi.bandsyncapi.api.v1.dto.twofa.VerifyLogin2FADto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.users.ChangePasswordDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.users.ForgotPasswordRequestDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.users.ResetPasswordRequestDto;
@@ -36,6 +38,7 @@ import com.bandsyncapi.bandsyncapi.api.v1.services.UsersRolesService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.UsersService;
 import com.bandsyncapi.bandsyncapi.response.ApiResponse;
 import com.bandsyncapi.bandsyncapi.response.PagedData;
+import com.bandsyncapi.bandsyncapi.utils.AESUtil;
 
 import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
@@ -71,6 +74,8 @@ public class UsersController {
 
   private final TwoFactorService twoFactorService;
 
+  private final AESUtil aesUtil;
+
   private UsersMapper usersMapper;
 
   /**
@@ -86,7 +91,7 @@ public class UsersController {
    */
   public UsersController(UsersService usersService, UsersMusicalBandsService usersMusicalBandsService,
       UsersRolesService usersRolesService, PasswordResetTokenService passwordResetTokenService,
-      TwoFactorService twoFactorService,
+      TwoFactorService twoFactorService, AESUtil aesUtil,
       UsersMapper usersMapper, JWTService jwtService) {
     this.usersService = usersService;
     this.usersMusicalBandsService = usersMusicalBandsService;
@@ -94,6 +99,7 @@ public class UsersController {
     this.jwtService = jwtService;
     this.passwordResetTokenService = passwordResetTokenService;
     this.twoFactorService = twoFactorService;
+    this.aesUtil = aesUtil;
     this.usersMapper = usersMapper;
   }
 
@@ -104,21 +110,57 @@ public class UsersController {
    * @return - An ApiResponse object
    */
   @PostMapping("/users/auth/login")
-  public ResponseEntity<ApiResponse<UserSessionDto>> login(@RequestBody UserLoginPostDto userLoginPostDto) {
+  public ResponseEntity<ApiResponse<?>> login(@RequestBody UserLoginPostDto userLoginPostDto) {
     usersService.verify(userLoginPostDto);
 
     log.info("User authenticated successfully: {}", userLoginPostDto.username());
+
+    UsersModel userModel = usersService.getByUsername(userLoginPostDto.username());
+
+    boolean is2FAEnabled = userModel.getIs2FAEnabled();
+
+    if (is2FAEnabled) {
+      String tempToken = jwtService.generateTempToken(userModel.getUsername());
+
+      var response = Required2FADto.builder()
+          .status("2FA_REQUIRED")
+          .tempToken(tempToken)
+          .build();
+
+      return ResponseEntity.status(HttpStatus.OK)
+          .body(new ApiResponse<>(true, "2FA required", response, null));
+    }
 
     String token = jwtService.generateToken(userLoginPostDto.username());
 
     log.info("Generated token for user: {}", userLoginPostDto.username());
 
-    UsersModel userModel = usersService.getByUsername(userLoginPostDto.username());
-
     UserSessionDto userSessionDto = usersMapper.toSessionDto(userModel, token);
 
     return ResponseEntity.status(HttpStatus.OK)
         .body(new ApiResponse<>(true, "User authenticated successfully", userSessionDto, null));
+  }
+
+  @PostMapping("/users/auth/verify-2fa-login")
+  public ResponseEntity<ApiResponse<UserSessionDto>> verify2FALogin(
+      @RequestBody VerifyLogin2FADto request) {
+
+    String username = jwtService.getUsernameFromToken(request.tempToken());
+
+    UsersModel user = usersService.getByUsername(username);
+
+    String secret = aesUtil.decrypt(user.getSecret2FA());
+
+    if (!twoFactorService.isValidCode(secret, request.code())) {
+      throw new IllegalArgumentException("Código inválido");
+    }
+
+    String token = jwtService.generateToken(username);
+
+    UserSessionDto userSessionDto = usersMapper.toSessionDto(user, token);
+
+    return ResponseEntity.ok(
+        new ApiResponse<>(true, "Login successful", userSessionDto, null));
   }
 
   /**

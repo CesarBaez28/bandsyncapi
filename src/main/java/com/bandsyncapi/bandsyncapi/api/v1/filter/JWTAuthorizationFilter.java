@@ -13,6 +13,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import com.bandsyncapi.bandsyncapi.api.v1.services.CustomUserDetailsService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.JWTService;
 
+import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -56,13 +57,22 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
       return;
     }
 
+    log.info("Getting Token from header");
     token = token.substring(7);
 
-    log.info("Token obtained successfully");
+    log.info("Verifing type of token");
+    
+    Claims claims = jwtService.extractAllClaims(token);
+    String type = claims.get("type", String.class);
 
-    String username = jwtService.getUsernameFromToken(token);
+    if (!"ACCESS".equals(type)) {
+      log.warn("Invalid token type: {}", type);
+      filterChain.doFilter(request, response);
+      return;
+    }
 
     log.info("Getting username from token");
+    String username = jwtService.getUsernameFromToken(token);
 
     // If the username is null or there is no authentication in the security
     // context, continue the filter chain
