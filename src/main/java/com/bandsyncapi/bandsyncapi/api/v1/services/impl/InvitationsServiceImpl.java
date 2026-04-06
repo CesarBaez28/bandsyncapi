@@ -21,7 +21,6 @@ import com.bandsyncapi.bandsyncapi.exceptions.InvitationException;
 
 import jakarta.mail.MessagingException;
 import jakarta.persistence.EntityNotFoundException;
-import lombok.var;
 import lombok.extern.slf4j.Slf4j;
 
 /**
