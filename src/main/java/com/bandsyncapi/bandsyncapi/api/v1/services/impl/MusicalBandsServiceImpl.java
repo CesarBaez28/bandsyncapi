@@ -20,6 +20,8 @@ import com.bandsyncapi.bandsyncapi.api.v1.models.UsersRolesModel;
 import com.bandsyncapi.bandsyncapi.api.v1.repositories.MusicalBandsRepository;
 import com.bandsyncapi.bandsyncapi.api.v1.services.FilesService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.MusicalBandsService;
+import com.bandsyncapi.bandsyncapi.api.v1.services.MusicalGenresService;
+import com.bandsyncapi.bandsyncapi.api.v1.services.MusicalRolesService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.PermissionsService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.RolesPermissionsService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.RolesService;
@@ -53,6 +55,10 @@ public class MusicalBandsServiceImpl implements MusicalBandsService {
 
   private final FilesService filesService;
 
+  private final MusicalGenresService musicalGenresService;
+
+  private final MusicalRolesService musicalRolesService;
+
   @Value("${aws.bucket.logos.directory}")
   private String awsLogosDirectory;
 
@@ -82,11 +88,13 @@ public class MusicalBandsServiceImpl implements MusicalBandsService {
    * @param usersRolesService        - Service for UsersRolesModel
    * @param musicalBandsMapper       - Mapper for MusicalBandsModel
    * @param filesService             - Service to upload images
+   * @param musicalGenresService     - Musical genres service
    */
   public MusicalBandsServiceImpl(MusicalBandsRepository musicalBandsRepository,
       UsersMusicalBandsService usersMusicalBandsService, RolesService rolesService, UsersRolesService usersRolesService,
       PermissionsService permissionsService, RolesPermissionsService rolesPermissionsService,
-      MusicalBandsMapper musicalBandsMapper, FilesService filesService) {
+      MusicalBandsMapper musicalBandsMapper, FilesService filesService, MusicalGenresService musicalGenresService,
+      MusicalRolesService musicalRolesService) {
     this.musicalBandsRepository = musicalBandsRepository;
     this.usersMusicalBandsService = usersMusicalBandsService;
     this.rolesService = rolesService;
@@ -95,6 +103,8 @@ public class MusicalBandsServiceImpl implements MusicalBandsService {
     this.rolesPermissionsService = rolesPermissionsService;
     this.musicalBandsMapper = musicalBandsMapper;
     this.filesService = filesService;
+    this.musicalGenresService = musicalGenresService;
+    this.musicalRolesService = musicalRolesService;
   }
 
   @Override
@@ -146,21 +156,20 @@ public class MusicalBandsServiceImpl implements MusicalBandsService {
 
     log.info("Saved role of the user in the musical band: {}", role);
 
-    // Save relationship between the user and the role
+    log.info("Saving relationship between user and role: {}", musicalBandsPostDto.user(), role);
     usersRolesService.save(new UsersRolesModel(role, savedMusicalBandsModel, musicalBandsPostDto.user(), true));
 
-    log.info("Saved relationship between user and role: {}", musicalBandsPostDto.user(), role);
-
-    // Get All permissions to be added to the role
+    log.info("Getting all permissions to be added to the role");
     List<RolesPermissionsModel> rolesPermissions = permissionsService.findAll().stream()
         .map(permission -> new RolesPermissionsModel(role, permission, true)).toList();
 
-    log.info("Getting all permissions to be added to the role: {}", rolesPermissions);
-
     // Save all permissions to the role
     rolesPermissionsService.saveAll(rolesPermissions);
+    log.info("Saved all permissions to the role");
 
-    log.info("Saved all permissions to the role: {}", rolesPermissions);
+    musicalGenresService.insertDefaultGenres(savedMusicalBandsModel);
+
+    musicalRolesService.insertDefaulRoles(savedMusicalBandsModel);
 
     String fileUrl = filesService.uploadFile(imagefile, awsLogosDirectory);
 

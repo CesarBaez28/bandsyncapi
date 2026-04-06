@@ -1,13 +1,16 @@
 package com.bandsyncapi.bandsyncapi.api.v1.services.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import com.bandsyncapi.bandsyncapi.api.v1.models.MusicalBandsModel;
 import com.bandsyncapi.bandsyncapi.api.v1.models.MusicalRolesModel;
 import com.bandsyncapi.bandsyncapi.api.v1.repositories.MusicalRolesRepository;
 import com.bandsyncapi.bandsyncapi.api.v1.services.MusicalRolesService;
@@ -23,6 +26,9 @@ import lombok.extern.slf4j.Slf4j;
 public class MusicalRolesServiceImpl implements MusicalRolesService {
 
   private final MusicalRolesRepository musicalRolesRepository;
+
+  @Value("${default.musical-roles}")
+  private String defaultRoles;
 
   /**
    * Constructor for the MusicalRolesServiceImpl class.
@@ -67,6 +73,24 @@ public class MusicalRolesServiceImpl implements MusicalRolesService {
     log.info("Finding musical roles by musical band id: {} and name: {}", musicalBandId, name);
     return musicalRolesRepository.findAllByMusicalBandId(musicalBandId, name,
         PageRequest.of(page, size, Sort.by("name").ascending()));
+  }
+
+  @Override
+  public void insertDefaulRoles(MusicalBandsModel musicalBandsModel) {
+    log.info("Inserting default musical roles");
+    String[] roles = defaultRoles.split(",");
+
+    List<MusicalRolesModel> rolesToAdd = new ArrayList<>();
+    for (int i = 0; i < roles.length; i++) {
+      rolesToAdd.add(MusicalRolesModel.builder()
+          .musicalBand(musicalBandsModel)
+          .name(roles[i])
+          .status(Boolean.TRUE)
+          .build());
+    }
+
+    musicalRolesRepository.saveAll(rolesToAdd);
+    log.info("default musical roles inserted successfully");
   }
 
 }

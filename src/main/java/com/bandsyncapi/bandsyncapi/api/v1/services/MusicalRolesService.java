@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import org.springframework.data.domain.Page;
 
+import com.bandsyncapi.bandsyncapi.api.v1.models.MusicalBandsModel;
 import com.bandsyncapi.bandsyncapi.api.v1.models.MusicalRolesModel;
 
 /*
@@ -15,17 +16,19 @@ public interface MusicalRolesService {
 
   /**
    * save a new musical Role
+   * 
    * @param musicalRolesModel - MusicalRoleModel
    * @return - The new Musical Role
    */
-  public MusicalRolesModel save (MusicalRolesModel musicalRolesModel);
+  public MusicalRolesModel save(MusicalRolesModel musicalRolesModel);
 
   /**
    * finds musical roles by musical band id
+   * 
    * @param id
    * @return
    */
-  public List<MusicalRolesModel> findByMusicalBandId (UUID id);
+  public List<MusicalRolesModel> findByMusicalBandId(UUID id);
 
   /**
    * Finds all musical roles by musical band id and name.
@@ -40,14 +43,24 @@ public interface MusicalRolesService {
 
   /**
    * Update musical genre name
-   * @param id - musical role id
+   * 
+   * @param id   - musical role id
    * @param name - musical role name
    */
   public void updateMusicalRoleName(Integer id, String name);
 
   /**
    * Deletes a musical roles from the database by its id.
+   * 
    * @param id - Id of the musical roles to be deleted.
    */
   public void deleteById(Integer id);
+
+  /**
+   * Insert default roles
+   * It is use when creating a new band
+   * 
+   * @param musicalBandsModel - musical band the roles belong to
+   */
+  public void insertDefaulRoles(MusicalBandsModel musicalBandsModel);
 }

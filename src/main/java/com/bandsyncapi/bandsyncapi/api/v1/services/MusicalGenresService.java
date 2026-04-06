@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import org.springframework.data.domain.Page;
 
+import com.bandsyncapi.bandsyncapi.api.v1.models.MusicalBandsModel;
 import com.bandsyncapi.bandsyncapi.api.v1.models.MusicalGenresModel;
 
 /*
@@ -72,4 +73,12 @@ public interface MusicalGenresService {
    * @param id - Id of the musical genre to be deleted.
    */
   public void deleteById(Integer id);
+
+  /**
+   * Insert defaults genres
+   * It is use when creating a new band
+   * 
+   * @param band - musical band the genres belong to
+   */
+  public void insertDefaultGenres(MusicalBandsModel band);
 }

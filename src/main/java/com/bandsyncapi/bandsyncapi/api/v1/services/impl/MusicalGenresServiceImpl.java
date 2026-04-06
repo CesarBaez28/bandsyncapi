@@ -1,5 +1,6 @@
 package com.bandsyncapi.bandsyncapi.api.v1.services.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -11,6 +12,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import com.bandsyncapi.bandsyncapi.api.v1.models.MusicalBandsModel;
 import com.bandsyncapi.bandsyncapi.api.v1.models.MusicalGenresModel;
 import com.bandsyncapi.bandsyncapi.api.v1.models.SongsModel;
 import com.bandsyncapi.bandsyncapi.api.v1.repositories.MusicalGenresRepository;
@@ -41,6 +43,9 @@ public class MusicalGenresServiceImpl implements MusicalGenresService {
   @Value("${aws.bucket.songs.directory}")
   private String awsSongsDirectory;
 
+  @Value("${default.musical-genres}")
+  private String defaultMusicalGenres;
+
   /**
    * Constructor for the MusicalGenresServiceImpl class.
    * 
@@ -49,7 +54,7 @@ public class MusicalGenresServiceImpl implements MusicalGenresService {
    *                                   operations on the musical_genres table.
    * @param songsRepository            - Repository for songs table.
    * @param repertoiresSongsRepository - Repository for repertoires_songs table.
-   * @param filesService - Service to storage files
+   * @param filesService               - Service to storage files
    * 
    */
   public MusicalGenresServiceImpl(MusicalGenresRepository musicalGenresRepository, SongsRepository songsRepository,
@@ -136,5 +141,23 @@ public class MusicalGenresServiceImpl implements MusicalGenresService {
     musicalGenresRepository.deleteMusicalGenreById(id);
 
     log.info("Musical genre successfully deleted by id: {}", id);
+  }
+
+  @Override
+  public void insertDefaultGenres(MusicalBandsModel band) {
+    log.info("Inserting default musical genres");
+    String[] genres = defaultMusicalGenres.split(",");
+
+    List<MusicalGenresModel> genresToInsert = new ArrayList<>();
+    for (int i = 0; i < genres.length; i++) {
+      genresToInsert.add(MusicalGenresModel.builder()
+          .musicalBand(band)
+          .name(genres[i])
+          .status(Boolean.TRUE)
+          .build());
+    }
+
+    musicalGenresRepository.saveAll(genresToInsert);
+    log.info("Default musical genres inserted successfully");
   }
 }
