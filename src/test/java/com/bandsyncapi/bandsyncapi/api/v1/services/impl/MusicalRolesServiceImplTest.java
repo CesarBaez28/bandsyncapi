@@ -30,13 +30,13 @@ class MusicalRolesServiceImplTest {
   private MusicalRolesServiceImpl musicalRolesServiceImpl;
 
   @Test
-  void testSave () {
+  void testSave() {
     // Given
     var musicalRole = MusicalRolesModel.builder()
-      .name("Test name")
-      .musicalBand(new MusicalBandsModel(UUID.randomUUID()))
-      .status(true)
-      .build();
+        .name("Test name")
+        .musicalBand(new MusicalBandsModel(UUID.randomUUID()))
+        .status(true)
+        .build();
 
     // When
     musicalRolesServiceImpl.save(musicalRole);
@@ -52,7 +52,7 @@ class MusicalRolesServiceImplTest {
   }
 
   @Test
-  void testFindByMusicalBandId () {
+  void testFindByMusicalBandId() {
     // Given
     var musicalBandId = UUID.randomUUID();
 
@@ -64,7 +64,7 @@ class MusicalRolesServiceImplTest {
   }
 
   @Test
-  void testUpdateMusicalRoleName () {
+  void testUpdateMusicalRoleName() {
     // Given
     Integer id = 1;
     String name = "new name";
@@ -74,12 +74,12 @@ class MusicalRolesServiceImplTest {
     // When
     musicalRolesServiceImpl.updateMusicalRoleName(id, name);
 
-    //Then
+    // Then
     verify(musicalRolesRepository).updateMusicalRoleName(id, name);
   }
 
-  @Test 
-  void testUpdateMusicalRoleNotFound () {
+  @Test
+  void testUpdateMusicalRoleNotFound() {
     // Given
     Integer id = 1;
     String name = "new name";
@@ -87,13 +87,13 @@ class MusicalRolesServiceImplTest {
     given(musicalRolesRepository.updateMusicalRoleName(id, name)).willReturn(0);
 
     // Then
-    assertThrows(EntityNotFoundException.class,() -> {
+    assertThrows(EntityNotFoundException.class, () -> {
       musicalRolesServiceImpl.updateMusicalRoleName(id, name);
     });
   }
 
-  @Test 
-  void deleteById () {
+  @Test
+  void deleteById() {
     // Given
     Integer id = 1;
 

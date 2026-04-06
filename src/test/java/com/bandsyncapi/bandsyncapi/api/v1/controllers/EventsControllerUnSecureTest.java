@@ -186,7 +186,7 @@ class EventsControllerUnSecureTest {
 
     // When
     mockMvc.perform(get(EVENTS_URL + "/findByMusicalBandId/" + musicalBandId))
-        .andExpect(MockMvcResultMatchers.status().isNoContent())
+        .andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(MockMvcResultMatchers.jsonPath("$.success").value(false))
         .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Events Not Found."));
   }
@@ -209,7 +209,7 @@ class EventsControllerUnSecureTest {
 
     // When
     mockMvc.perform(
-        put(EVENTS_URL + "/updateEvent/" + eventId)
+        put(EVENTS_URL + "/update/" + eventId)
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(putRequest)))
         .andExpect(MockMvcResultMatchers.status().isOk())
@@ -234,7 +234,7 @@ class EventsControllerUnSecureTest {
 
     // When
     mockMvc.perform(
-        put(EVENTS_URL + "/updateEvent/" + eventId)
+        put(EVENTS_URL + "/update/" + eventId)
           .contentType(MediaType.APPLICATION_JSON)
           .content(objectMapper.writeValueAsString(putRequest)))
         .andExpect(MockMvcResultMatchers.status().isBadRequest())

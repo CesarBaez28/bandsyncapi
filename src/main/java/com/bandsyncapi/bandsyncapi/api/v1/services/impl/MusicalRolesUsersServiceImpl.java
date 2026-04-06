@@ -42,9 +42,7 @@ public class MusicalRolesUsersServiceImpl implements MusicalRolesUsersService {
   public List<MusicalRolesUsersProjection> findAllByMusicalBandId(UUID musicalBandId) {
     log.info("Finding all musical roles users by musical band id: {}", musicalBandId);
 
-    List<MusicalRolesUsersProjection> projections = musicalRolesUsersRepository.findAllByMusicalBandId(musicalBandId);
-
-    return projections;
+    return musicalRolesUsersRepository.findAllByMusicalBandId(musicalBandId);
   }
 
   @Override
@@ -76,7 +74,7 @@ public class MusicalRolesUsersServiceImpl implements MusicalRolesUsersService {
     // Deletes roles that are not presents in the new list
     if (!rolesToDelete.isEmpty()) {
       log.info("Deleting roles: {} for user: {} in band: {}", rolesToDelete, userId, musicalBandId);
-      
+
       musicalRolesUsersRepository.deleteByUserIdAndBandIdAndRoleIds(userId, musicalBandId, rolesToDelete);
     }
 

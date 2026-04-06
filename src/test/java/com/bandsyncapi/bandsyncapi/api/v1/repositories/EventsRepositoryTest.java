@@ -112,13 +112,13 @@ class EventsRepositoryTest {
 
     // When
     var eventPutDto = new EventsPutDto(
-      savedEvent.getRepertoire().getId(),
-      savedEvent.getDate(),
-      "Updated name",
-      savedEvent.getDescription(),
-      savedEvent.getPlace(),
-      savedEvent.getLocation(),
-      savedEvent.getStatus());
+        savedEvent.getRepertoire().getId(),
+        savedEvent.getDate(),
+        "Updated name",
+        savedEvent.getDescription(),
+        savedEvent.getPlace(),
+        savedEvent.getLocation(),
+        savedEvent.getStatus());
 
     int updatedRow = eventsRepository.updateEvent(savedEvent.getId(), eventPutDto);
 

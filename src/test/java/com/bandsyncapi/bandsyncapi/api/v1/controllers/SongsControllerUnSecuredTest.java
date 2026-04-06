@@ -2,8 +2,7 @@ package com.bandsyncapi.bandsyncapi.api.v1.controllers;
 
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 
 import java.util.List;
 import java.util.UUID;
@@ -13,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -86,20 +86,27 @@ class SongsControllerUnSecuredTest {
         "Sheet Music");
 
     MockMultipartFile file = new MockMultipartFile(
-      "image",
-      "test_logo.png",
-      "image/png",
-      "dummy image content".getBytes());
+        "file",
+        "song.png",
+        MediaType.APPLICATION_OCTET_STREAM_VALUE,
+        "dummy content".getBytes());
+
+    MockMultipartFile songPart = new MockMultipartFile(
+        "song",
+        "",
+        MediaType.APPLICATION_JSON_VALUE,
+        objectMapper.writeValueAsBytes(postRequest));
 
     given(songsMapper.toModel(postRequest)).willReturn(song);
     given(songsService.save(song, file)).willReturn(song);
     given(songsMapper.toDto(song)).willReturn(songDto);
-    
+
     // When
     mockMvc.perform(
-        post(BASE_URL + "/save")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(postRequest)))
+        multipart(BASE_URL + "/save")
+            .file(songPart)
+            .file(file)
+            .contentType(MediaType.MULTIPART_FORM_DATA))
         // Then
         .andExpect(MockMvcResultMatchers.status().isCreated())
         .andExpect(MockMvcResultMatchers.jsonPath("$.success").value(true))
@@ -121,15 +128,29 @@ class SongsControllerUnSecuredTest {
         "http://localhost",
         true);
 
+    MockMultipartFile file = new MockMultipartFile(
+        "file",
+        "song.png",
+        MediaType.APPLICATION_OCTET_STREAM_VALUE,
+        "dummy content".getBytes());
+
+    MockMultipartFile songPart = new MockMultipartFile(
+        "song",
+        "",
+        MediaType.APPLICATION_JSON_VALUE,
+        objectMapper.writeValueAsBytes(postRequest));
+
     // When
     mockMvc.perform(
-        post(BASE_URL + "/save")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(postRequest)))
+        multipart(BASE_URL + "/save")
+            .file(songPart)
+            .file(file)
+            .contentType(MediaType.MULTIPART_FORM_DATA))
         // Then
         .andExpect(MockMvcResultMatchers.status().isBadRequest())
         .andExpect(MockMvcResultMatchers.jsonPath("$.success").value(false))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.errors.name").value("El nombre debe tener al menos 3 caracteres."))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.errors.name")
+            .value("El nombre debe tener al menos 3 caracteres."))
         .andExpect(MockMvcResultMatchers.jsonPath("$.errors.artist").value("Seleccione un artista."))
         .andExpect(MockMvcResultMatchers.jsonPath("$.errors.genre").value("Seleccione un género."));
   }
@@ -190,11 +211,24 @@ class SongsControllerUnSecuredTest {
         "http://locahost",
         "http://localhost");
 
+    MockMultipartFile file = new MockMultipartFile(
+        "file",
+        "song.png",
+        MediaType.APPLICATION_OCTET_STREAM_VALUE,
+        "dummy content".getBytes());
+
+    MockMultipartFile songPart = new MockMultipartFile(
+        "song",
+        "",
+        MediaType.APPLICATION_JSON_VALUE,
+        objectMapper.writeValueAsBytes(putRequest));
+
     // When
     mockMvc.perform(
-        put(BASE_URL + "/updateSong/" + id)
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(putRequest)))
+        multipart(HttpMethod.PUT, BASE_URL + "/update/" + id)
+            .file(songPart)
+            .file(file)
+            .contentType(MediaType.MULTIPART_FORM_DATA))
         // Then
         .andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(MockMvcResultMatchers.jsonPath("$.success").value(true))
@@ -213,16 +247,30 @@ class SongsControllerUnSecuredTest {
         "http://locahost",
         "http://localhost");
 
+    MockMultipartFile file = new MockMultipartFile(
+        "file",
+        "song.png",
+        MediaType.APPLICATION_OCTET_STREAM_VALUE,
+        "dummy content".getBytes());
+
+    MockMultipartFile songPart = new MockMultipartFile(
+        "song",
+        "",
+        MediaType.APPLICATION_JSON_VALUE,
+        objectMapper.writeValueAsBytes(putRequest));
+
     // When
     mockMvc.perform(
-        put(BASE_URL + "/updateSong/" + id)
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(putRequest)))
+        multipart(HttpMethod.PUT, BASE_URL + "/update/" + id)
+            .file(songPart)
+            .file(file)
+            .contentType(MediaType.MULTIPART_FORM_DATA))
         // Then
         .andExpect(MockMvcResultMatchers.status().isBadRequest())
         .andExpect(MockMvcResultMatchers.jsonPath("$.success").value(false))
         .andExpect(
-            MockMvcResultMatchers.jsonPath("$.errors.name").value("El nombre debe tener entre 3 y 100 caracteres"))
+            MockMvcResultMatchers.jsonPath("$.errors.name")
+                .value("El nombre debe tener entre 3 y 100 caracteres"))
         .andExpect(MockMvcResultMatchers.jsonPath("$.errors.artist").value("Seleccione un artista"))
         .andExpect(MockMvcResultMatchers.jsonPath("$.errors.genre").value("Seleccione un género"));
   }

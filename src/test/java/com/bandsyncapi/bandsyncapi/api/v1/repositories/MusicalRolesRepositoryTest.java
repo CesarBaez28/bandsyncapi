@@ -14,7 +14,7 @@ import com.bandsyncapi.bandsyncapi.api.v1.models.MusicalRolesModel;
 
 @DataJpaTest
 class MusicalRolesRepositoryTest {
-  
+
   @Autowired
   private MusicalRolesRepository musicalRolesRepository;
 
@@ -22,8 +22,8 @@ class MusicalRolesRepositoryTest {
   private MusicalBandsRepository musicalBandsRepository;
 
   @Test
-  void testFindByMusicalBandId () {
-    
+  void testFindByMusicalBandId() {
+
     // Given
     var musicalBand = MusicalBandsModel.builder()
         .name("Test Band")
@@ -33,7 +33,7 @@ class MusicalRolesRepositoryTest {
         .logo("Test logo")
         .phone("Test phone")
         .status(true)
-        .build();  
+        .build();
     var musicalBandSaved = musicalBandsRepository.save(musicalBand);
 
     var musicalRole = MusicalRolesModel.builder()

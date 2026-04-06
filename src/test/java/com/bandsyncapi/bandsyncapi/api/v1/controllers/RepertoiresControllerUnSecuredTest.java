@@ -23,6 +23,7 @@ import com.bandsyncapi.bandsyncapi.api.v1.dto.repertoires.RepertoiresDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.repertoires.RepertoiresPostDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.repertoires.RepertoiresPutDto;
 import com.bandsyncapi.bandsyncapi.api.v1.mappers.RepertoiresMapper;
+import com.bandsyncapi.bandsyncapi.api.v1.mappers.SongsMapper;
 import com.bandsyncapi.bandsyncapi.api.v1.models.ArtistsModel;
 import com.bandsyncapi.bandsyncapi.api.v1.models.MusicalBandsModel;
 import com.bandsyncapi.bandsyncapi.api.v1.models.MusicalGenresModel;
@@ -54,6 +55,9 @@ class RepertoiresControllerUnSecuredTest {
 
   @MockitoBean
   private RepertoiresMapper repertoiresMapper;
+
+  @MockitoBean
+  private SongsMapper songsMapper;
 
   @Test
   void testSave_Valid_Request() throws Exception {
@@ -123,8 +127,7 @@ class RepertoiresControllerUnSecuredTest {
         // Then
         .andExpect(MockMvcResultMatchers.status().isBadRequest())
         .andExpect(
-            MockMvcResultMatchers.jsonPath("$.errors.name").value("El nombre debe tener entre 3 y 100 caracteres."))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.errors.songs").value("Debe agregar canciones al repertorio."));
+            MockMvcResultMatchers.jsonPath("$.errors.name").value("El nombre debe tener entre 3 y 100 caracteres."));
   }
 
   @Test

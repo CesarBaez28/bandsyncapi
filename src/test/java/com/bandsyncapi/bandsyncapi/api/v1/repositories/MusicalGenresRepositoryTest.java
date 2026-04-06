@@ -23,25 +23,25 @@ class MusicalGenresRepositoryTest {
   private MusicalBandsRepository musicalBandRepository;
 
   @Test
-  void testFindByMusicalBandId () {
-    
+  void testFindByMusicalBandId() {
+
     // Given
     var musicalBand = MusicalBandsModel.builder()
-      .address("Test Address")
-      .hyphenatedName("Test-band")
-      .email("test@hotmail.com")
-      .logo("testLogo")
-      .name("Test Band")
-      .phone("123456789")
-      .status(true)
-      .build();
+        .address("Test Address")
+        .hyphenatedName("Test-band")
+        .email("test@hotmail.com")
+        .logo("testLogo")
+        .name("Test Band")
+        .phone("123456789")
+        .status(true)
+        .build();
     var savedMusicalBand = musicalBandRepository.save(musicalBand);
 
     var musicalGenres = MusicalGenresModel.builder()
-      .name("Test Genre")
-      .musicalBand(savedMusicalBand)
-      .status(true)
-      .build();
+        .name("Test Genre")
+        .musicalBand(savedMusicalBand)
+        .status(true)
+        .build();
     musicalGenresRepository.save(musicalGenres);
 
     // When
@@ -53,27 +53,27 @@ class MusicalGenresRepositoryTest {
   }
 
   @Test
-  void testUpdateMusicalGenre () {
+  void testUpdateMusicalGenre() {
 
     // Given
     var musicalBand = MusicalBandsModel.builder()
-      .address("Test Address")
-      .hyphenatedName("Test-band")
-      .email("test@hotmail.com")
-      .logo("testLogo")
-      .name("Test Band")
-      .phone("123456789")
-      .status(true)
-      .build();
+        .address("Test Address")
+        .hyphenatedName("Test-band")
+        .email("test@hotmail.com")
+        .logo("testLogo")
+        .name("Test Band")
+        .phone("123456789")
+        .status(true)
+        .build();
     var savedMusicalBand = musicalBandRepository.save(musicalBand);
 
     var musicalGenres = MusicalGenresModel.builder()
-      .name("Test Genre")
-      .musicalBand(savedMusicalBand)
-      .status(true)
-      .build();
+        .name("Test Genre")
+        .musicalBand(savedMusicalBand)
+        .status(true)
+        .build();
     musicalGenresRepository.save(musicalGenres);
-    
+
     // When
     int updatedRows = musicalGenresRepository.updateGenreName(musicalGenres.getId(), "Updated Genre");
 

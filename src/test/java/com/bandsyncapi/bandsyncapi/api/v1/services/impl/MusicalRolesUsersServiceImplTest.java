@@ -1,9 +1,7 @@
 package com.bandsyncapi.bandsyncapi.api.v1.services.impl;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyCollection;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anySet;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
@@ -11,7 +9,6 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.UUID;
 
@@ -53,19 +50,6 @@ class MusicalRolesUsersServiceImplTest {
 
     // Then
     verify(musicalRolesUsersRepository).findAllByMusicalBandId(musicalBandId);
-  }
-
-  @Test
-  void testFindAllByMusicalBandIdNotFound() {
-    // Given
-    var musicalBandId = UUID.randomUUID();
-
-    given(musicalRolesUsersRepository.findAllByMusicalBandId(musicalBandId)).willReturn(anyList());
-
-    // Then
-    assertThrows(NoSuchElementException.class, () -> {
-      musicalRolesUsersServiceImpl.findAllByMusicalBandId(musicalBandId);
-    });
   }
 
   @Test

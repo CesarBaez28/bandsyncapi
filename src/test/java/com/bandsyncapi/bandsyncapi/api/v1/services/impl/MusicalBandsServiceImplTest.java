@@ -7,6 +7,7 @@ import static org.mockito.Mockito.verify;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
@@ -16,6 +17,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import com.bandsyncapi.bandsyncapi.api.v1.dto.musicalbands.MusicalBandsDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.musicalbands.MusicalBandsPostDto;
@@ -29,6 +31,8 @@ import com.bandsyncapi.bandsyncapi.api.v1.models.UsersModel;
 import com.bandsyncapi.bandsyncapi.api.v1.models.UsersRolesModel;
 import com.bandsyncapi.bandsyncapi.api.v1.repositories.MusicalBandsRepository;
 import com.bandsyncapi.bandsyncapi.api.v1.services.FilesService;
+import com.bandsyncapi.bandsyncapi.api.v1.services.MusicalGenresService;
+import com.bandsyncapi.bandsyncapi.api.v1.services.MusicalRolesService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.PermissionsService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.RolesPermissionsService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.RolesService;
@@ -64,6 +68,12 @@ class MusicalBandsServiceImplTest {
   @Mock
   private FilesService filesService;
 
+  @Mock
+  private MusicalGenresService musicalGenresService;
+
+  @Mock
+  private MusicalRolesService musicalRolesService;
+
   @InjectMocks
   private MusicalBandsServiceImpl musicalBandsServiceImpl;
 
@@ -96,6 +106,8 @@ class MusicalBandsServiceImplTest {
   void testFindById() {
     // Given
     var musicalBandId = UUID.randomUUID();
+
+    given(musicalBandsRepository.findById(musicalBandId)).willReturn(Optional.of(new MusicalBandsModel(musicalBandId)));
 
     // When
     musicalBandsServiceImpl.findById(musicalBandId);
@@ -139,11 +151,11 @@ class MusicalBandsServiceImplTest {
 
     var role = RolesModel.builder()
         .musicalBand(musicalBand)
-        .name("Propietario")
+        .name("Administrador")
         .status(true)
         .build();
 
-    var permissions = List.of(new PermissionsModel(1, new TypeOfPermissionsModel(1) , "PERMISSION_1", true));
+    var permissions = List.of(new PermissionsModel(1, new TypeOfPermissionsModel(1), "PERMISSION_1", true));
     var rolesPermissions = permissions.stream()
         .map(permission -> new RolesPermissionsModel(role, permission, true))
         .toList();
@@ -153,6 +165,8 @@ class MusicalBandsServiceImplTest {
         "test_logo.png",
         "image/png",
         "dummy image content".getBytes());
+
+    ReflectionTestUtils.setField(musicalBandsServiceImpl, "awsLogosDirectory", LOGOS_DIRECTORY);
 
     given(musicalBandsMapper.toModel(musicalBandPostDto)).willReturn(musicalBand);
     given(musicalBandsMapper.toDto(musicalBand)).willReturn(musicalBandDto);

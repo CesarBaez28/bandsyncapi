@@ -168,9 +168,7 @@ public class UsersServiceImpl implements UsersService {
   public List<UsersModel> getAllUsersByMusicalBandId(UUID musicalBandId) {
     log.info("Getting all users by musical band id {}", musicalBandId);
 
-    List<UsersModel> users = usersRepository.findAllByMusicalBandId(musicalBandId);
-
-    return users;
+    return usersRepository.findAllByMusicalBandId(musicalBandId);
   }
 
   @Override

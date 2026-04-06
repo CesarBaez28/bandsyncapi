@@ -71,7 +71,9 @@ CREATE TABLE IF NOT EXISTS users (
     phone VARCHAR(25) NOT NULL DEFAULT '',
     photo VARCHAR(255) NOT NULL DEFAULT '',
     email VARCHAR(50) NOT NULL UNIQUE,
-    status BIT NOT NULL DEFAULT 1
+    status BIT NOT NULL DEFAULT 1,
+    secret_2fa VARCHAR(255),
+    is_2fa_enabled BIT DEFAULT 0
 );
 
 -- Table: users_roles

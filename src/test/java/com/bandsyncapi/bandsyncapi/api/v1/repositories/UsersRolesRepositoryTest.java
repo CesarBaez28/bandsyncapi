@@ -66,7 +66,7 @@ class UsersRolesRepositoryTest {
     // When
     UsersRolesModel usersRole = usersRolesRepository.findByUserIdAndMusicalBandId(user.getId(), musicalBand.getId())
         .orElseThrow(() -> new IllegalStateException("UsersRolesModel not found"));
-    
+
     // Then
     assertNotNull(usersRole);
     assertEquals(usersRole.getUser().getId(), user.getId());

@@ -162,7 +162,7 @@ class MusicalRolesUsersControllerUnSecuredTest {
   }
 
   @Test
-  void testAssignMusicalRoles_Valid_Request () throws Exception {
+  void testAssignMusicalRoles_Valid_Request() throws Exception {
     // Given
     var musicalBandId = UUID.randomUUID();
     var userId = UUID.randomUUID();
@@ -180,15 +180,15 @@ class MusicalRolesUsersControllerUnSecuredTest {
     List<MusicalRolesModel> musicalRolesModelList = List.of(musicalRolesModel);
 
     doNothing().when(musicalRolesUsersService).assignMusicalRolesUser(userId, musicalBandId, musicalRolesModelList);
-        
+
     // When
     mockMvc.perform(
-      post(BASE_URL + "/assignMusicalRoles/" + musicalBandId + "/" + userId)
-        .contentType(MediaType.APPLICATION_JSON)
-        .content(objectMapper.writeValueAsString(musicalRolesDtoList)))      
-      .andExpect(MockMvcResultMatchers.status().isOk())
-      .andExpect(MockMvcResultMatchers.jsonPath("$.success").value(true))
-      .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Musical roles assigned to user"));
+        post(BASE_URL + "/assignMusicalRoles/" + musicalBandId + "/" + userId)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(musicalRolesDtoList)))
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        .andExpect(MockMvcResultMatchers.jsonPath("$.success").value(true))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Musical roles assigned to user"));
   }
 
   @Test

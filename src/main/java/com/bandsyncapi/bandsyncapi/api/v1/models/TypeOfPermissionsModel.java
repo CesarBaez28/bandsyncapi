@@ -29,8 +29,9 @@ public class TypeOfPermissionsModel {
   @Column(name = "name", nullable = false, unique = true)
   private String name;
 
+  @Builder.Default
   @Column(name = "status", nullable = false, columnDefinition = "BIT DEFAULT 1")
-  private Boolean status;
+  private Boolean status = true;
 
   /**
    * Constructor with id

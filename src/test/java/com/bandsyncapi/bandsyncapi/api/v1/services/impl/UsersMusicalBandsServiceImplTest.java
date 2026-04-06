@@ -57,7 +57,6 @@ class UsersMusicalBandsServiceImplTest {
     var user = new UsersModel(UUID.randomUUID());
     var musicalBand = new MusicalBandsModel(UUID.randomUUID());
 
-
     var userMusicalBand = new UsersMusicalBandsModel(user, musicalBand, true);
     List<UsersMusicalBandsModel> list = List.of(userMusicalBand);
 

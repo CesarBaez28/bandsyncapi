@@ -17,6 +17,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.bandsyncapi.bandsyncapi.api.v1.models.MusicalBandsModel;
 import com.bandsyncapi.bandsyncapi.api.v1.models.MusicalGenresModel;
 import com.bandsyncapi.bandsyncapi.api.v1.repositories.MusicalGenresRepository;
+import com.bandsyncapi.bandsyncapi.api.v1.repositories.RepertoiresSongsRepository;
+import com.bandsyncapi.bandsyncapi.api.v1.repositories.SongsRepository;
 
 import jakarta.persistence.EntityNotFoundException;
 
@@ -26,11 +28,17 @@ class MusicalGenresServiceImplTest {
   @Mock
   private MusicalGenresRepository musicalGenresRepository;
 
+  @Mock
+  private SongsRepository songsRepository;
+
+  @Mock
+  private RepertoiresSongsRepository repertoiresSongsRepository;
+
   @InjectMocks
   private MusicalGenresServiceImpl musicalGenresServiceImpl;
 
   @Test
-  void testFindAll () {
+  void testFindAll() {
     // When
     musicalGenresServiceImpl.findAll();
 
@@ -39,7 +47,7 @@ class MusicalGenresServiceImplTest {
   }
 
   @Test
-  void testFindByMusicalBandId () {
+  void testFindByMusicalBandId() {
     // Given
     var musicalBandId = UUID.randomUUID();
 
@@ -51,7 +59,7 @@ class MusicalGenresServiceImplTest {
   }
 
   @Test
-  void testFindById () {
+  void testFindById() {
     // Given
     Integer id = 1;
 
@@ -63,29 +71,29 @@ class MusicalGenresServiceImplTest {
   }
 
   @Test
-  void testSave () {
+  void testSave() {
     // Given
     var musicalGenre = MusicalGenresModel.builder()
-      .name("Test genre")
-      .musicalBand(new MusicalBandsModel(UUID.randomUUID()))
-      .status(true)
-      .build();
+        .name("Test genre")
+        .musicalBand(new MusicalBandsModel(UUID.randomUUID()))
+        .status(true)
+        .build();
 
     // When
     musicalGenresServiceImpl.save(musicalGenre);
 
-    //Then
+    // Then
     ArgumentCaptor<MusicalGenresModel> captor = ArgumentCaptor.forClass(MusicalGenresModel.class);
-    
+
     verify(musicalGenresRepository).save(captor.capture());
-    
+
     MusicalGenresModel capturedUser = captor.getValue();
 
     assertEquals(musicalGenre, capturedUser);
   }
 
   @Test
-  void testUpdateMusicalGenre () {
+  void testUpdateMusicalGenre() {
     // Given
     Integer id = 1;
     String name = "new name";
@@ -93,14 +101,14 @@ class MusicalGenresServiceImplTest {
     given(musicalGenresRepository.updateGenreName(id, name)).willReturn(1);
 
     // When
-     musicalGenresServiceImpl.updateGenreName(id, name);
+    musicalGenresServiceImpl.updateGenreName(id, name);
 
     // Then
     verify(musicalGenresRepository).updateGenreName(id, name);
   }
 
   @Test
-  void testUpdateMusicalGenreNotFound () {
+  void testUpdateMusicalGenreNotFound() {
     // Given
     Integer id = 1;
     String name = "new name";
@@ -114,7 +122,7 @@ class MusicalGenresServiceImplTest {
   }
 
   @Test
-  void testDeleteById () {
+  void testDeleteById() {
     // Given
     Integer id = 1;
 
@@ -122,6 +130,6 @@ class MusicalGenresServiceImplTest {
     musicalGenresServiceImpl.deleteById(id);
 
     // Then
-    verify(musicalGenresRepository).deleteById(id);
+    verify(musicalGenresRepository).deleteMusicalGenreById(id);
   }
 }

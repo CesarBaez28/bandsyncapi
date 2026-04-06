@@ -15,6 +15,7 @@ import com.bandsyncapi.bandsyncapi.api.v1.models.MusicalBandsModel;
 import com.bandsyncapi.bandsyncapi.api.v1.models.PermissionsModel;
 import com.bandsyncapi.bandsyncapi.api.v1.models.RolesModel;
 import com.bandsyncapi.bandsyncapi.api.v1.models.RolesPermissionsModel;
+import com.bandsyncapi.bandsyncapi.api.v1.models.TypeOfPermissionsModel;
 
 @DataJpaTest
 class RolesPermissionsRepositoryTest {
@@ -30,6 +31,9 @@ class RolesPermissionsRepositoryTest {
 
   @Autowired
   private MusicalBandsRepository musicalBandsRepository;
+
+  @Autowired
+  private TypeOfPermissionsRepository typeOfPermissionsRepository;
 
   @Test
   void testFindAllByRole() {
@@ -47,7 +51,6 @@ class RolesPermissionsRepositoryTest {
     var savedMusicalBand = musicalBandsRepository.save(musicalBand);
 
     var role = RolesModel.builder()
-        .id(1)
         .name("Role Test")
         .musicalBand(savedMusicalBand)
         .status(true)
@@ -55,9 +58,16 @@ class RolesPermissionsRepositoryTest {
 
     var savedRole = rolesRepository.save(role);
 
+    var typePermission = TypeOfPermissionsModel.builder()
+        .name("test")
+        .build();
+
+    var typePermissionSaved = typeOfPermissionsRepository.save(typePermission);
+
     var permission = permissionsRepository.save(
         PermissionsModel.builder()
             .name("Permission Test")
+            .typeOfPermission(typePermissionSaved)
             .status(true)
             .build());
 
@@ -86,8 +96,13 @@ class RolesPermissionsRepositoryTest {
         .build();
     var savedMusicalBand = musicalBandsRepository.save(musicalBand);
 
+    var typePermission = TypeOfPermissionsModel.builder()
+        .name("test")
+        .build();
+
+    var typePermissionSaved = typeOfPermissionsRepository.save(typePermission);
+
     var role = RolesModel.builder()
-        .id(1)
         .name("Role Test")
         .musicalBand(savedMusicalBand)
         .status(true)
@@ -98,18 +113,18 @@ class RolesPermissionsRepositoryTest {
     var permission = permissionsRepository.save(
         PermissionsModel.builder()
             .name("Permission Test")
+            .typeOfPermission(typePermissionSaved)
             .status(true)
             .build());
 
     rolesPermissionsRepository.save(new RolesPermissionsModel(savedRole, permission, true));
 
     // When
-    rolesPermissionsRepository.deleteByRoleIdAndPermissionIdIn(savedRole.getId(), Set.of(permission.getId())); 
+    rolesPermissionsRepository.deleteByRoleIdAndPermissionIdIn(savedRole.getId(), Set.of(permission.getId()));
 
     List<RolesPermissionsModel> rolesPermissionsList = rolesPermissionsRepository.findAllByRole(savedRole.getId());
 
     // Then
     assertTrue(rolesPermissionsList.isEmpty());
   }
-
 }

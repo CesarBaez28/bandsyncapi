@@ -69,22 +69,22 @@ class MusicalGenresUnsecuredTest {
         musicalGenreModel.getName(),
         musicalGenreModel.getStatus());
 
-    given(musicalGenresMapper.toModel(postRequest)).willReturn(musicalGenreModel);    
+    given(musicalGenresMapper.toModel(postRequest)).willReturn(musicalGenreModel);
     given(musicalGenresService.save(musicalGenreModel)).willReturn(musicalGenreModel);
     given(musicalGenresMapper.toDto(musicalGenreModel)).willReturn(musicalGenreDtp);
 
     // When
     mockMvc.perform(
-      post(BASE_URL + "/save")
-        .contentType(MediaType.APPLICATION_JSON)
-        .content(objectMapper.writeValueAsString(postRequest)))
-      // Then
-      .andExpect(MockMvcResultMatchers.status().isCreated())
-      .andExpect(MockMvcResultMatchers.jsonPath("$.success").value(true))
-      .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Musical genre successfully created."))
-      .andExpect(MockMvcResultMatchers.jsonPath("$.data.id").value(musicalGenreDtp.id()))
-      .andExpect(MockMvcResultMatchers.jsonPath("$.data.name").value(musicalGenreDtp.name()))
-      .andExpect(MockMvcResultMatchers.jsonPath("$.data.status").value(musicalGenreDtp.status()));
+        post(BASE_URL + "/save")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(postRequest)))
+        // Then
+        .andExpect(MockMvcResultMatchers.status().isCreated())
+        .andExpect(MockMvcResultMatchers.jsonPath("$.success").value(true))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Musical genre successfully created."))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.data.id").value(musicalGenreDtp.id()))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.data.name").value(musicalGenreDtp.name()))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.data.status").value(musicalGenreDtp.status()));
   }
 
   @Test
@@ -96,15 +96,16 @@ class MusicalGenresUnsecuredTest {
 
     // When
     mockMvc.perform(
-      post(BASE_URL + "/save")
-        .contentType(MediaType.APPLICATION_JSON)
-        .content(objectMapper.writeValueAsString(postRequest)))
-      // Then
-      .andExpect(MockMvcResultMatchers.status().isBadRequest())
-      .andExpect(MockMvcResultMatchers.jsonPath("$.success").value(false))
-      .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Las validaciones de los campos fallaron."))
-      .andExpect(MockMvcResultMatchers.jsonPath("$.errors.name").value("El nombre debe tener entre 3 y 100 caracteres."));
-  } 
+        post(BASE_URL + "/save")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(postRequest)))
+        // Then
+        .andExpect(MockMvcResultMatchers.status().isBadRequest())
+        .andExpect(MockMvcResultMatchers.jsonPath("$.success").value(false))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Las validaciones de los campos fallaron."))
+        .andExpect(
+            MockMvcResultMatchers.jsonPath("$.errors.name").value("El nombre debe tener entre 3 y 100 caracteres."));
+  }
 
   @Test
   void testSaveMusicalGenre_EmptyRequest() throws Exception {
@@ -115,71 +116,74 @@ class MusicalGenresUnsecuredTest {
 
     // When
     mockMvc.perform(
-      post(BASE_URL + "/save")
-        .contentType(MediaType.APPLICATION_JSON)
-        .content(objectMapper.writeValueAsString(postRequest)))
-      // Then
-      .andExpect(MockMvcResultMatchers.status().isBadRequest())
-      .andExpect(MockMvcResultMatchers.jsonPath("$.success").value(false))
-      .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Las validaciones de los campos fallaron."))
-      .andExpect(MockMvcResultMatchers.jsonPath("$.errors.name").value("El nombre debe tener entre 3 y 100 caracteres."));
+        post(BASE_URL + "/save")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(postRequest)))
+        // Then
+        .andExpect(MockMvcResultMatchers.status().isBadRequest())
+        .andExpect(MockMvcResultMatchers.jsonPath("$.success").value(false))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Las validaciones de los campos fallaron."))
+        .andExpect(
+            MockMvcResultMatchers.jsonPath("$.errors.name").value("El nombre debe tener entre 3 y 100 caracteres."));
   }
 
   @Test
-  void testUpdateMusicalGenreName_ValidRequest () throws Exception {
+  void testUpdateMusicalGenreName_ValidRequest() throws Exception {
     // Given
     var id = 1;
     var putRequest = new MusicalGenrePutDto("Test new genre name");
 
     // When
     mockMvc.perform(
-      put(BASE_URL + "/updateMusicalGenreName/" + id)
-        .contentType(MediaType.APPLICATION_JSON)
-        .content(objectMapper.writeValueAsString(putRequest)))
-      // Then
-      .andExpect(MockMvcResultMatchers.status().isOk())
-      .andExpect(MockMvcResultMatchers.jsonPath("$.success").value(true))
-      .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Musical genre name updated successfully."));
+        put(BASE_URL + "/updateMusicalGenreName/" + id)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(putRequest)))
+        // Then
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        .andExpect(MockMvcResultMatchers.jsonPath("$.success").value(true))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Musical genre name updated successfully."));
   }
 
   @Test
-  void testUpdateMusicalGenreName_InvalidRequest () throws Exception {
+  void testUpdateMusicalGenreName_InvalidRequest() throws Exception {
     // Given
     var id = 1;
     var putRequest = new MusicalGenrePutDto("d");
 
     // When
     mockMvc.perform(
-      put(BASE_URL + "/updateMusicalGenreName/" + id)
-         .contentType(MediaType.APPLICATION_JSON)
-         .content(objectMapper.writeValueAsString(putRequest)))
-      // Then
-      .andExpect(MockMvcResultMatchers.status().isBadRequest())
-      .andExpect(MockMvcResultMatchers.jsonPath("$.success").value(false))
-      .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Las validaciones de los campos fallaron."))
-      .andExpect(MockMvcResultMatchers.jsonPath("$.errors.name").value("El nombre debe tener entre 3 y 100 caracteres."));
+        put(BASE_URL + "/updateMusicalGenreName/" + id)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(putRequest)))
+        // Then
+        .andExpect(MockMvcResultMatchers.status().isBadRequest())
+        .andExpect(MockMvcResultMatchers.jsonPath("$.success").value(false))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Las validaciones de los campos fallaron."))
+        .andExpect(
+            MockMvcResultMatchers.jsonPath("$.errors.name").value("El nombre debe tener entre 3 y 100 caracteres."));
   }
 
   @Test
-  void testUpdateMusicalGenreName_EmptyRequest () throws Exception {
+  void testUpdateMusicalGenreName_EmptyRequest() throws Exception {
     // Given
     var id = 1;
     var putRequest = new MusicalGenrePutDto("");
 
     // When
     mockMvc.perform(
-      put(BASE_URL + "/updateMusicalGenreName/" + id)
-         .contentType(MediaType.APPLICATION_JSON)
-         .content(objectMapper.writeValueAsString(putRequest)))
-      // Then
-      .andExpect(MockMvcResultMatchers.status().isBadRequest())
-      .andExpect(MockMvcResultMatchers.jsonPath("$.success").value(false))
-      .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Las validaciones de los campos fallaron."))
-      .andExpect(MockMvcResultMatchers.jsonPath("$.errors.name").value("El nombre debe tener entre 3 y 100 caracteres."));
+        put(BASE_URL + "/updateMusicalGenreName/" + id)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(putRequest)))
+        // Then
+        .andExpect(MockMvcResultMatchers.status().isBadRequest())
+        .andExpect(MockMvcResultMatchers.jsonPath("$.success").value(false))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Las validaciones de los campos fallaron."))
+        .andExpect(
+            MockMvcResultMatchers.jsonPath("$.errors.name").value("El nombre debe tener entre 3 y 100 caracteres."));
   }
 
   @Test
-  void testUpdateMusicalGenreName_NotFound () throws Exception {
+  void testUpdateMusicalGenreName_NotFound() throws Exception {
     // Given
     var id = 1;
     var putRequest = new MusicalGenrePutDto("Test new genre name");
@@ -189,26 +193,26 @@ class MusicalGenresUnsecuredTest {
 
     // When
     mockMvc.perform(
-      put(BASE_URL + "/updateMusicalGenreName/" + id)
-        .contentType(MediaType.APPLICATION_JSON)
-        .content(objectMapper.writeValueAsString(putRequest)))
-      // Then
-      .andExpect(MockMvcResultMatchers.status().isNotFound())
-      .andExpect(MockMvcResultMatchers.jsonPath("$.success").value(false))
-      .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Musical genre not found"));
+        put(BASE_URL + "/updateMusicalGenreName/" + id)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(putRequest)))
+        // Then
+        .andExpect(MockMvcResultMatchers.status().isNotFound())
+        .andExpect(MockMvcResultMatchers.jsonPath("$.success").value(false))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Musical genre not found"));
   }
 
   @Test
-  void testDeleteMusicalGenre_ValidRequest () throws Exception {
+  void testDeleteMusicalGenre_ValidRequest() throws Exception {
     // Given
     var id = 1;
 
     // When
     mockMvc.perform(
-      delete(BASE_URL + "/delete/" + id))
-      // Then
-      .andExpect(MockMvcResultMatchers.status().isOk())
-      .andExpect(MockMvcResultMatchers.jsonPath("$.success").value(true))
-      .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Musical genre deleted successfully."));
-    }
+        delete(BASE_URL + "/delete/" + id))
+        // Then
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        .andExpect(MockMvcResultMatchers.jsonPath("$.success").value(true))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Musical genre deleted successfully."));
+  }
 }

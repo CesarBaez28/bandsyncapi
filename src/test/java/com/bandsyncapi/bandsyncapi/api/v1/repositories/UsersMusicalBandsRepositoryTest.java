@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.util.List;
-import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +30,6 @@ class UsersMusicalBandsRepositoryTest {
 
     // Given
     var user = UsersModel.builder()
-        .id(UUID.randomUUID())
         .username("testUsername")
         .password("testPassword123#")
         .email("Test email")
@@ -63,7 +61,7 @@ class UsersMusicalBandsRepositoryTest {
         .logo("http://test.com")
         .status(true)
         .build();
-        
+
     musicalBandsRepository.save(musicalBand);
     musicalBandsRepository.save(musicalBand2);
 

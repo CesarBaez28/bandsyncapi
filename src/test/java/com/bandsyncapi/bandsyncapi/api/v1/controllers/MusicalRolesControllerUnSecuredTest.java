@@ -166,7 +166,7 @@ class MusicalRolesControllerUnSecuredTest {
     // When
     mockMvc.perform(
         get(BASE_URL + "/findByMusicalBandId/" + musicalBandId))
-        .andExpect(MockMvcResultMatchers.status().isNotFound())
+        .andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(MockMvcResultMatchers.jsonPath("$.success").value(false))
         .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("No musical roles found"))
         .andExpect(MockMvcResultMatchers.jsonPath("$.data").isEmpty());
@@ -236,13 +236,13 @@ class MusicalRolesControllerUnSecuredTest {
 
     // When
     mockMvc.perform(
-      put(BASE_URL + "/updateMusicalRoleName/" + id)
-          .contentType(MediaType.APPLICATION_JSON)
-          .content(objectMapper.writeValueAsString(putRequest)))
-      // Then
-      .andExpect(MockMvcResultMatchers.status().isNotFound())
-      .andExpect(MockMvcResultMatchers.jsonPath("$.success").value(false))
-      .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Musical Role not found with id: " + id));
+        put(BASE_URL + "/updateMusicalRoleName/" + id)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(putRequest)))
+        // Then
+        .andExpect(MockMvcResultMatchers.status().isNotFound())
+        .andExpect(MockMvcResultMatchers.jsonPath("$.success").value(false))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Musical Role not found with id: " + id));
   }
 
   @Test

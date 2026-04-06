@@ -32,24 +32,24 @@ class EventsServiceImplTest {
   private EventsServiceImpl eventsServiceImpl;
 
   @BeforeEach
-  void setUp () {
+  void setUp() {
     eventsServiceImpl = new EventsServiceImpl(eventsRepository);
   }
 
-  @Test 
-  void testSaveEvent () {
+  @Test
+  void testSaveEvent() {
     // Given
     var event = EventsModel.builder()
-      .name("Event Test")
-      .date(LocalDateTime.now())
-      .description("Description test")
-      .location("Location test")
-      .place("Place Test")
-      .musicalBand(new MusicalBandsModel(UUID.randomUUID()))
-      .repertoire(new RepertoiresModel(UUID.randomUUID()))
-      .status(true)
-      .build();
-      
+        .name("Event Test")
+        .date(LocalDateTime.now())
+        .description("Description test")
+        .location("Location test")
+        .place("Place Test")
+        .musicalBand(new MusicalBandsModel(UUID.randomUUID()))
+        .repertoire(new RepertoiresModel(UUID.randomUUID()))
+        .status(true)
+        .build();
+
     // When
     eventsServiceImpl.save(event);
 
@@ -64,7 +64,7 @@ class EventsServiceImplTest {
   }
 
   @Test
-  void testFindByMusicalBandId () {
+  void testFindByMusicalBandId() {
     // Given
     var musicalBandId = UUID.randomUUID();
 
@@ -76,20 +76,20 @@ class EventsServiceImplTest {
   }
 
   @Test
-  void testUpdateEvent () {
+  void testUpdateEvent() {
     // Given
     var eventId = UUID.randomUUID();
 
     var eventPutDto = new EventsPutDto(
-      UUID.randomUUID(), 
-      LocalDateTime.now(), 
-      "New name",
-      "New Description", 
-      "New Place", 
-      "New location", 
-      true);
+        UUID.randomUUID(),
+        LocalDateTime.now(),
+        "New name",
+        "New Description",
+        "New Place",
+        "New location",
+        true);
 
-    given(eventsRepository.updateEvent(eventId, eventPutDto)).willReturn(1);  
+    given(eventsRepository.updateEvent(eventId, eventPutDto)).willReturn(1);
 
     // When
     eventsServiceImpl.updateEvent(eventId, eventPutDto);
@@ -99,27 +99,27 @@ class EventsServiceImplTest {
   }
 
   @Test
-  void testUpdateEventNotFound () {
+  void testUpdateEventNotFound() {
     // Given
     var eventId = UUID.randomUUID();
 
     var eventPutDto = new EventsPutDto(
-      UUID.randomUUID(), 
-      LocalDateTime.now(), 
-      "New name",
-      "New Description", 
-      "New Place", 
-      "New location", 
-      true);
+        UUID.randomUUID(),
+        LocalDateTime.now(),
+        "New name",
+        "New Description",
+        "New Place",
+        "New location",
+        true);
 
     // When
-    given(eventsRepository.updateEvent(eventId, eventPutDto)).willReturn(0);  
+    given(eventsRepository.updateEvent(eventId, eventPutDto)).willReturn(0);
 
     // Then
     assertThrows(EntityNotFoundException.class, () -> {
-      eventsServiceImpl.updateEvent(eventId, eventPutDto);  
+      eventsServiceImpl.updateEvent(eventId, eventPutDto);
     });
-    
+
     verify(eventsRepository).updateEvent(eventId, eventPutDto);
   }
 }

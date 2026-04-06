@@ -11,7 +11,7 @@ import com.bandsyncapi.bandsyncapi.api.v1.models.RolesModel;
 
 @DataJpaTest
 class RolesRepositoryTest {
-  
+
   @Autowired
   private RolesRepository rolesRepository;
 
@@ -34,14 +34,14 @@ class RolesRepositoryTest {
     var savedMusicalBand = musicalBandsRepository.save(musicalBand);
 
     var role = RolesModel.builder()
-    .name("Role Test")
-    .musicalBand(savedMusicalBand)
-    .status(true)
-    .build();
+        .name("Role Test")
+        .musicalBand(savedMusicalBand)
+        .status(true)
+        .build();
 
     var savedRole = rolesRepository.save(role);
 
-    // When 
+    // When
     int result = rolesRepository.updateRoleNameById("Updated Role name", savedRole.getId());
 
     // Then

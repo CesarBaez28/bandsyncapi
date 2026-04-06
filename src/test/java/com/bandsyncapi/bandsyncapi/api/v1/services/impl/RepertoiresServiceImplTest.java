@@ -18,7 +18,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.repertoires.RepertoiresPutDto;
 import com.bandsyncapi.bandsyncapi.api.v1.models.MusicalBandsModel;
 import com.bandsyncapi.bandsyncapi.api.v1.models.RepertoiresModel;
+import com.bandsyncapi.bandsyncapi.api.v1.repositories.EventsRepository;
 import com.bandsyncapi.bandsyncapi.api.v1.repositories.RepertoiresRepository;
+import com.bandsyncapi.bandsyncapi.api.v1.repositories.RepertoiresSongsRepository;
+import com.bandsyncapi.bandsyncapi.api.v1.services.RepertoiresSongsService;
 
 import jakarta.persistence.EntityNotFoundException;
 
@@ -27,6 +30,15 @@ class RepertoiresServiceImplTest {
 
   @Mock
   private RepertoiresRepository repertoiresRepository;
+
+  @Mock
+  private RepertoiresSongsService repertoiresSongsService;
+
+  @Mock
+  private EventsRepository eventsRepository;
+
+  @Mock
+  private RepertoiresSongsRepository repertoiresSongsRepository;
 
   @InjectMocks
   private RepertoiresServiceImpl repertoiresServiceImpl;

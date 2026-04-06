@@ -116,6 +116,6 @@ class ArtistsServiceImplTest {
     artistsService.deleteById(id);
 
     // Then
-    verify(artistsRepository).deleteById(id);
+    verify(artistsRepository).deleteArtistById(id);
   }
 }

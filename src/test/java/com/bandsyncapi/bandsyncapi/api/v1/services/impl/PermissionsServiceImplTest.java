@@ -19,7 +19,7 @@ import jakarta.persistence.EntityNotFoundException;
 
 @ExtendWith(MockitoExtension.class)
 class PermissionsServiceImplTest {
-  
+
   @Mock
   private PermissionsRepository permissionsRepository;
 
@@ -27,7 +27,7 @@ class PermissionsServiceImplTest {
   private PermissionsServiceImpl permissionsServiceImpl;
 
   @Test
-  void testFindAll () {
+  void testFindAll() {
     // When
     permissionsServiceImpl.findAll();
 
@@ -36,7 +36,7 @@ class PermissionsServiceImplTest {
   }
 
   @Test
-  void testFindById () {
+  void testFindById() {
     // Given
     Integer id = 1;
 
@@ -50,7 +50,7 @@ class PermissionsServiceImplTest {
   }
 
   @Test
-  void testFindByIdNotFound () {
+  void testFindByIdNotFound() {
     // Given
     Integer id = 1;
 

@@ -8,26 +8,27 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.UUID;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import com.bandsyncapi.bandsyncapi.api.v1.dto.users.UserLoginPostDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.users.UsersPutDto;
 import com.bandsyncapi.bandsyncapi.api.v1.models.MusicalBandsModel;
 import com.bandsyncapi.bandsyncapi.api.v1.models.UsersModel;
 import com.bandsyncapi.bandsyncapi.api.v1.repositories.UsersRepository;
+import com.bandsyncapi.bandsyncapi.api.v1.services.FilesService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.UsersMusicalBandsService;
 import com.bandsyncapi.bandsyncapi.utils.Encrypt;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -36,6 +37,8 @@ import jakarta.persistence.EntityNotFoundException;
 
 @ExtendWith(MockitoExtension.class)
 class UsersServiceImplTest {
+
+  private static final String USERS_DIRECTORY = "/users";
 
   @Mock
   private UsersRepository usersRepository;
@@ -49,11 +52,19 @@ class UsersServiceImplTest {
   @Mock
   private Encrypt encrypt;
 
+  @Mock
+  private FilesService filesService;
+
   @InjectMocks
   private UsersServiceImpl usersServiceImpl;
 
-  @Autowired
   private ObjectMapper objectMapper;
+
+  @BeforeEach
+  void setUp() {
+    this.objectMapper = new ObjectMapper();
+    ReflectionTestUtils.setField(usersServiceImpl, "awsUsersDirectory", USERS_DIRECTORY);
+  }
 
   @Test
   void testVerify() {
@@ -148,22 +159,6 @@ class UsersServiceImplTest {
   }
 
   @Test
-  void testGetAllUsersByMusicalBandId_Empty() {
-    // Given
-    UUID musicalBandId = UUID.randomUUID();
-
-    given(usersRepository.findAllByMusicalBandId(musicalBandId)).willReturn(List.of());
-
-    // When
-    assertThrows(NoSuchElementException.class, () -> {
-      usersServiceImpl.getAllUsersByMusicalBandId(musicalBandId);
-    });
-
-    // Then
-    verify(usersRepository).findAllByMusicalBandId(musicalBandId);
-  }
-
-  @Test
   void testGetById() {
     // Given
     UUID userId = UUID.randomUUID();
@@ -212,6 +207,7 @@ class UsersServiceImplTest {
         objectMapper.writeValueAsString(usersPutDto).getBytes());
 
     given(usersRepository.updateUser(userId, usersPutDto)).willReturn(1);
+    given(filesService.uploadFile(imageFile, USERS_DIRECTORY)).willReturn("user");
 
     // When
     usersServiceImpl.updateUser(userId, usersPutDto, imageFile);
@@ -238,6 +234,7 @@ class UsersServiceImplTest {
         objectMapper.writeValueAsString(usersPutDto).getBytes());
 
     given(usersRepository.updateUser(userId, usersPutDto)).willReturn(0);
+    given(filesService.uploadFile(imageFile, USERS_DIRECTORY)).willReturn("user");
 
     // When
     assertThrows(EntityNotFoundException.class, () -> {

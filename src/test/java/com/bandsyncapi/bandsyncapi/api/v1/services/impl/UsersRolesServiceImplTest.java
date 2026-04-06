@@ -28,7 +28,7 @@ class UsersRolesServiceImplTest {
   private UsersRolesServiceImpl usersRolesServiceImpl;
 
   @Test
-  void testSave () {
+  void testSave() {
     // Given
     var role = new RolesModel(1);
     var musicalBand = new MusicalBandsModel(UUID.randomUUID());
@@ -39,10 +39,10 @@ class UsersRolesServiceImplTest {
     usersRolesServiceImpl.save(usersRolesModel);
 
     // Then
-    ArgumentCaptor<UsersRolesModel> argumentCaptor = ArgumentCaptor.forClass(UsersRolesModel.class); 
+    ArgumentCaptor<UsersRolesModel> argumentCaptor = ArgumentCaptor.forClass(UsersRolesModel.class);
 
     verify(usersRolesRepository).save(argumentCaptor.capture());
-    
+
     UsersRolesModel savedUsersRolesModel = argumentCaptor.getValue();
 
     assertEquals(usersRolesModel, savedUsersRolesModel);

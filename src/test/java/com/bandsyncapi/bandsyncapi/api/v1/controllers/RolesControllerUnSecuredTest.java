@@ -23,11 +23,14 @@ import com.bandsyncapi.bandsyncapi.api.v1.dto.roles.RolesPermissionsDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.roles.RolesPermissionsPutDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.roles.RolesPostDto;
 import com.bandsyncapi.bandsyncapi.api.v1.mappers.RolesMapper;
+import com.bandsyncapi.bandsyncapi.api.v1.mappers.UsersMapper;
 import com.bandsyncapi.bandsyncapi.api.v1.models.MusicalBandsModel;
 import com.bandsyncapi.bandsyncapi.api.v1.models.PermissionsModel;
 import com.bandsyncapi.bandsyncapi.api.v1.models.RolesModel;
 import com.bandsyncapi.bandsyncapi.api.v1.models.RolesPermissionsModel;
+import com.bandsyncapi.bandsyncapi.api.v1.services.RolesPermissionsService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.RolesService;
+import com.bandsyncapi.bandsyncapi.api.v1.services.UsersRolesService;
 import com.bandsyncapi.bandsyncapi.config.TestBeansConfig;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -48,7 +51,16 @@ class RolesControllerUnSecuredTest {
   private RolesService rolesService;
 
   @MockitoBean
+  private RolesPermissionsService rolesPermissionsService;
+
+  @MockitoBean
+  private UsersRolesService usersRolesService;
+
+  @MockitoBean
   private RolesMapper rolesMapper;
+
+  @MockitoBean
+  private UsersMapper usersMapper;
 
   @Test
   void testSave_Valid_Request() throws Exception {
