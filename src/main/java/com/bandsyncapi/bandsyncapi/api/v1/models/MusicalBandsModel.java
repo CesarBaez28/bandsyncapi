@@ -31,7 +31,7 @@ public class MusicalBandsModel {
   @Column(name = "name", nullable = false, unique = true, length = 100)
   private String name;
 
-  @Column(name = "hyphenated-name", nullable = false, unique = true, length = 100)
+  @Column(name = "hyphenated_name", nullable = false, unique = true, length = 100)
   private String hyphenatedName;
 
   @Column(name = "logo", nullable = false, length = 100)

@@ -1,3 +1,16 @@
+-- Types permissions of the system
+INSERT INTO bandsync.types_permissions (name) VALUES 
+('Integrantes'),
+('Repertorios'),
+('Eventos'),
+('Artistas'),
+('Canciones'),
+('Calendario'),
+('Roles y permisos'),
+('Géneros musicales'),
+('Roles musicales'),
+('Banda');  
+
 -- Permissions of the system
 INSERT INTO bandsync.permissions (name, type_permission_id) VALUES 
 ('Visualizar integrantes', 1), 
@@ -29,16 +42,3 @@ INSERT INTO bandsync.permissions (name, type_permission_id) VALUES
 ('Eliminar rol musical', 9),
 ("Editar Banda", 10),
 ("Eliminar Banda", 10);
-
--- Types permissions of the system
-INSERT INTO bandsync.types_permissions (name) VALUES 
-('Integrantes'),
-('Repertorios'),
-('Eventos'),
-('Artistas'),
-('Canciones'),
-('Calendario'),
-('Roles y permisos'),
-('Géneros musicales'),
-('Roles musicales'),
-('Banda');  
