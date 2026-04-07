@@ -5,7 +5,6 @@ INSERT INTO bandsync.types_permissions (name) VALUES
 ('Eventos'),
 ('Artistas'),
 ('Canciones'),
-('Calendario'),
 ('Roles y permisos'),
 ('Géneros musicales'),
 ('Roles musicales'),
