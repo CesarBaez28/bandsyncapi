@@ -185,22 +185,28 @@ public class MusicalBandsServiceImpl implements MusicalBandsService {
   @Transactional
   public MusicalBandPutDto update(UUID musicalBandId, MusicalBandPutDto musicalBandPutDto, MultipartFile imageFile)
       throws IOException {
+
     log.info("Updating musical band with id {}", musicalBandId);
 
-    String fileUrl = filesService.uploadFile(imageFile, awsLogosDirectory);
-    String currentFile = musicalBandPutDto.logo();
+    String uploadedFileUrl = filesService.uploadFile(imageFile, awsLogosDirectory);
+    String currentFileUrl = musicalBandPutDto.logo();
 
-    boolean hasNewFile = !fileUrl.isEmpty();
-    boolean hasOldFile = currentFile != null && !currentFile.isEmpty();
+    boolean hasNewFile = uploadedFileUrl != null && !uploadedFileUrl.isBlank();
+    boolean hasCurrentFile = currentFileUrl != null && !currentFileUrl.isBlank();
 
-    if (hasNewFile && hasOldFile) {
-      String fileName = AwsUtils.getFileNameFromAwsUrl(currentFile);
-      filesService.deleteFile(awsLogosDirectory + "/" + fileName);
+    String finalFileUrl;
+
+    if (hasNewFile) {
+      if (hasCurrentFile) {
+        String fileName = AwsUtils.getFileNameFromAwsUrl(currentFileUrl);
+        filesService.deleteFile(awsLogosDirectory + "/" + fileName);
+      }
+      finalFileUrl = uploadedFileUrl;
     } else {
-      fileUrl = currentFile;
+      finalFileUrl = currentFileUrl;
     }
 
-    int rowsUpdated = musicalBandsRepository.update(musicalBandId, musicalBandPutDto, fileUrl);
+    int rowsUpdated = musicalBandsRepository.update(musicalBandId, musicalBandPutDto, finalFileUrl);
 
     if (rowsUpdated == 0) {
       throw new EntityNotFoundException("Musical band not found with id: " + musicalBandId);
@@ -211,7 +217,7 @@ public class MusicalBandsServiceImpl implements MusicalBandsService {
         .address(musicalBandPutDto.address())
         .email(musicalBandPutDto.email())
         .phone(musicalBandPutDto.phone())
-        .logo(fileUrl)
+        .logo(finalFileUrl)
         .build();
   }
 
