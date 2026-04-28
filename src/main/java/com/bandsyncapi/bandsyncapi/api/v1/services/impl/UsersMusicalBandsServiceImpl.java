@@ -54,4 +54,10 @@ public class UsersMusicalBandsServiceImpl implements UsersMusicalBandsService {
     log.info("Deleting user {} from musical band {}", userId, musicalBandId);
     usersMusicalBandsRepository.deleteByUserIdAndMusicalBandId(userId, musicalBandId);
   }
+
+  @Override
+  public void deleteByUserId(UUID userId) {
+    log.info("Deleting all relationships of user {} with musical bands", userId);
+    usersMusicalBandsRepository.deleteByUserId(userId);
+  }
 }

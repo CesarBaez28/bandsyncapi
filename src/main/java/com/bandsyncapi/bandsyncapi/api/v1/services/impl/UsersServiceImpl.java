@@ -26,7 +26,9 @@ import com.bandsyncapi.bandsyncapi.api.v1.models.UsersModel;
 import com.bandsyncapi.bandsyncapi.api.v1.repositories.InvitationsRepository;
 import com.bandsyncapi.bandsyncapi.api.v1.repositories.UsersRepository;
 import com.bandsyncapi.bandsyncapi.api.v1.services.FilesService;
+import com.bandsyncapi.bandsyncapi.api.v1.services.MusicalRolesUsersService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.UsersMusicalBandsService;
+import com.bandsyncapi.bandsyncapi.api.v1.services.UsersRolesService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.UsersService;
 import com.bandsyncapi.bandsyncapi.utils.AwsUtils;
 import com.bandsyncapi.bandsyncapi.utils.Encrypt;
@@ -46,6 +48,10 @@ public class UsersServiceImpl implements UsersService {
 
   private final UsersMusicalBandsService usersMusicalBandsService;
 
+  private final MusicalRolesUsersService musicalRolesUsersService;
+
+  private final UsersRolesService usersRolesService;
+
   private final InvitationsRepository invitationsRepository;
 
   private final AuthenticationManager authenticationManager;
@@ -60,22 +66,27 @@ public class UsersServiceImpl implements UsersService {
   /**
    * Constructor
    * 
-   * @param usersRepository
-   * @param usersMusicalBandsService
-   * @param invitationsRepository
-   * @param encrypt
-   * @param authenticationManager
-   * @param filesService
+   * @param usersRepository          - User Repository
+   * @param usersMusicalBandsService - UsersMusicalBands Service
+   * @param invitationsRepository    - Invitations Repository
+   * @param encrypt                  - Encrypt utility
+   * @param authenticationManager    - Authentication Manager
+   * @param filesService             - Files Service
+   * @param musicalRolesUsersService - MusicalRolesUsers Service
+   * @param usersRolesService        - UsersRoles Service
    */
   public UsersServiceImpl(UsersRepository usersRepository, UsersMusicalBandsService usersMusicalBandsService,
       InvitationsRepository invitationsRepository,
-      Encrypt encrypt, AuthenticationManager authenticationManager, FilesService filesService) {
+      Encrypt encrypt, AuthenticationManager authenticationManager, FilesService filesService,
+      MusicalRolesUsersService musicalRolesUsersService, UsersRolesService usersRolesService) {
     this.usersRepository = usersRepository;
     this.usersMusicalBandsService = usersMusicalBandsService;
     this.invitationsRepository = invitationsRepository;
     this.authenticationManager = authenticationManager;
     this.encrypt = encrypt;
     this.filesService = filesService;
+    this.musicalRolesUsersService = musicalRolesUsersService;
+    this.usersRolesService = usersRolesService;
   }
 
   @Override
@@ -223,5 +234,24 @@ public class UsersServiceImpl implements UsersService {
   public Optional<UsersModel> findByEmail(String email) {
     log.info("Finding user by email: {}", email);
     return usersRepository.findByEmail(email);
+  }
+
+  @Override
+  public void deleteUserAccount(UUID userId) {
+    log.info("Deleting user account with id {}", userId);
+
+    if (userId == null) {
+      throw new IllegalArgumentException("User ID cannot be null");
+    }
+
+    usersMusicalBandsService.deleteByUserId(userId);
+
+    musicalRolesUsersService.deleteMusicalRolesByUserId(userId);
+
+    usersRolesService.deleteByUserId(userId);
+
+    usersRepository.deleteById(userId);
+
+    log.info("User account with id {} deleted successfully", userId);
   }
 }

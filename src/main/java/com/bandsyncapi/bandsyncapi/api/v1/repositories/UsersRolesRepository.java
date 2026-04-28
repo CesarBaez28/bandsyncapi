@@ -64,14 +64,14 @@ public interface UsersRolesRepository extends JpaRepository<UsersRolesModel, Use
    * @return - All user roles
    */
   @Query("""
-    SELECT ur
-    FROM UsersRolesModel ur
-    JOIN FETCH ur.role r
-    JOIN FETCH ur.musicalBand
-    JOIN FETCH r.musicalBand
-    JOIN FETCH ur.user u
-    WHERE ur.user.id = :userId
-    """)
+      SELECT ur
+      FROM UsersRolesModel ur
+      JOIN FETCH ur.role r
+      JOIN FETCH ur.musicalBand
+      JOIN FETCH r.musicalBand
+      JOIN FETCH ur.user u
+      WHERE ur.user.id = :userId
+      """)
   List<UsersRolesModel> findByUser(@Param("userId") UUID userId);
 
   /**
@@ -81,14 +81,14 @@ public interface UsersRolesRepository extends JpaRepository<UsersRolesModel, Use
    * @return
    */
   @Query("""
-    SELECT ur
-    FROM UsersRolesModel ur
-    JOIN FETCH ur.role r
-    JOIN FETCH ur.musicalBand mb
-    JOIN FETCH r.musicalBand
-    JOIN FETCH ur.user u
-    WHERE mb.id = :musicalBandId
-    """)
+      SELECT ur
+      FROM UsersRolesModel ur
+      JOIN FETCH ur.role r
+      JOIN FETCH ur.musicalBand mb
+      JOIN FETCH r.musicalBand
+      JOIN FETCH ur.user u
+      WHERE mb.id = :musicalBandId
+      """)
   List<UsersRolesModel> findByMusicalBand(@Param("musicalBandId") UUID musicalBandId);
 
   /**
@@ -135,7 +135,6 @@ public interface UsersRolesRepository extends JpaRepository<UsersRolesModel, Use
   @Query(value = "DELETE FROM users_roles WHERE user_id = :userId AND musical_band_id = :musicalBandId", nativeQuery = true)
   void deleteByUserIdAndMusicalBandId(UUID userId, UUID musicalBandId);
 
-
   /**
    * delete by musical band id
    * 
@@ -145,4 +144,14 @@ public interface UsersRolesRepository extends JpaRepository<UsersRolesModel, Use
   @Modifying
   @Query(value = "DELETE FROM users_roles WHERE musical_band_id = :musicalBandId", nativeQuery = true)
   void deleteByMusicalBandId(@Param("musicalBandId") UUID musicalBandId);
+
+  /**
+   * Delete by user id
+   * 
+   * @param userId - user id
+   */
+  @Transactional
+  @Modifying
+  @Query(value = "DELETE FROM users_roles WHERE user_id = :userId", nativeQuery = true)
+  void deleteByUserId(@Param("userId") UUID userId);
 }

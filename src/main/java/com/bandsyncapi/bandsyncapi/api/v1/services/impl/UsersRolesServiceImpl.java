@@ -182,4 +182,10 @@ public class UsersRolesServiceImpl implements UsersRolesService {
     log.info("Deleting user {} from musical band {}", userId, musicalBandId);
     usersRolesRepository.deleteByUserIdAndMusicalBandId(userId, musicalBandId);
   }
+
+  @Override
+  public void deleteByUserId(UUID userId) {
+    log.info("Deleting all user roles for user: {}", userId);
+    usersRolesRepository.deleteByUserId(userId);
+  }
 }

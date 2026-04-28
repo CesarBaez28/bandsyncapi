@@ -89,4 +89,10 @@ public class MusicalRolesUsersServiceImpl implements MusicalRolesUsersService {
       musicalRolesUsersRepository.saveAll(newRoles);
     }
   }
+
+  @Override
+  public void deleteMusicalRolesByUserId(UUID userId) {
+    log.info("Deleting all musical roles for user: {}", userId);
+    musicalRolesUsersRepository.deleteByUserId(userId);
+  }
 }

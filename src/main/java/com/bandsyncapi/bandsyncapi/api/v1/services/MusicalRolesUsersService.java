@@ -37,4 +37,11 @@ public interface MusicalRolesUsersService {
    * @param musicalRoles -  musical roles
    */
   void assignMusicalRolesUser(UUID userId, UUID musicalBandId, List<MusicalRolesModel> musicalRoles);
+
+  /**
+   * Delete all musical roles of a specific user
+   * 
+   * @param userId - user id
+   */
+  void deleteMusicalRolesByUserId(UUID userId);
 }

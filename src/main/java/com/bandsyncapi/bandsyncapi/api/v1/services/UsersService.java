@@ -120,4 +120,11 @@ public interface UsersService {
    * @return - Optional of type UsersModel
    */
   Optional<UsersModel> findByEmail(String email);
+
+  /**
+   * Delete a user account
+   * 
+   * @param userId - user id
+   */
+  void deleteUserAccount(UUID userId);
 }

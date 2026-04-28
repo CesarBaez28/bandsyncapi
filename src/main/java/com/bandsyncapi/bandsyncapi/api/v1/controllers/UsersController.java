@@ -44,6 +44,7 @@ import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -455,5 +456,12 @@ public class UsersController {
     twoFactorService.disable2FA(userDetails);
 
     return ResponseEntity.ok().body(new ApiResponse<>(true, "2FA disabled successfully", null, null));
+  }
+
+  @DeleteMapping("/users/delete/{userId}")
+  public ResponseEntity<ApiResponse<Void>> deleteUser(@PathVariable UUID userId) {
+    usersService.deleteUserAccount(userId);
+
+    return ResponseEntity.ok().body(new ApiResponse<>(true, "User deleted successfully", null, null));
   }
 }

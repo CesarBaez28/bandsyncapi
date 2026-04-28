@@ -51,4 +51,14 @@ public interface UsersMusicalBandsRepository extends JpaRepository<UsersMusicalB
   @Modifying
   @Query(value = "DELETE FROM users_musical_bands WHERE musical_band_id = :musicalBandId", nativeQuery = true)
   void deleteByMusicalBandId(@Param("musicalBandId") UUID musicalBandId);
+
+  /**
+   * Delete all the relationships of a user with musical bands
+   * 
+   * @param userId - UUID of the user
+   */
+  @Transactional
+  @Modifying
+  @Query(value = "DELETE FROM users_musical_bands WHERE user_id = :userId", nativeQuery = true)
+  void deleteByUserId(@Param("userId") UUID userId);
 }

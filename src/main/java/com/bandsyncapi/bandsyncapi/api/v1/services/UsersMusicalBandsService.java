@@ -37,4 +37,11 @@ public interface UsersMusicalBandsService {
    * @param musicalBandId - UUID of the musical band
    */
   void deleteByUserIdAndMusicalBandId(UUID userId, UUID musicalBandId);
+
+  /**
+   * Delete all the relationships of a user with musical bands
+   * 
+   * @param userId - UUID of the user
+   */
+  void deleteByUserId(UUID userId);
 }
