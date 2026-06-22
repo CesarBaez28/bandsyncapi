@@ -2,6 +2,7 @@ package com.bandsyncapi.bandsyncapi.api.v1.services.impl;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -103,5 +104,11 @@ public class PasswordResetTokenServiceImpl implements PasswordResetTokenService 
     // Marcar token como usado
     resetToken.setUsed(Boolean.TRUE);
     passwordResetTokenRepository.save(resetToken);
+  }
+
+  @Override
+  public void deleteByUserId(UUID userId) {
+    log.info("Deleting all password reset token by user id {}", userId);
+    passwordResetTokenRepository.deleteByUserId(userId);
   }
 }

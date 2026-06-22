@@ -12,6 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.bandsyncapi.bandsyncapi.api.v1.dto.musicalbands.MusicalBandPutDto;
 import com.bandsyncapi.bandsyncapi.api.v1.models.MusicalBandsModel;
+
+import java.util.List;
 import java.util.Optional;
 
 /**

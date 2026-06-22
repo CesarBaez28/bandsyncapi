@@ -16,12 +16,14 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.bandsyncapi.bandsyncapi.api.v1.constants.UserPermissions;
+import com.bandsyncapi.bandsyncapi.api.v1.dto.roles.TransferAdminRoleDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.twofa.Required2FADto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.twofa.SetUp2FADto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.twofa.Verify2FADto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.twofa.VerifyLogin2FADto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.users.ChangePasswordDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.users.ForgotPasswordRequestDto;
+import com.bandsyncapi.bandsyncapi.api.v1.dto.users.MusicalBandDeletionCheckDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.users.ResetPasswordRequestDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.users.UserLoginPostDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.users.UserRegisterPostDto;
@@ -142,6 +144,12 @@ public class UsersController {
         .body(new ApiResponse<>(true, "User authenticated successfully", userSessionDto, null));
   }
 
+  /**
+   * Verify the 2FA login
+   * 
+   * @param request - Request body with the 2FA data
+   * @return - An ApiResponse object
+   */
   @PostMapping("/users/auth/verify-2fa-login")
   public ResponseEntity<ApiResponse<UserSessionDto>> verify2FALogin(
       @RequestBody VerifyLogin2FADto request) {
@@ -458,10 +466,74 @@ public class UsersController {
     return ResponseEntity.ok().body(new ApiResponse<>(true, "2FA disabled successfully", null, null));
   }
 
+  /**
+   * Delete a user account. This will remove the user from all musical bands they
+   * are part of and delete their account.
+   * 
+   * @param userId - the id of the user to delete
+   * @return - An ApiResponse object indicating whether the user was deleted
+   *         successfully
+   */
   @DeleteMapping("/users/delete/{userId}")
   public ResponseEntity<ApiResponse<Void>> deleteUser(@PathVariable UUID userId) {
     usersService.deleteUserAccount(userId);
 
     return ResponseEntity.ok().body(new ApiResponse<>(true, "User deleted successfully", null, null));
+  }
+
+  /**
+   * Transfer admin roles and delete user account
+   * 
+   * @param userId   - user id
+   * @param transfer - users to transfer admin role
+   * @return - An ApiResponse object indicating whether the user was deleted
+   *         successfully
+   */
+  @DeleteMapping("/users/transfer-admins-and-delete/{userId}")
+  public ResponseEntity<ApiResponse<Void>> transferAdminRolesAndDeleteAccount(@PathVariable UUID userId,
+      @Valid @RequestBody List<TransferAdminRoleDto> transfer) {
+
+    usersService.transferAdminRolesAndDeleteAccount(transfer, userId);
+
+    log.info("Admin roles transfered and user deleted successfully.");
+
+    return ResponseEntity.ok()
+        .body(new ApiResponse<>(true, "User account deleted successfully.", null, null));
+  }
+
+  /**
+   * Check the user's bands before deleting the account. This will return a list
+   * of
+   * the bands the user belongs to and whether they can delete the account (i.e.
+   * if they are the only member of any band or if there is another admin in those
+   * bands).
+   * 
+   * @param userId - the id of the user to check
+   * @return - An ApiResponse object containing a list of the user's bands and
+   *         whether they can delete the account
+   */
+  @GetMapping("/users/get-bands-before-deletion/{userId}")
+  public ResponseEntity<ApiResponse<List<MusicalBandDeletionCheckDto>>> checkBandsBeforeDeletion(
+      @PathVariable UUID userId) {
+
+    List<MusicalBandDeletionCheckDto> result = usersService.getMusicalBandsToAssingAdminRoleBeforeDeletion(userId);
+
+    return ResponseEntity.ok().body(
+        new ApiResponse<>(true, "Bands checked successfully", result, null));
+  }
+
+  /**
+   * Check if the user needs to assign a new admin role to another user in any of
+   * his musical bands before deleting the user account
+   * 
+   * @param userId - user id
+   * @return true if the user needs to assign a new admin role, false otherwise
+   */
+  @GetMapping("/users/is-need-to-assign-admin-role-before-deletion/{userId}")
+  public ResponseEntity<ApiResponse<Boolean>> isNeedToAssignAdminRoleBeforeDeletion(@PathVariable UUID userId) {
+    Boolean result = usersService.isNeedToAssignAdminRoleBeforeDeletion(userId);
+
+    return ResponseEntity.ok()
+        .body(new ApiResponse<>(true, "Check completed successfully", result, null));
   }
 }

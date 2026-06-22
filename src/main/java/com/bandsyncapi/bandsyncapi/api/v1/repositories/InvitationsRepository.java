@@ -35,4 +35,14 @@ public interface InvitationsRepository extends JpaRepository<InvitationsModel, U
   @Transactional
   @Query(value = "DELETE FROM invitations WHERE musical_band_id = :musicalBandId", nativeQuery = true)
   void deleteByMusicalBandId(@Param("musicalBandId") UUID musicalBandId);
+
+  /**
+   * Deletes invitations by user id
+   * 
+   * @param userId - user id
+   */
+  @Modifying
+  @Transactional
+  @Query(value = "DELETE FROM invitations WHERE invited_by = :userId", nativeQuery = true)
+  void deleteByUserId(@Param("userId") UUID userId);
 }

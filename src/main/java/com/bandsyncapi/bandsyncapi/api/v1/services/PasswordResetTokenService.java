@@ -24,4 +24,11 @@ public interface PasswordResetTokenService {
    * @param newPassword - The new password to set for the user
    */
   void resetPassword(UUID token, String newPassword);
+
+  /**
+   * Deletes all token by user id
+   * 
+   * @param userId - user id
+   */
+  void deleteByUserId(UUID userId);
 }

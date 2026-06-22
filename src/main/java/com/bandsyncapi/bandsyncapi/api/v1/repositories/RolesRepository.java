@@ -1,6 +1,7 @@
 package com.bandsyncapi.bandsyncapi.api.v1.repositories;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -51,4 +52,14 @@ public interface RolesRepository extends JpaRepository<RolesModel, Integer> {
       WHERE mb.id = :musicalBandId
       """)
   List<RolesModel> findByMusicalBandId(@Param("musicalBandId") UUID musicalBandId);
+
+  /**
+   * delete roles by id in set
+   * 
+   * @param roleIds - set of role ids
+   */
+  @Transactional
+  @Modifying
+  @Query(value = "DELETE FROM roles where id IN :roleIds", nativeQuery = true)
+  void deleteByIdIn(Set<Integer> roleIds);
 }

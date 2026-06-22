@@ -2,6 +2,7 @@ package com.bandsyncapi.bandsyncapi.api.v1.services.impl;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -16,20 +17,28 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.bandsyncapi.bandsyncapi.api.v1.dto.musicalbands.MusicalBandsDto;
+import com.bandsyncapi.bandsyncapi.api.v1.dto.roles.TransferAdminRoleDto;
+import com.bandsyncapi.bandsyncapi.api.v1.dto.roles.UserRoleDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.users.ChangePasswordDto;
+import com.bandsyncapi.bandsyncapi.api.v1.dto.users.MusicalBandDeletionCheckDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.users.UserLoginPostDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.users.UsersPutDto;
 import com.bandsyncapi.bandsyncapi.api.v1.enums.InvitationStatus;
+import com.bandsyncapi.bandsyncapi.api.v1.mappers.UsersMapper;
 import com.bandsyncapi.bandsyncapi.api.v1.models.InvitationsModel;
 import com.bandsyncapi.bandsyncapi.api.v1.models.MusicalBandsModel;
 import com.bandsyncapi.bandsyncapi.api.v1.models.UsersModel;
 import com.bandsyncapi.bandsyncapi.api.v1.repositories.InvitationsRepository;
 import com.bandsyncapi.bandsyncapi.api.v1.repositories.UsersRepository;
 import com.bandsyncapi.bandsyncapi.api.v1.services.FilesService;
+import com.bandsyncapi.bandsyncapi.api.v1.services.MusicalBandDeletionBatchService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.MusicalRolesUsersService;
+import com.bandsyncapi.bandsyncapi.api.v1.services.PasswordResetTokenService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.UsersMusicalBandsService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.UsersRolesService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.UsersService;
+import com.bandsyncapi.bandsyncapi.constants.Constants;
 import com.bandsyncapi.bandsyncapi.utils.AwsUtils;
 import com.bandsyncapi.bandsyncapi.utils.Encrypt;
 
@@ -60,25 +69,36 @@ public class UsersServiceImpl implements UsersService {
 
   private final FilesService filesService;
 
+  private final UsersMapper usersMapper;
+
+  private final MusicalBandDeletionBatchService musicalBandDeletionBatchService;
+
+  private final PasswordResetTokenService passwordResetTokenService;
+
   @Value("${aws.bucket.users.directory}")
   private String awsUsersDirectory;
 
   /**
    * Constructor
    * 
-   * @param usersRepository          - User Repository
-   * @param usersMusicalBandsService - UsersMusicalBands Service
-   * @param invitationsRepository    - Invitations Repository
-   * @param encrypt                  - Encrypt utility
-   * @param authenticationManager    - Authentication Manager
-   * @param filesService             - Files Service
-   * @param musicalRolesUsersService - MusicalRolesUsers Service
-   * @param usersRolesService        - UsersRoles Service
+   * @param usersRepository                 - User Repository
+   * @param usersMusicalBandsService        - UsersMusicalBands Service
+   * @param invitationsRepository           - Invitations Repository
+   * @param encrypt                         - Encrypt utility
+   * @param authenticationManager           - Authentication Manager
+   * @param filesService                    - Files Service
+   * @param musicalRolesUsersService        - MusicalRolesUsers Service
+   * @param usersRolesService               - UsersRoles Service
+   * @param usersMapper                     - Users Mapper
+   * @param musicalBandDeletionBatchService - MusicalBandDeletionBatch Service
+   * @param passwordResetTokenService       - Password reset token service
    */
   public UsersServiceImpl(UsersRepository usersRepository, UsersMusicalBandsService usersMusicalBandsService,
       InvitationsRepository invitationsRepository,
       Encrypt encrypt, AuthenticationManager authenticationManager, FilesService filesService,
-      MusicalRolesUsersService musicalRolesUsersService, UsersRolesService usersRolesService) {
+      MusicalRolesUsersService musicalRolesUsersService, UsersRolesService usersRolesService, UsersMapper usersMapper,
+      MusicalBandDeletionBatchService musicalBandDeletionBatchService,
+      PasswordResetTokenService passwordResetTokenService) {
     this.usersRepository = usersRepository;
     this.usersMusicalBandsService = usersMusicalBandsService;
     this.invitationsRepository = invitationsRepository;
@@ -87,6 +107,9 @@ public class UsersServiceImpl implements UsersService {
     this.filesService = filesService;
     this.musicalRolesUsersService = musicalRolesUsersService;
     this.usersRolesService = usersRolesService;
+    this.usersMapper = usersMapper;
+    this.musicalBandDeletionBatchService = musicalBandDeletionBatchService;
+    this.passwordResetTokenService = passwordResetTokenService;
   }
 
   @Override
@@ -244,14 +267,133 @@ public class UsersServiceImpl implements UsersService {
       throw new IllegalArgumentException("User ID cannot be null");
     }
 
+    deleteMusicalBandsWhereUserIsOnlyMember(userId);
+
     usersMusicalBandsService.deleteByUserId(userId);
 
     musicalRolesUsersService.deleteMusicalRolesByUserId(userId);
 
     usersRolesService.deleteByUserId(userId);
 
-    usersRepository.deleteById(userId);
+    log.info("Deleting invitations by user id {}", userId);
+    invitationsRepository.deleteByUserId(userId);
+
+    passwordResetTokenService.deleteByUserId(userId);
+
+    usersRepository.deleteByUserId(userId);
 
     log.info("User account with id {} deleted successfully", userId);
+  }
+
+  @Override
+  public void deleteMusicalBandsWhereUserIsOnlyMember(UUID userId) {
+    log.info("Deleting musical bands where user with id {} is the only member", userId);
+
+    List<MusicalBandsDto> userBands = usersMusicalBandsService.findByUser(new UsersModel(userId));
+
+    List<UUID> musicalBandIdsToDelete = new ArrayList<>();
+
+    for (MusicalBandsDto band : userBands) {
+      boolean isOnlyMember = isOnlyMemberInAMusicalBand(band.id());
+
+      if (isOnlyMember) {
+        musicalBandIdsToDelete.add(band.id());
+      }
+    }
+
+    log.info("Deleting musical bands with ids: {} where user with id {} is the only member", musicalBandIdsToDelete,
+        userId);
+
+    musicalBandDeletionBatchService.deleteMusicalBands(musicalBandIdsToDelete);
+
+    log.info("Musical bands where user with id {} is the only member deleted successfully", userId);
+  }
+
+  @Override
+  public boolean isNeedToAssignAdminRoleBeforeDeletion(UUID userId) {
+    log.info("Checking if user with id {} needs to assign admin role before deletion", userId);
+
+    List<MusicalBandsDto> userBands = usersMusicalBandsService.findByUser(new UsersModel(userId));
+
+    for (MusicalBandsDto band : userBands) {
+      List<UserRoleDto> usersRolesInBand = usersRolesService.findByMusicalBand(new MusicalBandsModel(band.id()));
+
+      boolean isOnlyMember = isOnlyMemberInAMusicalBand(band.id());
+
+      if (isOnlyMember) {
+        continue;
+      }
+
+      boolean hasAnotherAdmin = usersRolesInBand.stream()
+          .filter(ur -> ur.role().name().equalsIgnoreCase(Constants.ADMIN_ROLE_NAME))
+          .toList().size() > 1;
+
+      if (!hasAnotherAdmin) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  @Override
+  public List<MusicalBandDeletionCheckDto> getMusicalBandsToAssingAdminRoleBeforeDeletion(UUID userId) {
+    log.info("Checking user's bands before deletion for user id {}", userId);
+
+    List<MusicalBandsDto> userBands = usersMusicalBandsService.findByUser(new UsersModel(userId));
+
+    List<MusicalBandDeletionCheckDto> result = new ArrayList<>();
+
+    for (MusicalBandsDto band : userBands) {
+      List<UsersModel> usersInBand = usersRepository.findAllByMusicalBandId(band.id());
+
+      boolean isOnlyMember = isOnlyMemberInAMusicalBand(band.id());
+
+      if (isOnlyMember) {
+        continue;
+      }
+
+      List<UserRoleDto> usersRolesInBand = usersRolesService.findByMusicalBand(new MusicalBandsModel(band.id()));
+
+      List<UserRoleDto> adminsInBand = usersRolesInBand.stream()
+          .filter(ur -> ur.role().name().equalsIgnoreCase(Constants.ADMIN_ROLE_NAME))
+          .toList();
+
+      boolean hasAnotherAdmin = adminsInBand.size() > 1;
+
+      if (!hasAnotherAdmin) {
+        result.add(
+            MusicalBandDeletionCheckDto.builder()
+                .musicalBand(band)
+                .adminId(adminsInBand.getFirst().role().id())
+                .members(
+                    usersInBand.stream()
+                        .filter(u -> !u.getId().equals(userId))
+                        .map(usersMapper::toDto)
+                        .toList())
+                .build());
+      }
+
+    }
+
+    return result;
+  }
+
+  @Override
+  @Transactional
+  public void transferAdminRolesAndDeleteAccount(List<TransferAdminRoleDto> transfer, UUID userId) {
+    log.info("Transfering admin roles and deleting account for user {}", userId);
+
+    usersRolesService.transferAdminRole(transfer);
+    deleteUserAccount(userId);
+  }
+
+  @Override
+  public boolean isOnlyMemberInAMusicalBand(UUID musicalBandId) {
+    log.info("Checking if user is the only member in musical band {}", musicalBandId);
+
+    int userCount = usersRepository.countByMusicalBandId(musicalBandId);
+
+    return userCount == 1;
   }
 }

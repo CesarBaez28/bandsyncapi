@@ -11,6 +11,7 @@ import com.bandsyncapi.bandsyncapi.api.v1.dto.musicalbands.MusicalBandsDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.permissions.PermissionDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.roles.RoleAndPermissionsDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.roles.RolesDto;
+import com.bandsyncapi.bandsyncapi.api.v1.dto.roles.TransferAdminRoleDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.roles.UserRolesAndPermissionsDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.roles.UserRoleDto;
 import com.bandsyncapi.bandsyncapi.api.v1.mappers.MusicalBandsMapper;
@@ -187,5 +188,27 @@ public class UsersRolesServiceImpl implements UsersRolesService {
   public void deleteByUserId(UUID userId) {
     log.info("Deleting all user roles for user: {}", userId);
     usersRolesRepository.deleteByUserId(userId);
+  }
+
+  @Override
+  public void transferAdminRole(List<TransferAdminRoleDto> transfer) {
+    log.info("Transferring admin role for users {}", transfer);
+
+    for (TransferAdminRoleDto transferAdminRoleDto : transfer) {
+      boolean hasARole = usersRolesRepository.findByUserIdAndMusicalBandId(transferAdminRoleDto.userId(),
+          transferAdminRoleDto.musicalBandId()).isPresent();
+
+      if (!hasARole) {
+        usersRolesRepository.save(new UsersRolesModel(
+            new RolesModel(transferAdminRoleDto.adminId()),
+            new MusicalBandsModel(transferAdminRoleDto.musicalBandId()),
+            new UsersModel(transferAdminRoleDto.userId()),
+            true));
+        continue;
+      }
+
+      usersRolesRepository.updateUserRole(new RolesModel(transferAdminRoleDto.adminId()), transferAdminRoleDto.userId(),
+          transferAdminRoleDto.musicalBandId());
+    }
   }
 }

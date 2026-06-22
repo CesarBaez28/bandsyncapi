@@ -36,6 +36,20 @@ public interface UsersRepository extends JpaRepository<UsersModel, UUID> {
   List<UsersModel> findAllByMusicalBandId(@Param("musicalBandId") UUID musicalBandId);
 
   /**
+   * Count the number of users that are part of a musical band
+   * 
+   * @param musicalBandId - Musical band id
+   * @return - The number of users in the musical band
+   */
+  @Query("""
+      SELECT COUNT(u) FROM UsersModel u
+      JOIN FETCH UsersMusicalBandsModel um
+      ON u.id = um.user.id
+      WHERE um.musicalBand.id = :musicalBandId
+      """)
+  int countByMusicalBandId(UUID musicalBandId);
+
+  /**
    * find all users that are part of a musical band and by
    * username, email, firstname, lastanme and phone number
    * 
@@ -102,4 +116,14 @@ public interface UsersRepository extends JpaRepository<UsersModel, UUID> {
    * @return - Optional of type UsersModel
    */
   Optional<UsersModel> findByEmail(String email);
+
+  /**
+   * delete user by id
+   * 
+   * @param userId - user id
+   */
+  @Transactional
+  @Modifying
+  @Query(value = "DELETE FROM users where id = :userId", nativeQuery = true)
+  void deleteByUserId(UUID userId);
 }

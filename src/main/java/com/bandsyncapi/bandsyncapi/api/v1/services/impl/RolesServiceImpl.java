@@ -160,6 +160,6 @@ public class RolesServiceImpl implements RolesService {
 
     rolesPermissionsService.deleteByRoleIdIn(roleIds);
 
-    rolesRepository.deleteAll(roles);
+    rolesRepository.deleteByIdIn(roleIds);
   }
 }

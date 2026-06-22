@@ -12,6 +12,7 @@ import com.bandsyncapi.bandsyncapi.api.v1.dto.musicalbands.MusicalBandsDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.musicalbands.MusicalBandsPostDto;
 import com.bandsyncapi.bandsyncapi.api.v1.models.UsersModel;
 import com.bandsyncapi.bandsyncapi.api.v1.services.InvitationsService;
+import com.bandsyncapi.bandsyncapi.api.v1.services.MusicalBandDeletionBatchService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.MusicalBandDeletionService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.MusicalBandsService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.UsersMusicalBandsService;
@@ -52,25 +53,34 @@ public class MusicalBandsController {
 
   private final MusicalBandDeletionService musicalBandDeletionService;
 
+  private final MusicalBandDeletionBatchService musicalBandDeletionBatchService;
+
   /**
    * Constructor for the MusicalBandsController class.
    * 
-   * @param musicalBandsService        - Service with methods for performing CRUD
-   *                                   operations on the musical_bands table.
-   * @param usersMusicalBandsService   - Service with methods for performing CRUD
-   *                                   operations on the users_musical_bands
-   *                                   table.
-   * @param invitationsService         - Service to send invitation to join to a
-   *                                   musical band
-   * @param musicalBandDeletionService - Service to delete a musical band
+   * @param musicalBandsService             - Service with methods for performing
+   *                                        CRUD
+   *                                        operations on the musical_bands table.
+   * @param usersMusicalBandsService        - Service with methods for performing
+   *                                        CRUD
+   *                                        operations on the users_musical_bands
+   *                                        table.
+   * @param invitationsService              - Service to send invitation to join
+   *                                        to a
+   *                                        musical band
+   * @param musicalBandDeletionService      - Service to delete a musical band
+   * @param musicalBandDeletionBatchService - Service to delete multiple musical
+   *                                        bands
    */
   public MusicalBandsController(MusicalBandsService musicalBandsService,
       UsersMusicalBandsService usersMusicalBandsService, InvitationsService invitationsService,
-      MusicalBandDeletionService musicalBandDeletionService) {
+      MusicalBandDeletionService musicalBandDeletionService,
+      MusicalBandDeletionBatchService musicalBandDeletionBatchService) {
     this.musicalBandsService = musicalBandsService;
     this.usersMusicalBandsService = usersMusicalBandsService;
     this.invitationsService = invitationsService;
     this.musicalBandDeletionService = musicalBandDeletionService;
+    this.musicalBandDeletionBatchService = musicalBandDeletionBatchService;
   }
 
   /**
@@ -197,5 +207,20 @@ public class MusicalBandsController {
 
     return ResponseEntity.status(HttpStatus.OK)
         .body(new ApiResponse<>(true, "Musical band deleted successfully", null, null));
+  }
+
+  /**
+   * Deletes multiple musical bands
+   * 
+   * @param musicalBandIds - List of musical band ids
+   * @return An ApiResponse object
+   */
+  @PreAuthorize("hasRole('" + UserPermissions.DELETE_BAND + "')")
+  @PostMapping("/delete-bands")
+  public ResponseEntity<ApiResponse<Void>> postMethodName(@RequestBody List<UUID> musicalBandIds) {
+    musicalBandDeletionBatchService.deleteMusicalBands(musicalBandIds);
+
+    return ResponseEntity.status(HttpStatus.OK)
+        .body(new ApiResponse<>(true, "Musical bands deleted successfully", null, null));
   }
 }

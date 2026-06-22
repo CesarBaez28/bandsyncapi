@@ -27,6 +27,7 @@ import com.bandsyncapi.bandsyncapi.api.v1.services.RolesPermissionsService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.RolesService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.UsersMusicalBandsService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.UsersRolesService;
+import com.bandsyncapi.bandsyncapi.constants.Constants;
 import com.bandsyncapi.bandsyncapi.utils.AwsUtils;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -61,8 +62,6 @@ public class MusicalBandsServiceImpl implements MusicalBandsService {
 
   @Value("${aws.bucket.logos.directory}")
   private String awsLogosDirectory;
-
-  private static final String ADMIN_ROLE_NAME = "Administrador";
 
   /**
    * Hyphenate a name
@@ -150,7 +149,7 @@ public class MusicalBandsServiceImpl implements MusicalBandsService {
 
     // Save the role of the user in the musical band
     var role = rolesService.save(RolesModel.builder()
-        .name(ADMIN_ROLE_NAME)
+        .name(Constants.ADMIN_ROLE_NAME)
         .musicalBand(savedMusicalBandsModel)
         .status(true).build());
 

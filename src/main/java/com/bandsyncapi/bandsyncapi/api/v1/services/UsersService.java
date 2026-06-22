@@ -8,7 +8,9 @@ import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.bandsyncapi.bandsyncapi.api.v1.dto.roles.TransferAdminRoleDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.users.ChangePasswordDto;
+import com.bandsyncapi.bandsyncapi.api.v1.dto.users.MusicalBandDeletionCheckDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.users.UserLoginPostDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.users.UsersPutDto;
 import com.bandsyncapi.bandsyncapi.api.v1.models.UsersModel;
@@ -127,4 +129,47 @@ public interface UsersService {
    * @param userId - user id
    */
   void deleteUserAccount(UUID userId);
+
+  /**
+   * Get the musical bands that the user is part of and check if the user is the
+   * only admin in any of them, if so, return the musical band info to assign a
+   * new admin role to another user before deleting the user account
+   * 
+   * @param userId - user id
+   * @return List of MusicalBandDeletionCheckDto with the musical bands that the
+   *         user is part of and if the user is the only admin in any of them
+   */
+  List<MusicalBandDeletionCheckDto> getMusicalBandsToAssingAdminRoleBeforeDeletion(UUID userId);
+
+  /**
+   * Check if the user needs to assign a new admin role to another user in any of
+   * his musical bands before deleting the user account
+   * 
+   * @param userId - user id
+   * @return true if the user needs to assign a new admin role, false otherwise
+   */
+  boolean isNeedToAssignAdminRoleBeforeDeletion(UUID userId);
+
+  /**
+   * Delete musical bands where the user is the only member
+   * 
+   * @param userId - user id
+   */
+  void deleteMusicalBandsWhereUserIsOnlyMember(UUID userId);
+
+  /**
+   * Transfer admin roles and delete account
+   * 
+   * @param transfer - users to transfer admin role
+   * @param userId   - user id to delete account
+   */
+  void transferAdminRolesAndDeleteAccount(List<TransferAdminRoleDto> transfer, UUID userId);
+
+  /**
+   * Check if the user is the only member in a musical band
+   * 
+   * @param musicalBandId - musical band id
+   * @return true if the user is the only member, false otherwise
+   */
+  boolean isOnlyMemberInAMusicalBand(UUID musicalBandId);
 }

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 import com.bandsyncapi.bandsyncapi.api.v1.dto.roles.RoleAndPermissionsDto;
+import com.bandsyncapi.bandsyncapi.api.v1.dto.roles.TransferAdminRoleDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.roles.UserRolesAndPermissionsDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.roles.UserRoleDto;
 import com.bandsyncapi.bandsyncapi.api.v1.models.MusicalBandsModel;
@@ -90,4 +91,16 @@ public interface UsersRolesService {
    * @param userId - user id
    */
   void deleteByUserId(UUID userId);
+
+  /**
+   * Transfer admin role to another user in the musical bands where the user is
+   * the only admin
+   * before deleting the user account
+   * 
+   * @param transfer - List of TransferAdminRoleDto with the info of the musical
+   *                 bands where the user
+   *                 is the only admin and the user to transfer the admin role to
+   *                 in each band
+   */
+  void transferAdminRole(List<TransferAdminRoleDto> transfer);
 }
