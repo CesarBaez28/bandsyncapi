@@ -22,6 +22,7 @@ import com.bandsyncapi.bandsyncapi.api.v1.dto.musicalbands.MusicalBandsDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.musicalbands.MusicalBandsPostDto;
 import com.bandsyncapi.bandsyncapi.api.v1.models.UsersModel;
 import com.bandsyncapi.bandsyncapi.api.v1.services.InvitationsService;
+import com.bandsyncapi.bandsyncapi.api.v1.services.MusicalBandDeletionBatchService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.MusicalBandDeletionService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.MusicalBandsService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.UsersMusicalBandsService;
@@ -52,6 +53,9 @@ class MusicalBandsControllerUnSecuredTest {
 
   @MockitoBean
   private MusicalBandDeletionService musicalBandDeletionService;
+
+  @MockitoBean
+  private MusicalBandDeletionBatchService musicalBandDeletionBatchService;
 
   @Test
   void testSaveMusicalBand_Valid_Post_Request() throws Exception {
