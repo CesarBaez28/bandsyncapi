@@ -87,7 +87,7 @@ public class RolesPermissionsServiceImpl implements RolesPermissionsService {
 
   @Override
   public List<RolesPermissionsModel> saveAll(List<RolesPermissionsModel> rolesPermissionsModel) {
-    log.info("Saving all roles permissions {}", rolesPermissionsModel);
+    log.info("Saving all roles permissions");
     return rolesPermissionsRepository.saveAll(rolesPermissionsModel);
   }
 

@@ -31,6 +31,7 @@ import com.bandsyncapi.bandsyncapi.api.v1.models.UsersModel;
 import com.bandsyncapi.bandsyncapi.api.v1.models.UsersRolesModel;
 import com.bandsyncapi.bandsyncapi.api.v1.repositories.MusicalBandsRepository;
 import com.bandsyncapi.bandsyncapi.api.v1.services.FilesService;
+import com.bandsyncapi.bandsyncapi.api.v1.services.MusicalBandsServiceAsync;
 import com.bandsyncapi.bandsyncapi.api.v1.services.MusicalGenresService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.MusicalRolesService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.PermissionsService;
@@ -73,6 +74,8 @@ class MusicalBandsServiceImplTest {
 
   @Mock
   private MusicalRolesService musicalRolesService;
+
+  @Mock MusicalBandsServiceAsync musicalBandsServiceAsync;
 
   @InjectMocks
   private MusicalBandsServiceImpl musicalBandsServiceImpl;
@@ -173,7 +176,6 @@ class MusicalBandsServiceImplTest {
     given(musicalBandsRepository.save(musicalBand)).willReturn(musicalBand);
     given(rolesService.save(role)).willReturn(role);
     given(permissionsService.findAll()).willReturn(permissions);
-    given(filesService.uploadFile(image, LOGOS_DIRECTORY)).willReturn("https://test_logo.png");
 
     // When
     MusicalBandsDto result = musicalBandsServiceImpl.registerMusicalBand(musicalBandPostDto, image);
@@ -187,11 +189,10 @@ class MusicalBandsServiceImplTest {
     verify(permissionsService).findAll();
     verify(rolesPermissionsService).saveAll(rolesPermissions);
     verify(musicalBandsMapper).toDto(musicalBand);
-    verify(filesService).uploadFile(image, LOGOS_DIRECTORY);
+    verify(musicalBandsServiceAsync).uploadLogo(musicalBand.getId(), image);
 
     assertNotNull(result);
     assertEquals(musicalBand.getName(), result.name());
-    assertEquals(musicalBand.getLogo(), result.logo());
     assertEquals(musicalBand.getAddress(), result.address());
     assertEquals(musicalBand.getPhone(), result.phone());
     assertEquals(musicalBand.getEmail(), result.email());

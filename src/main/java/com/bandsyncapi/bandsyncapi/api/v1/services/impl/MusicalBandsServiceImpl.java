@@ -20,6 +20,7 @@ import com.bandsyncapi.bandsyncapi.api.v1.models.UsersRolesModel;
 import com.bandsyncapi.bandsyncapi.api.v1.repositories.MusicalBandsRepository;
 import com.bandsyncapi.bandsyncapi.api.v1.services.FilesService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.MusicalBandsService;
+import com.bandsyncapi.bandsyncapi.api.v1.services.MusicalBandsServiceAsync;
 import com.bandsyncapi.bandsyncapi.api.v1.services.MusicalGenresService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.MusicalRolesService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.PermissionsService;
@@ -60,6 +61,8 @@ public class MusicalBandsServiceImpl implements MusicalBandsService {
 
   private final MusicalRolesService musicalRolesService;
 
+  private final MusicalBandsServiceAsync musicalBandsServiceAsync;
+
   @Value("${aws.bucket.logos.directory}")
   private String awsLogosDirectory;
 
@@ -88,12 +91,13 @@ public class MusicalBandsServiceImpl implements MusicalBandsService {
    * @param musicalBandsMapper       - Mapper for MusicalBandsModel
    * @param filesService             - Service to upload images
    * @param musicalGenresService     - Musical genres service
+   * @param musicalBandsServiceAsync - Service for async processes
    */
   public MusicalBandsServiceImpl(MusicalBandsRepository musicalBandsRepository,
       UsersMusicalBandsService usersMusicalBandsService, RolesService rolesService, UsersRolesService usersRolesService,
       PermissionsService permissionsService, RolesPermissionsService rolesPermissionsService,
       MusicalBandsMapper musicalBandsMapper, FilesService filesService, MusicalGenresService musicalGenresService,
-      MusicalRolesService musicalRolesService) {
+      MusicalRolesService musicalRolesService, MusicalBandsServiceAsync musicalBandsServiceAsync) {
     this.musicalBandsRepository = musicalBandsRepository;
     this.usersMusicalBandsService = usersMusicalBandsService;
     this.rolesService = rolesService;
@@ -104,6 +108,7 @@ public class MusicalBandsServiceImpl implements MusicalBandsService {
     this.filesService = filesService;
     this.musicalGenresService = musicalGenresService;
     this.musicalRolesService = musicalRolesService;
+    this.musicalBandsServiceAsync = musicalBandsServiceAsync;
   }
 
   @Override
@@ -170,12 +175,7 @@ public class MusicalBandsServiceImpl implements MusicalBandsService {
 
     musicalRolesService.insertDefaulRoles(savedMusicalBandsModel);
 
-    String fileUrl = filesService.uploadFile(imagefile, awsLogosDirectory);
-
-    if (!fileUrl.isEmpty()) {
-      updateLogoById(savedMusicalBandsModel.getId(), fileUrl);
-      savedMusicalBandsModel.setLogo(fileUrl);
-    }
+    musicalBandsServiceAsync.uploadLogo(savedMusicalBandsModel.getId(), imagefile);
 
     return musicalBandsMapper.toDto(savedMusicalBandsModel);
   }
