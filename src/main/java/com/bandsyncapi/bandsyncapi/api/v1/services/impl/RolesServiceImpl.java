@@ -21,7 +21,9 @@ import com.bandsyncapi.bandsyncapi.api.v1.models.RolesPermissionsModel;
 import com.bandsyncapi.bandsyncapi.api.v1.repositories.RolesRepository;
 import com.bandsyncapi.bandsyncapi.api.v1.services.RolesPermissionsService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.RolesService;
+import com.bandsyncapi.bandsyncapi.constants.Constants;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -92,6 +94,10 @@ public class RolesServiceImpl implements RolesService {
   public void updateRolesPermissions(RolesPermissionsPutDto rolesPermissionsPutDto) {
     log.info("Updating role and permissions of the role {}", rolesPermissionsPutDto);
 
+    if (rolesPermissionsPutDto.newName().equals(Constants.ADMIN_ROLE_NAME)) {
+      throw new IllegalArgumentException("No puedes actualizar el role " + Constants.ADMIN_ROLE_NAME);
+    }
+
     // Get the role by ID
     RolesModel rolesModel = rolesRepository.findById(rolesPermissionsPutDto.roleId())
         .orElseThrow(() -> new NoSuchElementException("Role not found with id: " + rolesPermissionsPutDto.roleId()));
@@ -140,6 +146,13 @@ public class RolesServiceImpl implements RolesService {
 
   @Override
   public void deleteRoleById(Integer roleId) {
+    RolesModel role = rolesRepository.findById(roleId)
+        .orElseThrow(() -> new EntityNotFoundException("Role no encontrado"));
+
+    if (role.getName().equals(Constants.ADMIN_ROLE_NAME)) {
+      throw new IllegalArgumentException("No puede eliminar el role " + Constants.ADMIN_ROLE_NAME);
+    }
+
     rolesPermissionsService.deleteByRoleId(roleId);
 
     log.info("Deleting role with id: ", roleId);
