@@ -225,6 +225,18 @@ public class GlobalExceptionHandler {
   }
 
   /**
+   * Handle RateLimitExceededException
+   * 
+   * @param ex - RateLimitExceededException object
+   * @return An ApiResponse object with the error
+   */
+  @ExceptionHandler(RateLimitExceededException.class)
+  public ResponseEntity<ApiResponse<Void>> handleRateLimitExceededException(RateLimitExceededException ex) {
+    return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
+        .body(new ApiResponse<>(false, ex.getMessage(), null, null));
+  }
+
+  /**
    * Extract the constrain name from the database
    * 
    * @param errorMessage - The error message from the exception

@@ -10,7 +10,9 @@ import com.bandsyncapi.bandsyncapi.api.v1.dto.events.EventsPostDto;
 import com.bandsyncapi.bandsyncapi.api.v1.mappers.EventsMapper;
 import com.bandsyncapi.bandsyncapi.api.v1.models.EventsModel;
 import com.bandsyncapi.bandsyncapi.api.v1.services.EventsService;
+import com.bandsyncapi.bandsyncapi.constants.Constants;
 import com.bandsyncapi.bandsyncapi.response.ApiResponse;
+import com.bandsyncapi.bandsyncapi.security.RateLimited;
 
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -34,6 +36,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 @RestController
 @RequestMapping(path = "/api/v1/events")
 @Slf4j
+@RateLimited(capacity = Constants.RATE_LIMIT_CAPACITY, refillTokens = Constants.RATE_LIMIT_TOKENS, refillMinutes = Constants.RATE_LIMIT_MINUTES)
 public class EventsController {
 
   private final EventsService eventsService;
@@ -59,6 +62,7 @@ public class EventsController {
    */
   @PostMapping("/save")
   @PreAuthorize("hasRole('" + UserPermissions.ADD_EVENT + "')")
+  @RateLimited(capacity = 20, refillTokens = 20, refillMinutes = 1)
   public ResponseEntity<ApiResponse<EventsDto>> save(@Valid @RequestBody EventsPostDto eventsPostDto) {
     EventsModel eventsModel = eventsMapper.toModel(eventsPostDto);
     EventsModel savedEvent = eventsService.save(eventsModel);
@@ -66,7 +70,8 @@ public class EventsController {
 
     log.info("Event successfully created: {}", savedEvent);
 
-    return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse<>(true, "Event successfully created.", response, null));
+    return ResponseEntity.status(HttpStatus.CREATED)
+        .body(new ApiResponse<>(true, "Event successfully created.", response, null));
   }
 
   /**
@@ -89,39 +94,45 @@ public class EventsController {
 
     log.info("Events found for musical band ID: {}: {}", musicalBandId, response);
 
-    return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(true, "Events found successfully.", response, null));
+    return ResponseEntity.status(HttpStatus.OK)
+        .body(new ApiResponse<>(true, "Events found successfully.", response, null));
   }
 
   /**
    * Update an event.
    * 
-   * @param id            - Event id
+   * @param id           - Event id
    * @param eventsPutDto - Event info to update @see EventsPutDto
    * @return - An ApiResponse object
    */
   @PutMapping("/update/{id}")
   @PreAuthorize("hasRole('" + UserPermissions.UPDATE_EVENT + "')")
-  public ResponseEntity<ApiResponse<Void>> updateEvent(@Valid @PathVariable UUID id, @Valid @RequestBody EventsPutDto eventsPutDto) {
+  @RateLimited(capacity = 20, refillTokens = 20, refillMinutes = 1)
+  public ResponseEntity<ApiResponse<Void>> updateEvent(@Valid @PathVariable UUID id,
+      @Valid @RequestBody EventsPutDto eventsPutDto) {
     eventsService.updateEvent(id, eventsPutDto);
 
     log.info("Event with ID: {} updated successfully", id);
 
-    return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(true, "Event successfully updated.", null, null));
+    return ResponseEntity.status(HttpStatus.OK)
+        .body(new ApiResponse<>(true, "Event successfully updated.", null, null));
   }
 
   /**
    * Delete an event.
    * 
    * @param id - Event id
-   * @return - An ApiResponse object 
+   * @return - An ApiResponse object
    */
   @DeleteMapping("/delete/{id}")
   @PreAuthorize("hasRole('" + UserPermissions.DELETE_EVENT + "')")
+  @RateLimited(capacity = 20, refillTokens = 20, refillMinutes = 1)
   public ResponseEntity<ApiResponse<Void>> deleteEvent(@PathVariable UUID id) {
     eventsService.deleteEvent(id);
 
     log.info("Event with ID: {} deleted successfully", id);
-    
-    return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(true, "Event deleted successfully.", null, null));
+
+    return ResponseEntity.status(HttpStatus.OK)
+        .body(new ApiResponse<>(true, "Event deleted successfully.", null, null));
   }
 }

@@ -11,8 +11,10 @@ import com.bandsyncapi.bandsyncapi.api.v1.dto.songs.SongsPutDto;
 import com.bandsyncapi.bandsyncapi.api.v1.mappers.SongsMapper;
 import com.bandsyncapi.bandsyncapi.api.v1.models.SongsModel;
 import com.bandsyncapi.bandsyncapi.api.v1.services.SongsService;
+import com.bandsyncapi.bandsyncapi.constants.Constants;
 import com.bandsyncapi.bandsyncapi.response.ApiResponse;
 import com.bandsyncapi.bandsyncapi.response.PagedData;
+import com.bandsyncapi.bandsyncapi.security.RateLimited;
 
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -37,6 +39,7 @@ import org.springframework.web.bind.annotation.RequestPart;
 @RestController
 @RequestMapping(path = "api/v1/songs")
 @Slf4j
+@RateLimited(capacity = Constants.RATE_LIMIT_CAPACITY, refillTokens = Constants.RATE_LIMIT_TOKENS, refillMinutes = Constants.RATE_LIMIT_MINUTES)
 public class SongsController {
 
   private final SongsService songsService;
@@ -65,6 +68,7 @@ public class SongsController {
    */
   @PostMapping(path = "/save", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   @PreAuthorize("hasRole('" + UserPermissions.ADD_SONG + "')")
+  @RateLimited(capacity = 20, refillTokens = 20, refillMinutes = 1)
   public ResponseEntity<ApiResponse<SongsDto>> save(
       @Valid @RequestPart("song") SongsPostDto songsPostDto,
       @RequestPart(value = "file", required = false) MultipartFile file) throws IOException {
@@ -150,6 +154,7 @@ public class SongsController {
    */
   @PutMapping(path = "/update/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   @PreAuthorize("hasRole('" + UserPermissions.UPDATE_SONG + "')")
+  @RateLimited(capacity = 20, refillTokens = 20, refillMinutes = 1)
   public ResponseEntity<ApiResponse<Void>> update(
       @PathVariable Integer id,
       @Valid @RequestPart("song") SongsPutDto songsPutDto,
@@ -170,6 +175,7 @@ public class SongsController {
    */
   @DeleteMapping("/delete/{id}")
   @PreAuthorize("hasRole('" + UserPermissions.DELETE_SONG + "')")
+  @RateLimited(capacity = 20, refillTokens = 20, refillMinutes = 1)
   public ResponseEntity<ApiResponse<Void>> delete(@PathVariable Integer id) {
     songsService.deleteById(id);
 

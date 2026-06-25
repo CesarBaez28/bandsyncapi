@@ -21,7 +21,9 @@ import com.bandsyncapi.bandsyncapi.api.v1.models.UsersRolesModel;
 import com.bandsyncapi.bandsyncapi.api.v1.services.RolesPermissionsService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.RolesService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.UsersRolesService;
+import com.bandsyncapi.bandsyncapi.constants.Constants;
 import com.bandsyncapi.bandsyncapi.response.ApiResponse;
+import com.bandsyncapi.bandsyncapi.security.RateLimited;
 
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -45,6 +47,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 @RestController
 @RequestMapping(path = "api/v1/roles")
 @Slf4j
+@RateLimited(capacity = Constants.RATE_LIMIT_CAPACITY, refillTokens = Constants.RATE_LIMIT_TOKENS, refillMinutes = Constants.RATE_LIMIT_MINUTES)
 public class RolesController {
 
   private final RolesService rolesService;
@@ -87,6 +90,7 @@ public class RolesController {
    */
   @PostMapping("/save")
   @PreAuthorize("hasRole('" + UserPermissions.ADD_ROLE + "')")
+  @RateLimited(capacity = 20, refillTokens = 20, refillMinutes = 1)
   public ResponseEntity<ApiResponse<RolesPermissionsDto>> save(@Valid @RequestBody RolesPostDto rolesPostDto) {
 
     RolesPermissionsDto response = rolesService.saveRoleAndPermissions(rolesPostDto);
@@ -107,6 +111,7 @@ public class RolesController {
    */
   @PostMapping("/assign/role/{roleId}/user/{userId}/musicalBand/{musicalBandId}")
   @PreAuthorize("hasRole('" + UserPermissions.ASSIGN_ROLE + "')")
+  @RateLimited(capacity = 20, refillTokens = 20, refillMinutes = 1)
   public ResponseEntity<ApiResponse<Void>> assignRoleToUserInBand(@PathVariable Integer roleId,
       @PathVariable UUID userId, @PathVariable UUID musicalBandId) {
     usersRolesService.assignRoleToUserInBand(roleId, userId, musicalBandId);
@@ -127,6 +132,7 @@ public class RolesController {
    */
   @PutMapping("/user/{userId}/musicalBand/{musicalBandId}")
   @PreAuthorize("hasRole('" + UserPermissions.UPDATE_ROLE + "')")
+  @RateLimited(capacity = 20, refillTokens = 20, refillMinutes = 1)
   public ResponseEntity<ApiResponse<Void>> updateUserRole(@PathVariable UUID userId, @PathVariable UUID musicalBandId,
       @RequestBody RolesModel newRole) {
 
@@ -233,6 +239,7 @@ public class RolesController {
    */
   @PutMapping("/update")
   @PreAuthorize("hasRole('" + UserPermissions.UPDATE_ROLE + "')")
+  @RateLimited(capacity = 20, refillTokens = 20, refillMinutes = 1)
   public ResponseEntity<ApiResponse<Void>> update(@Valid @RequestBody RolesPermissionsPutDto rolesPermissionsPutDto) {
     rolesService.updateRolesPermissions(rolesPermissionsPutDto);
 
@@ -251,6 +258,7 @@ public class RolesController {
    */
   @DeleteMapping("/delete/{roleId}")
   @PreAuthorize("hasRole('" + UserPermissions.DELETE_ROLE + "')")
+  @RateLimited(capacity = 20, refillTokens = 20, refillMinutes = 1)
   public ResponseEntity<ApiResponse<List<UsersDto>>> delete(@PathVariable Integer roleId) {
     List<UsersRolesModel> usersRole = usersRolesService.findByRoleId(roleId);
 
@@ -277,6 +285,7 @@ public class RolesController {
    */
   @DeleteMapping("/delete/user/{userId}/musicalBand/{musicalBandId}")
   @PreAuthorize("hasRole('" + UserPermissions.DELETE_ROLE + "')")
+  @RateLimited(capacity = 20, refillTokens = 20, refillMinutes = 1)
   public ResponseEntity<ApiResponse<Void>> deleteUserRoleFromMusicalBand(@PathVariable UUID userId,
       @PathVariable UUID musicalBandId) {
     usersRolesService.deleteByUserIdAndMusicalBandId(userId, musicalBandId);

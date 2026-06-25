@@ -38,8 +38,10 @@ import com.bandsyncapi.bandsyncapi.api.v1.services.TwoFactorService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.UsersMusicalBandsService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.UsersRolesService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.UsersService;
+import com.bandsyncapi.bandsyncapi.constants.Constants;
 import com.bandsyncapi.bandsyncapi.response.ApiResponse;
 import com.bandsyncapi.bandsyncapi.response.PagedData;
+import com.bandsyncapi.bandsyncapi.security.RateLimited;
 import com.bandsyncapi.bandsyncapi.utils.AESUtil;
 
 import jakarta.mail.MessagingException;
@@ -61,6 +63,7 @@ import org.springframework.web.bind.annotation.RequestPart;
 @RestController
 @RequestMapping(path = "api/v1")
 @Slf4j
+@RateLimited(capacity = Constants.RATE_LIMIT_CAPACITY, refillTokens = Constants.RATE_LIMIT_TOKENS, refillMinutes = Constants.RATE_LIMIT_MINUTES)
 public class UsersController {
 
   private static final int PAGE_SIZE = 15;
@@ -113,6 +116,7 @@ public class UsersController {
    * @return - An ApiResponse object
    */
   @PostMapping("/users/auth/login")
+  @RateLimited(capacity = 10, refillTokens = 10, refillMinutes = 60)
   public ResponseEntity<ApiResponse<?>> login(@RequestBody UserLoginPostDto userLoginPostDto) {
     usersService.verify(userLoginPostDto);
 
@@ -151,6 +155,7 @@ public class UsersController {
    * @return - An ApiResponse object
    */
   @PostMapping("/users/auth/verify-2fa-login")
+  @RateLimited(capacity = 10, refillTokens = 10, refillMinutes = 60)
   public ResponseEntity<ApiResponse<UserSessionDto>> verify2FALogin(
       @RequestBody VerifyLogin2FADto request) {
 
@@ -179,6 +184,7 @@ public class UsersController {
    * @return - An ApiResponse object
    */
   @PostMapping("/users/register")
+  @RateLimited(capacity = 20, refillTokens = 20, refillMinutes = 1)
   public ResponseEntity<ApiResponse<Void>> register(@Valid @RequestBody UserRegisterPostDto userRegisterPostDto) {
 
     if (!userRegisterPostDto.password().equals(userRegisterPostDto.repeatedPassword())) {
@@ -204,6 +210,7 @@ public class UsersController {
    * @return - An ApiResponse object
    */
   @PostMapping("/users/change-password")
+  @RateLimited(capacity = 10, refillTokens = 10, refillMinutes = 60)
   public ResponseEntity<ApiResponse<Void>> changePassword(@RequestBody ChangePasswordDto changePasswordDto) {
     usersService.changePassword(changePasswordDto);
 
@@ -218,6 +225,7 @@ public class UsersController {
    * @return - An ApiResponse object
    */
   @PostMapping("/users/register/{token}")
+  @RateLimited(capacity = 20, refillTokens = 20, refillMinutes = 1)
   public ResponseEntity<ApiResponse<Void>> registerFromToken(
       @Valid @RequestBody UserRegisterPostDto userRegisterPostDto, @PathVariable String token) {
 
@@ -353,6 +361,7 @@ public class UsersController {
    * @return An ApiResponse object
    */
   @PutMapping(path = "/users/updateUser/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  @RateLimited(capacity = 20, refillTokens = 20, refillMinutes = 1)
   public ResponseEntity<ApiResponse<UsersPutDto>> updateUser(@PathVariable UUID id,
       @Valid @RequestPart("user") UsersPutDto usersPutDto,
       @RequestPart(value = "image", required = false) MultipartFile imageFile) throws IOException {
@@ -395,6 +404,7 @@ public class UsersController {
    * @throws MessagingException - if there is an error sending the email
    */
   @PostMapping("/users/auth/forgot-password")
+  @RateLimited(capacity = 10, refillTokens = 10, refillMinutes = 1)
   public ResponseEntity<ApiResponse<Void>> forgotPassword(@RequestBody ForgotPasswordRequestDto request)
       throws MessagingException {
     passwordResetTokenService.forgotPassword(request.email());
@@ -409,6 +419,7 @@ public class UsersController {
    * @return - An ApiResponse object
    */
   @PostMapping("/users/auth/reset-password")
+  @RateLimited(capacity = 10, refillTokens = 10, refillMinutes = 1)
   public ResponseEntity<ApiResponse<Void>> resetPassword(@RequestBody ResetPasswordRequestDto request) {
     passwordResetTokenService.resetPassword(request.token(), request.newPassword());
 
@@ -443,6 +454,7 @@ public class UsersController {
    *         successful
    */
   @PostMapping("/users/auth/2fa/verify")
+  @RateLimited(capacity = 10, refillTokens = 10, refillMinutes = 1)
   public ResponseEntity<ApiResponse<Void>> verify2FA(@AuthenticationPrincipal UserDetails userDetails,
       @RequestBody Verify2FADto verify2FADto) {
     twoFactorService.verify2FA(userDetails, verify2FADto.code(), verify2FADto.secret());

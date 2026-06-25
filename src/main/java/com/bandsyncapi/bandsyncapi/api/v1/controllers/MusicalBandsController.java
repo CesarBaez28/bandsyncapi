@@ -16,7 +16,9 @@ import com.bandsyncapi.bandsyncapi.api.v1.services.MusicalBandDeletionBatchServi
 import com.bandsyncapi.bandsyncapi.api.v1.services.MusicalBandDeletionService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.MusicalBandsService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.UsersMusicalBandsService;
+import com.bandsyncapi.bandsyncapi.constants.Constants;
 import com.bandsyncapi.bandsyncapi.response.ApiResponse;
+import com.bandsyncapi.bandsyncapi.security.RateLimited;
 
 import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
@@ -43,6 +45,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 @RestController
 @RequestMapping(path = "api/v1/musical-bands")
 @Slf4j
+@RateLimited(capacity = Constants.RATE_LIMIT_CAPACITY, refillTokens = Constants.RATE_LIMIT_TOKENS, refillMinutes = Constants.RATE_LIMIT_MINUTES)
 public class MusicalBandsController {
 
   private final MusicalBandsService musicalBandsService;
@@ -90,6 +93,7 @@ public class MusicalBandsController {
    * @return - The saved musical band.
    */
   @PostMapping(path = "/save", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  @RateLimited(capacity = 15, refillTokens = 15, refillMinutes = 1)
   public ResponseEntity<ApiResponse<MusicalBandsDto>> saveMusicalBand(
       @Valid @RequestPart("musicalBand") MusicalBandsPostDto musicalBandsPostDto,
       @RequestPart(value = "image", required = false) MultipartFile imageFile) throws IOException {
@@ -113,6 +117,7 @@ public class MusicalBandsController {
    */
   @PutMapping(path = "/update/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   @PreAuthorize("hasRole('" + UserPermissions.UPDATE_BAND + "')")
+  @RateLimited(capacity = 15, refillTokens = 15, refillMinutes = 1)
   public ResponseEntity<ApiResponse<MusicalBandPutDto>> update(
       @PathVariable UUID id,
       @Valid @RequestPart("musicalBand") MusicalBandPutDto musicalBandPutDto,
@@ -185,6 +190,7 @@ public class MusicalBandsController {
    * @throws MessagingException
    */
   @PostMapping("/{musicalBandId}/invite")
+  @RateLimited(capacity = 20, refillTokens = 20, refillMinutes = 1)
   public ResponseEntity<ApiResponse<Void>> invite(@PathVariable UUID musicalBandId,
       @Valid @RequestBody InviteRequestDto inviteRequest) throws MessagingException {
 
@@ -202,6 +208,7 @@ public class MusicalBandsController {
    */
   @DeleteMapping("/delete/{id}")
   @PreAuthorize("hasRole('" + UserPermissions.DELETE_BAND + "')")
+  @RateLimited(capacity = 10, refillTokens = 10, refillMinutes = 1)
   public ResponseEntity<ApiResponse<Void>> delete(@PathVariable UUID id) {
     musicalBandDeletionService.deleteMusuicalBand(id);
 
@@ -217,6 +224,7 @@ public class MusicalBandsController {
    */
   @PreAuthorize("hasRole('" + UserPermissions.DELETE_BAND + "')")
   @PostMapping("/delete-bands")
+  @RateLimited(capacity = 10, refillTokens = 10, refillMinutes = 1)
   public ResponseEntity<ApiResponse<Void>> postMethodName(@RequestBody List<UUID> musicalBandIds) {
     musicalBandDeletionBatchService.deleteMusicalBands(musicalBandIds);
 

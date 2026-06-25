@@ -11,8 +11,10 @@ import com.bandsyncapi.bandsyncapi.api.v1.dto.musicalroles.MusicalRolesPutDto;
 import com.bandsyncapi.bandsyncapi.api.v1.mappers.MusicalRolesMapper;
 import com.bandsyncapi.bandsyncapi.api.v1.models.MusicalRolesModel;
 import com.bandsyncapi.bandsyncapi.api.v1.services.MusicalRolesService;
+import com.bandsyncapi.bandsyncapi.constants.Constants;
 import com.bandsyncapi.bandsyncapi.response.ApiResponse;
 import com.bandsyncapi.bandsyncapi.response.PagedData;
+import com.bandsyncapi.bandsyncapi.security.RateLimited;
 
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -37,6 +39,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 @RestController
 @RequestMapping(path = "api/v1/musical-roles")
 @Slf4j
+@RateLimited(capacity = Constants.RATE_LIMIT_CAPACITY, refillTokens = Constants.RATE_LIMIT_TOKENS, refillMinutes = Constants.RATE_LIMIT_MINUTES)
 public class MusicalRolesController {
 
   private final MusicalRolesService musicalRolesService;
@@ -68,6 +71,7 @@ public class MusicalRolesController {
    */
   @PostMapping("/save")
   @PreAuthorize("hasRole('" + UserPermissions.ADD_MUSICAL_ROLE + "')")
+  @RateLimited(capacity = 20, refillTokens = 20, refillMinutes = 1)
   public ResponseEntity<ApiResponse<MusicalRolesDto>> save(
       @Valid @RequestBody MusicalRolesPostDto musicalRolesPostDto) {
     MusicalRolesModel musicalRolesModel = musicalRolesMapper.toModel(musicalRolesPostDto);
@@ -142,6 +146,7 @@ public class MusicalRolesController {
    */
   @PutMapping("/updateMusicalRoleName/{id}")
   @PreAuthorize("hasRole('" + UserPermissions.UPDATE_MUSICAL_ROLE + "')")
+  @RateLimited(capacity = 20, refillTokens = 20, refillMinutes = 1)
   public ResponseEntity<ApiResponse<Void>> updateMusicalRoleName(@PathVariable Integer id,
       @Valid @RequestBody MusicalRolesPutDto musicalRolesPutDto) {
     musicalRolesService.updateMusicalRoleName(id, musicalRolesPutDto.name());
@@ -160,6 +165,7 @@ public class MusicalRolesController {
    */
   @DeleteMapping("/delete/{id}")
   @PreAuthorize("hasRole('" + UserPermissions.DELETE_MUSICAL_ROLE + "')")
+  @RateLimited(capacity = 20, refillTokens = 20, refillMinutes = 1)
   public ResponseEntity<ApiResponse<Void>> deleteMusicalRole(@PathVariable Integer id) {
     musicalRolesService.deleteById(id);
 

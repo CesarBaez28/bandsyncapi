@@ -8,7 +8,9 @@ import com.bandsyncapi.bandsyncapi.api.v1.models.UsersModel;
 import com.bandsyncapi.bandsyncapi.api.v1.services.InvitationsService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.JWTService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.UsersService;
+import com.bandsyncapi.bandsyncapi.constants.Constants;
 import com.bandsyncapi.bandsyncapi.response.ApiResponse;
+import com.bandsyncapi.bandsyncapi.security.RateLimited;
 
 import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +28,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 @RestController
 @RequestMapping(path = "api/v1/invitations")
 @Slf4j
+@RateLimited(capacity = Constants.RATE_LIMIT_CAPACITY, refillTokens = Constants.RATE_LIMIT_TOKENS, refillMinutes = Constants.RATE_LIMIT_MINUTES)
 public class InvitationsController {
 
   private final InvitationsService invitationsService;
@@ -55,6 +58,7 @@ public class InvitationsController {
    * @return An ApiResponse object of type AcceptedInvitationDto
    */
   @PostMapping("/accept/{token}")
+  @RateLimited(capacity = 10, refillTokens = 10, refillMinutes = 1)
   public ResponseEntity<ApiResponse<AcceptInvitationDto>> accept(@PathVariable String token) {
     log.info("proceeding process to accept invitation...");
 

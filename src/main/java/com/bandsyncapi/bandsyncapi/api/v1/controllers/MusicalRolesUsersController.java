@@ -11,7 +11,9 @@ import com.bandsyncapi.bandsyncapi.api.v1.models.MusicalRolesModel;
 import com.bandsyncapi.bandsyncapi.api.v1.projections.MusicalRolesSingleUserProjection;
 import com.bandsyncapi.bandsyncapi.api.v1.projections.MusicalRolesUsersProjection;
 import com.bandsyncapi.bandsyncapi.api.v1.services.MusicalRolesUsersService;
+import com.bandsyncapi.bandsyncapi.constants.Constants;
 import com.bandsyncapi.bandsyncapi.response.ApiResponse;
+import com.bandsyncapi.bandsyncapi.security.RateLimited;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -31,6 +33,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 @RestController
 @RequestMapping(path = "api/v1/musical-roles-users")
 @Slf4j
+@RateLimited(capacity = Constants.RATE_LIMIT_CAPACITY, refillTokens = Constants.RATE_LIMIT_TOKENS, refillMinutes = Constants.RATE_LIMIT_MINUTES)
 public class MusicalRolesUsersController {
 
   private final MusicalRolesUsersService musicalRolesUsersService;
@@ -113,6 +116,7 @@ public class MusicalRolesUsersController {
    * @return An ApiResponse object
    */
   @PostMapping("/assignMusicalRoles/{musicalBandId}/{userId}")
+  @RateLimited(capacity = 20, refillTokens = 20, refillMinutes = 1)
   public ResponseEntity<ApiResponse<Void>> assignMusicalRoles(@PathVariable UUID musicalBandId,
       @PathVariable UUID userId, @RequestBody List<MusicalRolesDto> musicalRoles) {
 

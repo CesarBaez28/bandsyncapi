@@ -8,7 +8,9 @@ import com.bandsyncapi.bandsyncapi.api.v1.dto.permissions.TypeOfPermissionDto;
 import com.bandsyncapi.bandsyncapi.api.v1.mappers.TypeOfPermissionsMapper;
 import com.bandsyncapi.bandsyncapi.api.v1.models.TypeOfPermissionsModel;
 import com.bandsyncapi.bandsyncapi.api.v1.services.TypeOfPermissionsService;
+import com.bandsyncapi.bandsyncapi.constants.Constants;
 import com.bandsyncapi.bandsyncapi.response.ApiResponse;
+import com.bandsyncapi.bandsyncapi.security.RateLimited;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -24,6 +26,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 @RestController
 @RequestMapping(path = "api/v1/type-of-permissions")
 @Slf4j
+@RateLimited(capacity = Constants.RATE_LIMIT_CAPACITY, refillTokens = Constants.RATE_LIMIT_TOKENS, refillMinutes = Constants.RATE_LIMIT_MINUTES)
 public class TypeOfPermissionsController {
 
   private final TypeOfPermissionsService typeOfPermissionsService;

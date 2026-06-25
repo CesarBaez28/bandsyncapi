@@ -10,8 +10,10 @@ import com.bandsyncapi.bandsyncapi.api.v1.dto.musicalgenres.MusicalGenrePutDto;
 import com.bandsyncapi.bandsyncapi.api.v1.mappers.MusicalGenresMapper;
 import com.bandsyncapi.bandsyncapi.api.v1.models.MusicalGenresModel;
 import com.bandsyncapi.bandsyncapi.api.v1.services.MusicalGenresService;
+import com.bandsyncapi.bandsyncapi.constants.Constants;
 import com.bandsyncapi.bandsyncapi.response.ApiResponse;
 import com.bandsyncapi.bandsyncapi.response.PagedData;
+import com.bandsyncapi.bandsyncapi.security.RateLimited;
 
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -37,6 +39,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RestController
 @RequestMapping(path = "api/v1/musical-genres")
 @Slf4j
+@RateLimited(capacity = Constants.RATE_LIMIT_CAPACITY, refillTokens = Constants.RATE_LIMIT_TOKENS, refillMinutes = Constants.RATE_LIMIT_MINUTES)
 public class MusicalGenresController {
 
   private final MusicalGenresService musicalGenresService;
@@ -64,6 +67,7 @@ public class MusicalGenresController {
    */
   @PostMapping(path = "/save")
   @PreAuthorize("hasRole('" + UserPermissions.ADD_MUSICAL_GENRE + "')")
+  @RateLimited(capacity = 20, refillTokens = 20, refillMinutes = 1)
   public ResponseEntity<ApiResponse<MusicalGenreDto>> saveMusicalGenre(
       @Valid @RequestBody MusicalGenrePostDto musicalGenrePostDto) {
     MusicalGenresModel musicalGenre = musicalGenresMapper.toModel(musicalGenrePostDto);
@@ -97,8 +101,8 @@ public class MusicalGenresController {
    * finds all musical genres by musical band and name
    * 
    * @param musicalBandId - Musical band id
-   * @param query - Musical genre name
-   * @param page - Page number for pagination
+   * @param query         - Musical genre name
+   * @param page          - Page number for pagination
    * @return A Page List of MusicalGenreDto
    */
   @GetMapping("/findByMusicalBandIdAndName/{musicalBandId}")
@@ -131,6 +135,7 @@ public class MusicalGenresController {
    */
   @PutMapping("/updateMusicalGenreName/{id}")
   @PreAuthorize("hasRole('" + UserPermissions.UPDATE_MUSICAL_GENRE + "')")
+  @RateLimited(capacity = 20, refillTokens = 20, refillMinutes = 1)
   public ResponseEntity<ApiResponse<Void>> updateMusicalGenreName(@PathVariable Integer id,
       @Valid @RequestBody MusicalGenrePutDto musicalGenrePutDto) {
     musicalGenresService.updateGenreName(id, musicalGenrePutDto.name());
@@ -149,6 +154,7 @@ public class MusicalGenresController {
    */
   @DeleteMapping("/delete/{id}")
   @PreAuthorize("hasRole('" + UserPermissions.DELETE_MUSICAL_GENRE + "')")
+  @RateLimited(capacity = 20, refillTokens = 20, refillMinutes = 1)
   public ResponseEntity<ApiResponse<Void>> deleteMusicalGenre(@PathVariable Integer id) {
     musicalGenresService.deleteById(id);
 

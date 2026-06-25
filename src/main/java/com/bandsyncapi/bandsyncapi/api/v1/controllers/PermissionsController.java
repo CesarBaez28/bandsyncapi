@@ -10,7 +10,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.bandsyncapi.bandsyncapi.api.v1.constants.UserPermissions;
 import com.bandsyncapi.bandsyncapi.api.v1.models.PermissionsModel;
 import com.bandsyncapi.bandsyncapi.api.v1.services.PermissionsService;
+import com.bandsyncapi.bandsyncapi.constants.Constants;
 import com.bandsyncapi.bandsyncapi.response.ApiResponse;
+import com.bandsyncapi.bandsyncapi.security.RateLimited;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 @RestController
 @RequestMapping(path = "api/v1/permissions")
 @Slf4j
+@RateLimited(capacity = Constants.RATE_LIMIT_CAPACITY, refillTokens = Constants.RATE_LIMIT_TOKENS, refillMinutes = Constants.RATE_LIMIT_MINUTES)
 public class PermissionsController {
 
   private final PermissionsService permissionsService;

@@ -14,8 +14,10 @@ import com.bandsyncapi.bandsyncapi.api.v1.models.RepertoiresModel;
 import com.bandsyncapi.bandsyncapi.api.v1.models.SongsModel;
 import com.bandsyncapi.bandsyncapi.api.v1.services.RepertoiresService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.RepertoiresSongsService;
+import com.bandsyncapi.bandsyncapi.constants.Constants;
 import com.bandsyncapi.bandsyncapi.response.ApiResponse;
 import com.bandsyncapi.bandsyncapi.response.PagedData;
+import com.bandsyncapi.bandsyncapi.security.RateLimited;
 
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -38,6 +40,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RestController
 @RequestMapping(path = "api/v1/repertoires")
 @Slf4j
+@RateLimited(capacity = Constants.RATE_LIMIT_CAPACITY, refillTokens = Constants.RATE_LIMIT_TOKENS, refillMinutes = Constants.RATE_LIMIT_MINUTES)
 public class RepertoiresController {
 
   private final RepertoiresService repertoiresService;
@@ -76,6 +79,7 @@ public class RepertoiresController {
    */
   @PostMapping("/save")
   @PreAuthorize("hasRole('" + UserPermissions.ADD_REPERTOIRE + "')")
+  @RateLimited(capacity = 20, refillTokens = 20, refillMinutes = 1)
   public ResponseEntity<ApiResponse<Void>> save(@Valid @RequestBody RepertoiresPostDto repertoiresPostDto) {
     RepertoiresModel repertoiresModel = repertoiresMapper.toModel(repertoiresPostDto);
     RepertoiresModel repertoiresModelSaved = repertoiresService.save(repertoiresModel);
@@ -156,7 +160,7 @@ public class RepertoiresController {
   }
 
   /**
-   * finds songs of a repertoire 
+   * finds songs of a repertoire
    * 
    * @param id - repertoire id
    * @return - songs of the repertoire
@@ -181,6 +185,7 @@ public class RepertoiresController {
    */
   @PutMapping("/updateRepertoire/{id}")
   @PreAuthorize("hasRole('" + UserPermissions.UPDATE_REPERTOIRE + "')")
+  @RateLimited(capacity = 20, refillTokens = 20, refillMinutes = 1)
   public ResponseEntity<ApiResponse<Void>> updateRepertoire(@PathVariable UUID id,
       @Valid @RequestBody RepertoiresPutDto repertoiresPutDto) {
     repertoiresService.updateRepertoire(id, repertoiresPutDto);
@@ -199,6 +204,7 @@ public class RepertoiresController {
    */
   @DeleteMapping("/delete/{id}")
   @PreAuthorize("hasRole('" + UserPermissions.DELETE_REPERTOIRE + "')")
+  @RateLimited(capacity = 10, refillTokens = 10, refillMinutes = 1)
   public ResponseEntity<ApiResponse<Void>> deleteById(@PathVariable UUID id) {
     repertoiresService.deleteById(id);
 

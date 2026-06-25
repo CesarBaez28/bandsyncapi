@@ -11,8 +11,10 @@ import com.bandsyncapi.bandsyncapi.api.v1.dto.artists.ArtistsPutDto;
 import com.bandsyncapi.bandsyncapi.api.v1.mappers.ArtistsMapper;
 import com.bandsyncapi.bandsyncapi.api.v1.models.ArtistsModel;
 import com.bandsyncapi.bandsyncapi.api.v1.services.ArtistsService;
+import com.bandsyncapi.bandsyncapi.constants.Constants;
 import com.bandsyncapi.bandsyncapi.response.ApiResponse;
 import com.bandsyncapi.bandsyncapi.response.PagedData;
+import com.bandsyncapi.bandsyncapi.security.RateLimited;
 
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -37,6 +39,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 @RestController
 @RequestMapping(path = "api/v1/artists")
 @Slf4j
+@RateLimited(capacity = Constants.RATE_LIMIT_CAPACITY, refillTokens = Constants.RATE_LIMIT_TOKENS, refillMinutes = Constants.RATE_LIMIT_MINUTES)
 public class ArtistsController {
 
   private final ArtistsService artistsService;
@@ -66,6 +69,7 @@ public class ArtistsController {
    */
   @PostMapping("/save")
   @PreAuthorize("hasRole('" + UserPermissions.ADD_ARTIST + "')")
+  @RateLimited(capacity = 20, refillTokens = 20, refillMinutes = 1)
   public ResponseEntity<ApiResponse<ArtistsDto>> save(@Valid @RequestBody ArtistsPostDto artistsPostDto) {
     ArtistsModel artistsModel = artistsMapper.toModel(artistsPostDto);
     ArtistsModel artistsModelSaved = artistsService.save(artistsModel);
@@ -106,7 +110,7 @@ public class ArtistsController {
       @PathVariable UUID musicalBandId,
       @RequestParam String query,
       @RequestParam(defaultValue = "0") int page) {
-        
+
     page--; // convert to zero-based index
 
     Page<ArtistsModel> resultPage = artistsService.findByMusicalBandIdAndName(musicalBandId, query, page, PAGE_SIZE);
@@ -131,6 +135,7 @@ public class ArtistsController {
    */
   @PutMapping("/updateArtistName/{id}")
   @PreAuthorize("hasRole('" + UserPermissions.UPDATE_ARTIST + "')")
+  @RateLimited(capacity = 20, refillTokens = 20, refillMinutes = 1)
   public ResponseEntity<ApiResponse<Void>> updateArtistName(@PathVariable Integer id,
       @Valid @RequestBody ArtistsPutDto artistsPutDto) {
     artistsService.updateArtist(id, artistsPutDto.name());
@@ -149,6 +154,7 @@ public class ArtistsController {
    */
   @DeleteMapping("/delete/{id}")
   @PreAuthorize("hasRole('" + UserPermissions.DELETE_ARTIST + "')")
+  @RateLimited(capacity = 20, refillTokens = 20, refillMinutes = 1)
   public ResponseEntity<ApiResponse<Void>> deleteById(@PathVariable Integer id) {
     artistsService.deleteById(id);
 
