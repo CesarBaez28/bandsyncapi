@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 
 import com.bandsyncapi.bandsyncapi.api.v1.models.MusicalBandsModel;
 import com.bandsyncapi.bandsyncapi.api.v1.models.RolesModel;

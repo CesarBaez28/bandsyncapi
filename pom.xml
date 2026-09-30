@@ -6,7 +6,7 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>3.5.14</version>
+    <version>4.1.1</version>
     <relativePath /> <!-- lookup parent from repository -->
   </parent>
   <groupId>com.bandsyncapi</groupId>
@@ -60,7 +60,7 @@
 
     <dependency>
       <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-web</artifactId>
+      <artifactId>spring-boot-starter-webmvc</artifactId>
     </dependency>
 
     <dependency>
@@ -95,15 +95,15 @@
     </dependency>
 
     <dependency>
-      <groupId>org.springframework.security</groupId>
-      <artifactId>spring-security-test</artifactId>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-webmvc-test</artifactId>
       <scope>test</scope>
     </dependency>
 
     <dependency>
-      <groupId>jakarta.persistence</groupId>
-      <artifactId>jakarta.persistence-api</artifactId>
-      <version>3.1.0</version>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-test</artifactId>
+      <scope>test</scope>
     </dependency>
 
     <dependency>
@@ -112,21 +112,15 @@
     </dependency>
 
     <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-data-jpa-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
       <groupId>org.mapstruct</groupId>
       <artifactId>mapstruct</artifactId>
       <version>${org.mapstruct.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>jakarta.validation</groupId>
-      <artifactId>jakarta.validation-api</artifactId>
-      <version>3.1.0</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.springframework.security</groupId>
-      <artifactId>spring-security-crypto</artifactId>
-      <version>6.4.5</version>
     </dependency>
 
     <dependency>
@@ -164,7 +158,7 @@
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
-      <version>2.22.0</version>
+      <version>2.22.2</version>
     </dependency>
 
     <dependency>
@@ -172,13 +166,6 @@
       <artifactId>s3</artifactId>
       <version>2.31.62</version>
       <scope>compile</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>io.awspring.cloud</groupId>
-      <artifactId>spring-cloud-aws-dependencies</artifactId>
-      <version>3.4.0</version>
-      <type>pom</type>
     </dependency>
 
     <dependency>
