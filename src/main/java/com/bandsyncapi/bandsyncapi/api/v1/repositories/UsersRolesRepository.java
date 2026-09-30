@@ -7,7 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.bandsyncapi.bandsyncapi.api.v1.models.UsersRolesModel;
@@ -19,7 +18,6 @@ import java.util.List;
  * This interface is a repository for the users_roles table in the database.
  * Provides methods for performing CRUD operations on the users_roles table.
  */
-@Repository
 public interface UsersRolesRepository extends JpaRepository<UsersRolesModel, UsersRolesKey> {
 
   /**

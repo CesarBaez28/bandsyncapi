@@ -4,7 +4,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.bandsyncapi.bandsyncapi.api.v1.models.RolesPermissionsKey;
@@ -18,7 +17,6 @@ import java.util.UUID;
  * This interface is a repository for the roles_permissions table in the
  * database.
  */
-@Repository
 public interface RolesPermissionsRepository extends JpaRepository<RolesPermissionsModel, RolesPermissionsKey> {
 
   /**

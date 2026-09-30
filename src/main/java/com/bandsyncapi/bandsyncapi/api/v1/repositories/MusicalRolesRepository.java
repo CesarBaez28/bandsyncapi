@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
 
 import com.bandsyncapi.bandsyncapi.api.v1.models.MusicalRolesModel;
 
@@ -19,7 +18,6 @@ import java.util.UUID;
  * This interface is a repository for the musical_roles table in the database.
  * Provides methods for performing CRUD operations on the musical_roles table.
  */
-@Repository
 public interface MusicalRolesRepository extends JpaRepository<MusicalRolesModel, Integer> {
 
   /**

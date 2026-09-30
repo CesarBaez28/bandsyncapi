@@ -7,20 +7,17 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.lang.NonNull;
-import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.bandsyncapi.bandsyncapi.api.v1.dto.musicalbands.MusicalBandPutDto;
 import com.bandsyncapi.bandsyncapi.api.v1.models.MusicalBandsModel;
 
-import java.util.List;
 import java.util.Optional;
 
 /**
  * This interface is repository for the musical_bands table in the database.
  * Provides methods for performing CRUD operations on the musical_bands table.
  */
-@Repository
 public interface MusicalBandsRepository extends JpaRepository<MusicalBandsModel, UUID> {
 
   /**

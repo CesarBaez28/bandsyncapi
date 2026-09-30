@@ -9,7 +9,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
 
 import com.bandsyncapi.bandsyncapi.api.v1.models.RepertoiresModel;
 
@@ -19,7 +18,6 @@ import jakarta.transaction.Transactional;
  * This interface is a repository for the repertoires table in the database.
  * Provides methods for performing CRUD operations on the repertoires table.
  */
-@Repository
 public interface RepertoiresRepository extends JpaRepository<RepertoiresModel, UUID> {
 
   /**
