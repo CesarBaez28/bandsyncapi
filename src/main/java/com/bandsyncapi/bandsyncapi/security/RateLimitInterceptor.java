@@ -1,7 +1,6 @@
 package com.bandsyncapi.bandsyncapi.security;
 
 import org.springframework.core.annotation.AnnotationUtils;
-import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -28,9 +27,9 @@ public class RateLimitInterceptor implements HandlerInterceptor {
 
   @Override
   public boolean preHandle(
-      @NonNull HttpServletRequest request,
-      @NonNull HttpServletResponse response,
-      @NonNull Object handler)
+      HttpServletRequest request,
+      HttpServletResponse response,
+      Object handler)
       throws Exception {
 
     if (!(handler instanceof HandlerMethod handlerMethod)) {
@@ -70,7 +69,7 @@ public class RateLimitInterceptor implements HandlerInterceptor {
         rateLimited.refillMinutes());
 
     boolean allowed = bucket.tryConsume(1);
-    
+
     if (!allowed) {
       throw new RateLimitExceededException("Too many requests. Please try again later");
     }

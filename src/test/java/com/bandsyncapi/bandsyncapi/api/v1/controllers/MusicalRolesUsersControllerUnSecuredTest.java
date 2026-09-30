@@ -207,6 +207,6 @@ class MusicalRolesUsersControllerUnSecuredTest {
         // Then
         .andExpect(MockMvcResultMatchers.status().isBadRequest())
         .andExpect(MockMvcResultMatchers.jsonPath("$.success").value(false))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Musical roles list is empty"));
+        .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Seleccione un role musical para asignar"));
   }
 }

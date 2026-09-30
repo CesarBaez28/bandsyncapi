@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.lang.NonNull;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.bandsyncapi.bandsyncapi.api.v1.dto.musicalbands.MusicalBandPutDto;
@@ -26,7 +25,7 @@ public interface MusicalBandsRepository extends JpaRepository<MusicalBandsModel,
    * @param id - Musical band id
    * @return - true if exists, false otherwise
    */
-  boolean existsById(@NonNull UUID id);
+  boolean existsById(UUID id);
 
   /**
    * find musical band by hyphenated name
