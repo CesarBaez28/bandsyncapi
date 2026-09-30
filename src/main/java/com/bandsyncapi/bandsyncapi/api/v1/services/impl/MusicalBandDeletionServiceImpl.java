@@ -1,6 +1,5 @@
 package com.bandsyncapi.bandsyncapi.api.v1.services.impl;
 
-import java.util.List;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;

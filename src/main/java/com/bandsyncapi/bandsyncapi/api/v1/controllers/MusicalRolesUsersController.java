@@ -123,7 +123,7 @@ public class MusicalRolesUsersController {
     if (musicalRoles.isEmpty()) {
       log.warn("Musical roles list is empty. Cannot assign roles to user: {}", userId);
       return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-          .body(new ApiResponse<>(false, "Musical roles list is empty", null, null));
+          .body(new ApiResponse<>(false, "Seleccione un role musical para asignar", null, null));
     }
 
     List<MusicalRolesModel> musicalRolesModelList = musicalRolesMapper.toModelList(musicalRoles);

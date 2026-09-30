@@ -1,7 +1,6 @@
 package com.bandsyncapi.bandsyncapi.api.v1.services;
 
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 import com.bandsyncapi.bandsyncapi.api.v1.dto.roles.RolesPermissionsDto;

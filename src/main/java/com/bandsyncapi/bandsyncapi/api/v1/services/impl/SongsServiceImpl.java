@@ -106,7 +106,9 @@ public class SongsServiceImpl implements SongsService {
     if (hasNewFile && hasOldFile) {
       String fileName = AwsUtils.getFileNameFromAwsUrl(currentFile);
       filesService.deleteFile(awsSongsDirectory + "/" + fileName);
-    } else {
+    }
+
+    if (!hasNewFile) {
       fileUrl = currentFile;
     }
 

@@ -100,7 +100,7 @@ public class MusicalRolesController {
           .body(new ApiResponse<>(false, "No musical roles found", null, null));
     }
 
-    log.info("Musical roles found successfully: {}", musicalRolesDtoListResponse);
+    log.info("Musical roles found successfully for musical band id: {}", musicalBandId);
 
     return ResponseEntity.status(HttpStatus.OK)
         .body(new ApiResponse<>(true, "Musical roles found successfully", musicalRolesDtoListResponse, null));

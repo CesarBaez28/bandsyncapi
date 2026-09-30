@@ -225,3 +225,40 @@ CREATE TABLE IF NOT EXISTS password_reset_tokens (
     expiration_date DATETIME NOT NULL,
     used BIT NOT NULL DEFAULT 0
 );
+
+-- Table: Set list
+CREATE TABLE IF NOT EXISTS set_lists (
+    id BINARY(16) PRIMARY KEY DEFAULT(UUID_TO_BIN(UUID())),
+    musical_band_id BINARY(16) NOT NULL,
+    FOREIGN KEY (musical_band_id) REFERENCES musical_bands (id),
+    repertoire_id BINARY(16) NOT NULL,
+    FOREIGN KEY (repertoire_id) REFERENCES repertoires (id),
+    name VARCHAR(100) NOT NULL,
+    description TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    status BIT NOT NULL DEFAULT 1
+);
+CREATE INDEX set_list_name_index ON set_lists (name);
+
+-- Table: Set
+CREATE TABLE IF NOT EXISTS sets (
+    id BINARY(16) PRIMARY KEY DEFAULT(UUID_TO_BIN(UUID())),
+    set_list_id BINARY(16) NOT NULL,
+    FOREIGN KEY (set_list_id) REFERENCES set_lists (id),
+    name VARCHAR(100) NOT NULL,
+    order_index INT NOT NULL,
+    status BIT NOT NULL DEFAULT 1
+);
+CREATE INDEX set_name_index ON sets (name);
+
+-- Table: set_list_songs
+CREATE TABLE IF NOT EXISTS set_list_songs (
+    id BINARY(16) PRIMARY KEY DEFAULT(UUID_TO_BIN(UUID())),
+    set_id BINARY(16) NOT NULL,
+    song_id INT NOT NULL,
+    FOREIGN KEY (set_id) REFERENCES sets (id),
+    FOREIGN KEY (song_id) REFERENCES songs (id),
+    order_index INT NOT NULL,
+    notes TEXT,
+    status BIT NOT NULL DEFAULT 1
+);

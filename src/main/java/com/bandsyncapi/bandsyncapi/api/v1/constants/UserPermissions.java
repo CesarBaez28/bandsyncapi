@@ -74,4 +74,12 @@ public final class UserPermissions {
   // =========================
   public static final String UPDATE_BAND = "Editar Banda";
   public static final String DELETE_BAND = "Eliminar Banda";
+
+  // =========================
+  // Set lists
+  // =========================
+  public static final String ADD_SET_LIST = "Agregar setlist";
+  public static final String UPDATE_SET_LIST = "Modificar setlist";
+  public static final String DELETE_SET_LIST = "Eliminar setlist";
+
 }
