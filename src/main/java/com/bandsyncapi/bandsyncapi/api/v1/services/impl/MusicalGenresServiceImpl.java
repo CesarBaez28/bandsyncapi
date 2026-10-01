@@ -7,6 +7,8 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -20,6 +22,7 @@ import com.bandsyncapi.bandsyncapi.api.v1.repositories.RepertoiresSongsRepositor
 import com.bandsyncapi.bandsyncapi.api.v1.repositories.SongsRepository;
 import com.bandsyncapi.bandsyncapi.api.v1.services.FilesService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.MusicalGenresService;
+import com.bandsyncapi.bandsyncapi.constants.CacheNames;
 import com.bandsyncapi.bandsyncapi.utils.AwsUtils;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -66,12 +69,14 @@ public class MusicalGenresServiceImpl implements MusicalGenresService {
   }
 
   @Override
+  @Cacheable(cacheNames = CacheNames.MUSICAL_GENRES_ALL)
   public List<MusicalGenresModel> findAll() {
     log.info("Fetching all musical genres");
     return musicalGenresRepository.findAll();
   }
 
   @Override
+  @Cacheable(cacheNames = CacheNames.MUSICAL_GENRES_BY_BAND, key = "#id")
   public List<MusicalGenresModel> findByMusicalBandId(UUID id) {
     log.info("Fetching all musical genres for the band with id: {}", id);
     return musicalGenresRepository.findByMusicalBandId(id);
@@ -91,12 +96,14 @@ public class MusicalGenresServiceImpl implements MusicalGenresService {
   }
 
   @Override
+  @CacheEvict(cacheNames = { CacheNames.MUSICAL_GENRES_BY_BAND, CacheNames.MUSICAL_GENRES_ALL }, allEntries = true)
   public MusicalGenresModel save(MusicalGenresModel musicalGenresModel) {
     log.info("Saving musical genre: {}", musicalGenresModel);
     return musicalGenresRepository.save(musicalGenresModel);
   }
 
   @Override
+  @CacheEvict(cacheNames = { CacheNames.MUSICAL_GENRES_BY_BAND, CacheNames.MUSICAL_GENRES_ALL }, allEntries = true)
   public void updateGenreName(Integer id, String name) {
     log.info("Updating musical genre with id: {} to name: {}", id, name);
     int rowsUpdated = musicalGenresRepository.updateGenreName(id, name);
@@ -107,6 +114,7 @@ public class MusicalGenresServiceImpl implements MusicalGenresService {
   }
 
   @Override
+  @CacheEvict(cacheNames = { CacheNames.MUSICAL_GENRES_BY_BAND, CacheNames.MUSICAL_GENRES_ALL }, allEntries = true)
   public void deleteById(Integer id) {
     log.info("Starting process to delete musial genre with id: {}", id);
 
@@ -144,6 +152,7 @@ public class MusicalGenresServiceImpl implements MusicalGenresService {
   }
 
   @Override
+  @CacheEvict(cacheNames = { CacheNames.MUSICAL_GENRES_BY_BAND, CacheNames.MUSICAL_GENRES_ALL }, allEntries = true)
   public void insertDefaultGenres(MusicalBandsModel band) {
     log.info("Inserting default musical genres");
     String[] genres = defaultMusicalGenres.split(",");

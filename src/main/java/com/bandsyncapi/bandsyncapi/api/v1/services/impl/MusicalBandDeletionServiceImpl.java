@@ -2,6 +2,7 @@ package com.bandsyncapi.bandsyncapi.api.v1.services.impl;
 
 import java.util.UUID;
 
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +19,7 @@ import com.bandsyncapi.bandsyncapi.api.v1.services.MusicalBandsService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.RepertoiresService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.RolesService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.SetListsService;
+import com.bandsyncapi.bandsyncapi.constants.CacheNames;
 import com.bandsyncapi.bandsyncapi.api.v1.services.SongsService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -102,6 +104,7 @@ public class MusicalBandDeletionServiceImpl implements MusicalBandDeletionServic
 
   @Transactional
   @Override
+  @CacheEvict(cacheNames = CacheNames.EVENTS_BY_BAND, allEntries = true)
   public void deleteMusuicalBand(UUID musicalBandId) {
     log.info("Proceding to delete the musical band: {}", musicalBandId);
 

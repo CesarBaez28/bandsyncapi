@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -14,6 +16,7 @@ import com.bandsyncapi.bandsyncapi.api.v1.models.MusicalBandsModel;
 import com.bandsyncapi.bandsyncapi.api.v1.models.MusicalRolesModel;
 import com.bandsyncapi.bandsyncapi.api.v1.repositories.MusicalRolesRepository;
 import com.bandsyncapi.bandsyncapi.api.v1.services.MusicalRolesService;
+import com.bandsyncapi.bandsyncapi.constants.CacheNames;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
@@ -41,18 +44,21 @@ public class MusicalRolesServiceImpl implements MusicalRolesService {
   }
 
   @Override
+  @CacheEvict(cacheNames = CacheNames.MUSICAL_ROLES_BY_BAND, allEntries = true)
   public MusicalRolesModel save(MusicalRolesModel musicalRolesModel) {
     log.info("Saving musical role: {}", musicalRolesModel);
     return musicalRolesRepository.save(musicalRolesModel);
   }
 
   @Override
+  @Cacheable(cacheNames = CacheNames.MUSICAL_ROLES_BY_BAND, key = "#musicalBandId")
   public List<MusicalRolesModel> findByMusicalBandId(UUID musicalBandId) {
     log.info("Finding musical roles by musical band id: {}", musicalBandId);
     return musicalRolesRepository.findByMusicalBandId(musicalBandId);
   }
 
   @Override
+  @CacheEvict(cacheNames = CacheNames.MUSICAL_ROLES_BY_BAND, allEntries = true)
   public void updateMusicalRoleName(Integer id, String name) {
     log.info("Updating musical role name with id: {} to {}", id, name);
     int rowsUpdated = musicalRolesRepository.updateMusicalRoleName(id, name);
@@ -63,6 +69,7 @@ public class MusicalRolesServiceImpl implements MusicalRolesService {
   }
 
   @Override
+  @CacheEvict(cacheNames = CacheNames.MUSICAL_ROLES_BY_BAND, allEntries = true)
   public void deleteById(Integer id) {
     log.info("Deleting musical role with id: {}", id);
     musicalRolesRepository.deleteById(id);
@@ -76,6 +83,7 @@ public class MusicalRolesServiceImpl implements MusicalRolesService {
   }
 
   @Override
+  @CacheEvict(cacheNames = CacheNames.MUSICAL_ROLES_BY_BAND, allEntries = true)
   public void insertDefaulRoles(MusicalBandsModel musicalBandsModel) {
     log.info("Inserting default musical roles");
     String[] roles = defaultRoles.split(",");

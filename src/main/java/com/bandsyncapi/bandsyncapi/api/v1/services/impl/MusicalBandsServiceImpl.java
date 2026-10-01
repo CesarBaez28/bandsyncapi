@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -28,6 +30,7 @@ import com.bandsyncapi.bandsyncapi.api.v1.services.RolesPermissionsService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.RolesService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.UsersMusicalBandsService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.UsersRolesService;
+import com.bandsyncapi.bandsyncapi.constants.CacheNames;
 import com.bandsyncapi.bandsyncapi.constants.Constants;
 import com.bandsyncapi.bandsyncapi.utils.AwsUtils;
 
@@ -112,6 +115,7 @@ public class MusicalBandsServiceImpl implements MusicalBandsService {
   }
 
   @Override
+  @Cacheable(cacheNames = CacheNames.MUSICAL_BANDS_BY_ID, key = "#id")
   public MusicalBandsDto findById(UUID id) {
     log.info("Finding musical band by id: {}", id);
 
@@ -122,6 +126,7 @@ public class MusicalBandsServiceImpl implements MusicalBandsService {
   }
 
   @Override
+  @CacheEvict(cacheNames = { CacheNames.MUSICAL_BANDS_BY_ID, CacheNames.MUSICAL_BANDS_BY_HYPHENATED_NAME }, allEntries = true)
   public MusicalBandsModel save(MusicalBandsModel musicalBandsModel) {
 
     musicalBandsModel.setHyphenatedName(hyphenateName(musicalBandsModel.getName()));
@@ -182,6 +187,7 @@ public class MusicalBandsServiceImpl implements MusicalBandsService {
 
   @Override
   @Transactional
+  @CacheEvict(cacheNames = { CacheNames.MUSICAL_BANDS_BY_ID, CacheNames.MUSICAL_BANDS_BY_HYPHENATED_NAME }, allEntries = true)
   public MusicalBandPutDto update(UUID musicalBandId, MusicalBandPutDto musicalBandPutDto, MultipartFile imageFile)
       throws IOException {
 
@@ -226,6 +232,7 @@ public class MusicalBandsServiceImpl implements MusicalBandsService {
   }
 
   @Override
+  @Cacheable(cacheNames = CacheNames.MUSICAL_BANDS_BY_HYPHENATED_NAME, key = "#name")
   public MusicalBandsDto findByHyphenatedName(String name) {
     log.info("Finding musical band by hyphenatedName");
 
@@ -236,11 +243,13 @@ public class MusicalBandsServiceImpl implements MusicalBandsService {
   }
 
   @Override
+  @CacheEvict(cacheNames = { CacheNames.MUSICAL_BANDS_BY_ID, CacheNames.MUSICAL_BANDS_BY_HYPHENATED_NAME }, allEntries = true)
   public void updateLogoById(UUID musicalBandId, String logo) {
     musicalBandsRepository.updateLogoById(musicalBandId, logo);
   }
 
   @Override
+  @CacheEvict(cacheNames = { CacheNames.MUSICAL_BANDS_BY_ID, CacheNames.MUSICAL_BANDS_BY_HYPHENATED_NAME }, allEntries = true)
   public void deleteById(UUID musicalBandId) {
     log.info("Deleting musical band with id: {}", musicalBandId);
 

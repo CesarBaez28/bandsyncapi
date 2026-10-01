@@ -5,6 +5,8 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -17,6 +19,7 @@ import com.bandsyncapi.bandsyncapi.api.v1.repositories.RepertoiresSongsRepositor
 import com.bandsyncapi.bandsyncapi.api.v1.repositories.SongsRepository;
 import com.bandsyncapi.bandsyncapi.api.v1.services.ArtistsService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.FilesService;
+import com.bandsyncapi.bandsyncapi.constants.CacheNames;
 import com.bandsyncapi.bandsyncapi.utils.AwsUtils;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -57,18 +60,21 @@ public class ArtistsServiceImpl implements ArtistsService {
   }
 
   @Override
+  @CacheEvict(cacheNames = CacheNames.ARTISTS_BY_BAND, allEntries = true)
   public ArtistsModel save(ArtistsModel artistsModel) {
     log.info("Saving artist: {}", artistsModel);
     return artistsRepository.save(artistsModel);
   }
 
   @Override
+  @Cacheable(cacheNames = CacheNames.ARTISTS_BY_BAND, key = "#id")
   public List<ArtistsModel> findByMusicalBandId(UUID id) {
     log.info("Finding artists by musical band id: {}", id);
     return artistsRepository.findByMusicalBandId(id);
   }
 
   @Override
+  @CacheEvict(cacheNames = CacheNames.ARTISTS_BY_BAND, allEntries = true)
   public void updateArtist(Integer id, String name) {
     log.info("Updating artist with id: {} and name: {}", id, name);
 
@@ -81,6 +87,7 @@ public class ArtistsServiceImpl implements ArtistsService {
   }
 
   @Override
+  @CacheEvict(cacheNames = CacheNames.ARTISTS_BY_BAND, allEntries = true)
   public void deleteById(Integer id) {
     log.info("Starting process to delete artist with id: {}", id);
 
@@ -125,6 +132,7 @@ public class ArtistsServiceImpl implements ArtistsService {
   }
 
   @Override
+  @CacheEvict(cacheNames = CacheNames.ARTISTS_BY_BAND, allEntries = true)
   public void deleteArtistsByMusicalBandId(UUID musicalBandId) {
     log.info("Deleting artists by musical band id: {}", musicalBandId);
     artistsRepository.deleteByMusicalBandId(musicalBandId);

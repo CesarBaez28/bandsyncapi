@@ -7,6 +7,8 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +23,7 @@ import com.bandsyncapi.bandsyncapi.api.v1.models.RolesPermissionsModel;
 import com.bandsyncapi.bandsyncapi.api.v1.repositories.RolesRepository;
 import com.bandsyncapi.bandsyncapi.api.v1.services.RolesPermissionsService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.RolesService;
+import com.bandsyncapi.bandsyncapi.constants.CacheNames;
 import com.bandsyncapi.bandsyncapi.constants.Constants;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -54,12 +57,14 @@ public class RolesServiceImpl implements RolesService {
   }
 
   @Override
+  @Cacheable(cacheNames = CacheNames.ROLES_ALL)
   public List<RolesModel> findAll() {
     log.info("Finding all roles");
     return rolesRepository.findAll();
   }
 
   @Override
+  @CacheEvict(cacheNames = CacheNames.ROLES_ALL, allEntries = true)
   @Transactional
   public RolesModel save(RolesModel rolesModel) {
     log.info("Saving role {}", rolesModel);
@@ -67,6 +72,7 @@ public class RolesServiceImpl implements RolesService {
   }
 
   @Override
+  @CacheEvict(cacheNames = CacheNames.ROLES_ALL, allEntries = true)
   @Transactional
   public RolesPermissionsDto saveRoleAndPermissions(RolesPostDto rolesPostDto) {
     log.info("Saving role and permissions of the role {}", rolesPostDto);
@@ -90,6 +96,7 @@ public class RolesServiceImpl implements RolesService {
   }
 
   @Override
+  @CacheEvict(cacheNames = CacheNames.ROLES_ALL, allEntries = true)
   @Transactional
   public void updateRolesPermissions(RolesPermissionsPutDto rolesPermissionsPutDto) {
     log.info("Updating role and permissions of the role {}", rolesPermissionsPutDto);
@@ -145,6 +152,7 @@ public class RolesServiceImpl implements RolesService {
   }
 
   @Override
+  @CacheEvict(cacheNames = CacheNames.ROLES_ALL, allEntries = true)
   public void deleteRoleById(Integer roleId) {
     RolesModel role = rolesRepository.findById(roleId)
         .orElseThrow(() -> new EntityNotFoundException("Role no encontrado"));
@@ -162,6 +170,7 @@ public class RolesServiceImpl implements RolesService {
   }
 
   @Override
+  @CacheEvict(cacheNames = CacheNames.ROLES_ALL, allEntries = true)
   public void deleteRoleAndRolesPermissionsByMusicalBandId(UUID musicalBandId) {
     log.info("Deleting roles and roles permissions related to musical band: {}", musicalBandId);
 

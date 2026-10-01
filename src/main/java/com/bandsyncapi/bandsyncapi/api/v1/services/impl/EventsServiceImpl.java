@@ -3,12 +3,15 @@ package com.bandsyncapi.bandsyncapi.api.v1.services.impl;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import com.bandsyncapi.bandsyncapi.api.v1.dto.events.EventsPutDto;
 import com.bandsyncapi.bandsyncapi.api.v1.models.EventsModel;
 import com.bandsyncapi.bandsyncapi.api.v1.repositories.EventsRepository;
 import com.bandsyncapi.bandsyncapi.api.v1.services.EventsService;
+import com.bandsyncapi.bandsyncapi.constants.CacheNames;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
@@ -32,6 +35,7 @@ public class EventsServiceImpl implements EventsService {
   }
 
   @Override
+  @CacheEvict(cacheNames = CacheNames.EVENTS_BY_BAND, allEntries = true)
   public EventsModel save(EventsModel eventsModel) {
     log.info("Saving event: {}", eventsModel);
 
@@ -39,6 +43,7 @@ public class EventsServiceImpl implements EventsService {
   }
 
   @Override
+  @Cacheable(cacheNames = CacheNames.EVENTS_BY_BAND, key = "#musicalBandId")
   public List<EventsModel> findByMusicalBandId(UUID musicalBandId) {
     log.info("Finding events by musical band ID: {}", musicalBandId);
 
@@ -46,6 +51,7 @@ public class EventsServiceImpl implements EventsService {
   }
 
   @Override
+  @CacheEvict(cacheNames = CacheNames.EVENTS_BY_BAND, allEntries = true)
   public void updateEvent(UUID id, EventsPutDto eventsPutDto) {
     log.info("Updating event with ID: {} with data: {}", id, eventsPutDto);
 
@@ -58,6 +64,7 @@ public class EventsServiceImpl implements EventsService {
   }
 
   @Override
+  @CacheEvict(cacheNames = CacheNames.EVENTS_BY_BAND, allEntries = true)
   public void deleteEvent(UUID id) {
     log.info("Deleting event with ID: {}", id);
 
