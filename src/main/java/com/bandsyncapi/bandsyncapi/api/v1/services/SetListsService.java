@@ -63,4 +63,11 @@ public interface SetListsService {
    * @param setListId - set list id
    */
   void deleteSetList(UUID setListId);
+
+  /**
+   * Deletes all set lists, sets and songs belonging to a musical band.
+   *
+   * @param musicalBandId musical band id
+   */
+  void deleteSetListsByMusicalBandId(UUID musicalBandId);
 }

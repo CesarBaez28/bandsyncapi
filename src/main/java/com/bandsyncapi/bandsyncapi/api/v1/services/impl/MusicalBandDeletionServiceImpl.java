@@ -17,6 +17,7 @@ import com.bandsyncapi.bandsyncapi.api.v1.services.MusicalBandDeletionService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.MusicalBandsService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.RepertoiresService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.RolesService;
+import com.bandsyncapi.bandsyncapi.api.v1.services.SetListsService;
 import com.bandsyncapi.bandsyncapi.api.v1.services.SongsService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -52,6 +53,8 @@ public class MusicalBandDeletionServiceImpl implements MusicalBandDeletionServic
 
   private final MusicalBandsService musicalBandsService;
 
+  private final SetListsService setListsService;
+
   /**
    * Constructor
    * 
@@ -67,6 +70,7 @@ public class MusicalBandDeletionServiceImpl implements MusicalBandDeletionServic
    * @param musicalRolesRepository
    * @param rolesService
    * @param musicalBandsService
+  * @param setListsService
    */
   public MusicalBandDeletionServiceImpl(EventsRepository eventsRepository,
       RepertoiresService repertoiresService,
@@ -79,7 +83,8 @@ public class MusicalBandDeletionServiceImpl implements MusicalBandDeletionServic
       MusicalRolesUsersRepository musicalRolesUsersRepository,
       MusicalRolesRepository musicalRolesRepository,
       RolesService rolesService,
-      MusicalBandsService musicalBandsService) {
+      MusicalBandsService musicalBandsService,
+      SetListsService setListsService) {
     this.eventsRepository = eventsRepository;
     this.repertoiresService = repertoiresService;
     this.invitationsRepository = invitationsRepository;
@@ -92,6 +97,7 @@ public class MusicalBandDeletionServiceImpl implements MusicalBandDeletionServic
     this.musicalRolesRepository = musicalRolesRepository;
     this.rolesService = rolesService;
     this.musicalBandsService = musicalBandsService;
+    this.setListsService = setListsService;
   }
 
   @Transactional
@@ -101,6 +107,9 @@ public class MusicalBandDeletionServiceImpl implements MusicalBandDeletionServic
 
     log.info("Deleting events related to musical band: {}", musicalBandId);
     eventsRepository.deleteByMusicalBandId(musicalBandId);
+
+    log.info("Deleting set lists related to musical band: {}", musicalBandId);
+    setListsService.deleteSetListsByMusicalBandId(musicalBandId);
 
     repertoiresService.deleteByMusicalBandId(musicalBandId);
 

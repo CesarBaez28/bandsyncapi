@@ -1,6 +1,7 @@
 package com.bandsyncapi.bandsyncapi.api.v1.repositories;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -29,4 +30,7 @@ public interface SetsRepository extends JpaRepository<SetsModel, UUID> {
       ORDER BY s.orderIndex ASC
       """)
   List<SetsModel> findBySetListIdOrderByOrderIndexAsc(@Param("setListId") UUID setListId);
+
+  @Query("SELECT s.id FROM SetsModel s WHERE s.setList.id IN :setListIds")
+  List<UUID> findIdsBySetListIds(@Param("setListIds") Set<UUID> setListIds);
 }

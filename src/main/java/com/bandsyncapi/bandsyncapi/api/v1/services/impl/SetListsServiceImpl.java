@@ -179,6 +179,29 @@ public class SetListsServiceImpl implements SetListsService {
 
   @Override
   @Transactional
+  public void deleteSetListsByMusicalBandId(UUID musicalBandId) {
+    
+    Set<UUID> setListIds = setListsRepository.findByMusicalBandId(musicalBandId).stream()
+        .map(SetListsModel::getId)
+        .collect(Collectors.toSet());
+
+    if (setListIds.isEmpty()) {
+      return;
+    }
+
+    Set<UUID> setIds = new HashSet<>(setsRepository.findIdsBySetListIds(setListIds));
+
+    if (!setIds.isEmpty()) {
+      setListSongsRepository.deleteBySetIds(setIds);
+      setsRepository.deleteAllByIdInBatch(setIds);
+    }
+
+    setListsRepository.deleteAllByIdInBatch(setListIds);
+    log.info("Deleted {} set lists and {} sets for musical band {}", setListIds.size(), setIds.size(), musicalBandId);
+  }
+
+  @Override
+  @Transactional
   public void updateSetList(UUID setListId, UpdateSetListDto updateSetListDto) {
     log.info("Updating set list with id: {}", setListId);
 
