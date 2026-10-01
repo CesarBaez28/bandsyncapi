@@ -1,5 +1,6 @@
 package com.bandsyncapi.bandsyncapi.api.v1.repositories;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.data.domain.Pageable;
@@ -33,6 +34,20 @@ public interface SetListsRepository extends JpaRepository<SetListsModel, UUID> {
         r.name LIKE %:term%
       )
       """)
-  Page<SetListsModel> findAllByMusicalBandId(@Param("musicalBandId") UUID musicalBandId, @Param("term") String term,
+  Page<SetListsModel> searchAllByMusicalBandId(@Param("musicalBandId") UUID musicalBandId, @Param("term") String term,
       Pageable pageable);
+
+  /**
+   * Finds set lists by muscal band id
+   * 
+   * @param musicalBandId
+   * @return
+   */
+  @Query("""
+      SELECT sl FROM SetListsModel sl
+      JOIN FETCH sl.musicalBand mb
+      JOIN FETCH sl.repertoire r
+      WHERE mb.id = :musicalBandId
+      """)
+  List<SetListsModel> findByMusicalBandId(@Param("musicalBandId") UUID musicalBandId);
 }

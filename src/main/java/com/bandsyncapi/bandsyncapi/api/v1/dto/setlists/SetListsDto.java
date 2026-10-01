@@ -3,6 +3,7 @@ package com.bandsyncapi.bandsyncapi.api.v1.dto.setlists;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import com.bandsyncapi.bandsyncapi.api.v1.models.MusicalBandsModel;
 import com.bandsyncapi.bandsyncapi.api.v1.models.RepertoiresModel;
 
 /**
@@ -11,8 +12,9 @@ import com.bandsyncapi.bandsyncapi.api.v1.models.RepertoiresModel;
 public record SetListsDto(
     UUID id,
     RepertoiresModel repertoire,
+    MusicalBandsModel musicalBand,
     String name,
     String description,
     LocalDateTime createdAt,
-    Boolean status
-){}
+    Boolean status) {
+}

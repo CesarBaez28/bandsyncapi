@@ -1,5 +1,6 @@
 package com.bandsyncapi.bandsyncapi.api.v1.services;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.data.domain.Page;
@@ -23,7 +24,15 @@ public interface SetListsService {
    * @param size          - page size
    * @return - Page of SetListsModel
    */
-  Page<SetListsModel> findAllByMusicalBandId(UUID musicalBandId, String term, int page, int size);
+  Page<SetListsModel> searchAllByMusicalBandId(UUID musicalBandId, String term, int page, int size);
+
+  /**
+   * Finds set lists by musical band id
+   * 
+   * @param musicalBandId - musical band id
+   * @return
+   */
+  List<SetListsModel> findByMuscalBandId(UUID musicalBandId);
 
   /**
    * Finds details of a set list by its id

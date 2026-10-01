@@ -10,6 +10,7 @@ import com.bandsyncapi.bandsyncapi.api.v1.dto.setlists.SetListsDto;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.setlists.UpdateSetListDto;
 import com.bandsyncapi.bandsyncapi.api.v1.mappers.SetListsMapper;
 import com.bandsyncapi.bandsyncapi.api.v1.models.SetListsModel;
+import com.bandsyncapi.bandsyncapi.api.v1.exporters.SetListSpreadsheetExporter;
 import com.bandsyncapi.bandsyncapi.api.v1.services.SetListsService;
 import com.bandsyncapi.bandsyncapi.constants.Constants;
 import com.bandsyncapi.bandsyncapi.response.ApiResponse;
@@ -23,7 +24,9 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.data.domain.Page;
+import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -47,18 +50,27 @@ public class SetListsController {
 
   private final SetListsMapper setListsMapper;
 
+  private final SetListSpreadsheetExporter setListSpreadsheetExporter;
+
   private static final int PAGE_SIZE = 10;
+
+  private static final String EXCEL_MEDIA_TYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
 
   /**
    * Constructor for SetListsController.
    *
-   * @param setListsService the service for managing set lists
-   * @param setListsMapper  the mapper for converting between SetListsModel and
-   *                        DTOs
+   * @param setListsService            the service for managing set lists
+   * @param setListsMapper             the mapper for converting between
+   *                                   SetListsModel and
+   *                                   DTOs
+   * @param setListSpreadsheetExporter - used to export set lists information as a
+   *                                   spreadsheet
    */
-  public SetListsController(SetListsService setListsService, SetListsMapper setListsMapper) {
+  public SetListsController(SetListsService setListsService, SetListsMapper setListsMapper,
+      SetListSpreadsheetExporter setListSpreadsheetExporter) {
     this.setListsService = setListsService;
     this.setListsMapper = setListsMapper;
+    this.setListSpreadsheetExporter = setListSpreadsheetExporter;
   }
 
   /**
@@ -69,15 +81,15 @@ public class SetListsController {
    * @param page          - page number
    * @return
    */
-  @GetMapping("/musicalBandId/{musicalBandId}")
-  public ResponseEntity<ApiResponse<PagedData<SetListsDto>>> findAllByMusicalBandId(
+  @GetMapping("/musicalBandId/{musicalBandId}/search")
+  public ResponseEntity<ApiResponse<PagedData<SetListsDto>>> searchAllByMusicalBandId(
       @PathVariable UUID musicalBandId,
       @RequestParam String query,
       @RequestParam(defaultValue = "0") int page) {
 
     page = Math.max(page - 1, 0); // convert to zero-based index and ensure non-negative
 
-    Page<SetListsModel> setListsPage = setListsService.findAllByMusicalBandId(musicalBandId, query, page, PAGE_SIZE);
+    Page<SetListsModel> setListsPage = setListsService.searchAllByMusicalBandId(musicalBandId, query, page, PAGE_SIZE);
 
     List<SetListsDto> setListsDto = setListsMapper.toDtoList(setListsPage.getContent());
 
@@ -87,6 +99,25 @@ public class SetListsController {
 
     return ResponseEntity.status(HttpStatus.OK)
         .body(new ApiResponse<>(true, "Set lists found successfully", pagedData, null));
+  }
+
+  /**
+   * finds set lists by musical band id
+   * 
+   * @param musicalBandId - musical band id
+   * @return - ResponseEntity containing the API response with set lists
+   *         data
+   */
+  @GetMapping("/musicalBandId/{musicalBandId}")
+  public ResponseEntity<ApiResponse<List<SetListsDto>>> findByMusicalBandId(@PathVariable UUID musicalBandId) {
+    List<SetListsModel> setListsModels = setListsService.findByMuscalBandId(musicalBandId);
+
+    List<SetListsDto> setListsDto = setListsMapper.toDtoList(setListsModels);
+
+    log.info("Set lists found by musical band id: {}", musicalBandId);
+
+    return ResponseEntity.status(HttpStatus.OK)
+        .body(new ApiResponse<>(true, "Set lists found successfully", setListsDto, null));
   }
 
   /**
@@ -104,6 +135,32 @@ public class SetListsController {
 
     return ResponseEntity.status(HttpStatus.OK)
         .body(new ApiResponse<>(true, "Set list details found successfully", setListDetailsDto, null));
+  }
+
+  /**
+   * Downloads a set list and its sets and songs as an Excel spreadsheet.
+   *
+   * @param id set list id
+   * @return the generated Excel file
+   */
+  @GetMapping(value = "/{id}/spreadsheet", produces = EXCEL_MEDIA_TYPE)
+  public ResponseEntity<byte[]> downloadSetListSpreadsheet(@PathVariable UUID id) {
+
+    SetListDetailsDto setListDetails = setListsService.findSetListDetailsById(id);
+
+    byte[] spreadsheet = setListSpreadsheetExporter.export(setListDetails);
+
+    ContentDisposition contentDisposition = ContentDisposition.attachment()
+        .filename("setlist-" + id + ".xlsx")
+        .build();
+
+    log.info("Excel document generated successfully for set list with id: {}",
+        setListDetails.setList().id());
+
+    return ResponseEntity.ok()
+        .contentType(MediaType.parseMediaType(EXCEL_MEDIA_TYPE))
+        .header("Content-Disposition", contentDisposition.toString())
+        .body(spreadsheet);
   }
 
   /**

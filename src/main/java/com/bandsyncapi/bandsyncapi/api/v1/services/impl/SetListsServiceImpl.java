@@ -78,9 +78,15 @@ public class SetListsServiceImpl implements SetListsService {
   }
 
   @Override
-  public Page<SetListsModel> findAllByMusicalBandId(UUID musicalBandId, String term, int page, int size) {
+  public Page<SetListsModel> searchAllByMusicalBandId(UUID musicalBandId, String term, int page, int size) {
     log.info("Finding set lists for musical band with ID: {} and search term: {}", musicalBandId, term);
-    return setListsRepository.findAllByMusicalBandId(musicalBandId, term, PageRequest.of(page, size));
+    return setListsRepository.searchAllByMusicalBandId(musicalBandId, term, PageRequest.of(page, size));
+  }
+
+  @Override
+  public List<SetListsModel> findByMuscalBandId(UUID musicalBandId) {
+    log.info("Finding set lists for musical band with ID: {}", musicalBandId);
+    return setListsRepository.findByMusicalBandId(musicalBandId);
   }
 
   @Override
