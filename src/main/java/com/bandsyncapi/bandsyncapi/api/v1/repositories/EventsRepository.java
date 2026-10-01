@@ -28,7 +28,6 @@ public interface EventsRepository extends JpaRepository<EventsModel, UUID> {
       SELECT e
       FROM EventsModel e
       JOIN FETCH e.musicalBand mb
-      JOIN FETCH e.repertoire r
       WHERE mb.id = :musicalBandId
       """)
   List<EventsModel> findByMusicalBandId(UUID musicalBandId);
@@ -44,8 +43,7 @@ public interface EventsRepository extends JpaRepository<EventsModel, UUID> {
   @Modifying
   @Query("""
       UPDATE EventsModel e
-      SET e.repertoire.id = :#{#EventsPutDto.repertoireId},
-          e.date = :#{#EventsPutDto.date},
+      SET e.date = :#{#EventsPutDto.date},
           e.name = :#{#EventsPutDto.name},
           e.description = :#{#EventsPutDto.description},
           e.place = :#{#EventsPutDto.place},
@@ -54,16 +52,6 @@ public interface EventsRepository extends JpaRepository<EventsModel, UUID> {
       WHERE e.id = :id
       """)
   int updateEvent(@Param("id") UUID id, @Param("EventsPutDto") EventsPutDto eventsPutDto);
-
-  /**
-   * This method deletes an event by id.
-   * 
-   * @param id - Event id
-   */
-  @Modifying
-  @Transactional
-  @Query(value = "DELETE FROM events WHERE repertoire_id = :repertoireId", nativeQuery = true)
-  void deleteByRepertoireId(UUID repertoireId);
 
   /**
    * Deletes all events associated with a musical band

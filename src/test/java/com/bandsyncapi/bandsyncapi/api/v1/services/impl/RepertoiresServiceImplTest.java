@@ -18,7 +18,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.repertoires.RepertoiresPutDto;
 import com.bandsyncapi.bandsyncapi.api.v1.models.MusicalBandsModel;
 import com.bandsyncapi.bandsyncapi.api.v1.models.RepertoiresModel;
-import com.bandsyncapi.bandsyncapi.api.v1.repositories.EventsRepository;
 import com.bandsyncapi.bandsyncapi.api.v1.repositories.RepertoiresRepository;
 import com.bandsyncapi.bandsyncapi.api.v1.repositories.RepertoiresSongsRepository;
 import com.bandsyncapi.bandsyncapi.api.v1.services.RepertoiresSongsService;
@@ -33,9 +32,6 @@ class RepertoiresServiceImplTest {
 
   @Mock
   private RepertoiresSongsService repertoiresSongsService;
-
-  @Mock
-  private EventsRepository eventsRepository;
 
   @Mock
   private RepertoiresSongsRepository repertoiresSongsRepository;

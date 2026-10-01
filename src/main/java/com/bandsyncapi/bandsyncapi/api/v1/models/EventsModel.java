@@ -35,10 +35,6 @@ public class EventsModel {
   @JoinColumn(name = "musical_band_id")
   private MusicalBandsModel musicalBand;
 
-  @ManyToOne
-  @JoinColumn(name = "repertoire_id")
-  private RepertoiresModel repertoire;
-
   @Column(name = "date", nullable = false)
   private LocalDateTime date;
 

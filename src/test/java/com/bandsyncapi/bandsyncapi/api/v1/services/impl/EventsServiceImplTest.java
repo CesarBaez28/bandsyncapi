@@ -18,7 +18,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.bandsyncapi.bandsyncapi.api.v1.dto.events.EventsPutDto;
 import com.bandsyncapi.bandsyncapi.api.v1.models.EventsModel;
 import com.bandsyncapi.bandsyncapi.api.v1.models.MusicalBandsModel;
-import com.bandsyncapi.bandsyncapi.api.v1.models.RepertoiresModel;
 import com.bandsyncapi.bandsyncapi.api.v1.repositories.EventsRepository;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -46,7 +45,6 @@ class EventsServiceImplTest {
         .location("Location test")
         .place("Place Test")
         .musicalBand(new MusicalBandsModel(UUID.randomUUID()))
-        .repertoire(new RepertoiresModel(UUID.randomUUID()))
         .status(true)
         .build();
 
@@ -81,7 +79,6 @@ class EventsServiceImplTest {
     var eventId = UUID.randomUUID();
 
     var eventPutDto = new EventsPutDto(
-        UUID.randomUUID(),
         LocalDateTime.now(),
         "New name",
         "New Description",
@@ -104,7 +101,6 @@ class EventsServiceImplTest {
     var eventId = UUID.randomUUID();
 
     var eventPutDto = new EventsPutDto(
-        UUID.randomUUID(),
         LocalDateTime.now(),
         "New name",
         "New Description",

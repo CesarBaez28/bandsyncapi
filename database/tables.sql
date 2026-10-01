@@ -206,9 +206,7 @@ CREATE TABLE IF NOT EXISTS repertoires_songs (
 CREATE TABLE IF NOT EXISTS events (
     id BINARY(16) PRIMARY KEY DEFAULT(UUID_TO_BIN(UUID())),
     musical_band_id BINARY(16) NOT NULL,
-    repertoire_id BINARY(16) NOT NULL,
     FOREIGN KEY (musical_band_id) REFERENCES musical_bands (id),
-    FOREIGN KEY (repertoire_id) REFERENCES repertoires (id),
     name VARCHAR(100) NOT NULL,
     description TEXT,
     date DATETIME NOT NULL,

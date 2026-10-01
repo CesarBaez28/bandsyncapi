@@ -54,7 +54,6 @@ class EventsRepositoryTest {
 
     var testEvent = EventsModel.builder()
         .musicalBand(savedMusicalBand)
-        .repertoire(savedRepertoire)
         .date(LocalDateTime.now())
         .name("Test Event")
         .description("Test Event Description")
@@ -63,7 +62,8 @@ class EventsRepositoryTest {
         .status(true)
         .build();
 
-    eventsRepository.save(testEvent);
+    var savedEvent = eventsRepository.save(testEvent);
+    repertoiresRepository.deleteById(savedRepertoire.getId());
 
     // When
     List<EventsModel> events = eventsRepository.findByMusicalBandId(savedMusicalBand.getId());
@@ -71,6 +71,7 @@ class EventsRepositoryTest {
     // Then
     assertNotNull(events);
     assertFalse(events.isEmpty());
+    assertEquals(savedEvent.getId(), events.getFirst().getId());
   }
 
   @Test
@@ -88,18 +89,8 @@ class EventsRepositoryTest {
         .build();
     var savedMusicalBand = musicalBandsRepository.save(musicalBand);
 
-    var repertoire = RepertoiresModel.builder()
-        .name("Test Repertoire")
-        .musicalBand(savedMusicalBand)
-        .description("Test")
-        .link("http//test.com")
-        .status(true)
-        .build();
-    var savedRepertoire = repertoiresRepository.save(repertoire);
-
     var testEvent = EventsModel.builder()
         .musicalBand(savedMusicalBand)
-        .repertoire(savedRepertoire)
         .date(LocalDateTime.now())
         .name("Test Event")
         .description("Test Event Description")
@@ -112,7 +103,6 @@ class EventsRepositoryTest {
 
     // When
     var eventPutDto = new EventsPutDto(
-        savedEvent.getRepertoire().getId(),
         savedEvent.getDate(),
         "Updated name",
         savedEvent.getDescription(),

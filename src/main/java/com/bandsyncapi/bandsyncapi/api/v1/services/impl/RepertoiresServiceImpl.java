@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 import com.bandsyncapi.bandsyncapi.api.v1.dto.repertoires.RepertoiresPutDto;
 import com.bandsyncapi.bandsyncapi.api.v1.models.RepertoiresModel;
-import com.bandsyncapi.bandsyncapi.api.v1.repositories.EventsRepository;
 import com.bandsyncapi.bandsyncapi.api.v1.repositories.RepertoiresRepository;
 import com.bandsyncapi.bandsyncapi.api.v1.repositories.RepertoiresSongsRepository;
 import com.bandsyncapi.bandsyncapi.api.v1.services.RepertoiresService;
@@ -30,8 +29,6 @@ public class RepertoiresServiceImpl implements RepertoiresService {
 
   private final RepertoiresSongsRepository repertoiresSongsRepository;
 
-  private final EventsRepository eventsRepository;
-
   private final RepertoiresSongsService repertoiresSongsService;
 
   /**
@@ -43,14 +40,9 @@ public class RepertoiresServiceImpl implements RepertoiresService {
    * @param repertoiresSongsRepository - Repository with methods for performing
    *                                   CRUD
    *                                   operations on the repertoires_songs table.
-   * @param eventsRepository           - Repository with methods for performing
-   *                                   CRUD
-   *                                   operations on the events table.
    */
   public RepertoiresServiceImpl(RepertoiresRepository repertoiresRepository,
-      RepertoiresSongsRepository repertoiresSongsRepository, RepertoiresSongsService repertoiresSongsService,
-      EventsRepository eventsRepository) {
-    this.eventsRepository = eventsRepository;
+      RepertoiresSongsRepository repertoiresSongsRepository, RepertoiresSongsService repertoiresSongsService) {
     this.repertoiresSongsRepository = repertoiresSongsRepository;
     this.repertoiresRepository = repertoiresRepository;
     this.repertoiresSongsService = repertoiresSongsService;
@@ -92,9 +84,6 @@ public class RepertoiresServiceImpl implements RepertoiresService {
   @Override
   public void deleteById(UUID id) {
     log.info("Deleting repertoire with id {}", id);
-
-    log.info("Deleting events associated with repertoire id {}", id);
-    eventsRepository.deleteByRepertoireId(id);
 
     log.info("Deleting repertoire songs associated with repertoire id {}", id);
     repertoiresSongsRepository.deleteByRepertoireId(id);
