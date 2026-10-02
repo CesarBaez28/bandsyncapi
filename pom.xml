@@ -3,34 +3,51 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
+
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
     <version>4.1.1</version>
     <relativePath /> <!-- lookup parent from repository -->
   </parent>
+
   <groupId>com.bandsyncapi</groupId>
   <artifactId>bandsyncapi</artifactId>
   <version>0.0.1-SNAPSHOT</version>
-  <name>bandsyncapi</name>
-  <description>Demo project for Spring Boot</description>
-  <url />
+  <name>BandSync API</name>
+
+  <description>
+    Backend REST API for the BandSync platform, designed to manage artists,
+    musical bands, songs, setlists, events, user roles, media assets, and
+    authentication flows.
+  </description>
+
+  <url>https://github.com/CesarBaez28/bandsyncapi</url>
+
   <licenses>
     <license />
   </licenses>
+
   <developers>
-    <developer />
+    <developer>
+      <id>cesarbaez</id>
+      <name>César Báez</name>
+      <organizationUrl>https://github.com/CesarBaez28</organizationUrl>
+    </developer>
   </developers>
+
   <scm>
-    <connection />
-    <developerConnection />
-    <tag />
-    <url />
+    <connection>scm:git:https://github.com/CesarBaez28/bandsyncapi.git</connection>
+    <developerConnection>scm:git:https://github.com/CesarBaez28/bandsyncapi.git</developerConnection>
+    <tag>HEAD</tag>
+    <url>https://github.com/CesarBaez28/bandsyncapi</url>
   </scm>
+
   <properties>
     <java.version>25</java.version>
     <org.mapstruct.version>1.6.3</org.mapstruct.version>
   </properties>
+
   <dependencies>
 
     <dependency>
