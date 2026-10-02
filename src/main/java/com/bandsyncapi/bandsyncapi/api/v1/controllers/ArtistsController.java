@@ -1,0 +1,166 @@
+package com.bandsyncapi.bandsyncapi.api.v1.controllers;
+
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.bandsyncapi.bandsyncapi.api.v1.constants.UserPermissions;
+import com.bandsyncapi.bandsyncapi.api.v1.dto.artists.ArtistsDto;
+import com.bandsyncapi.bandsyncapi.api.v1.dto.artists.ArtistsPostDto;
+import com.bandsyncapi.bandsyncapi.api.v1.dto.artists.ArtistsPutDto;
+import com.bandsyncapi.bandsyncapi.api.v1.mappers.ArtistsMapper;
+import com.bandsyncapi.bandsyncapi.api.v1.models.ArtistsModel;
+import com.bandsyncapi.bandsyncapi.api.v1.services.ArtistsService;
+import com.bandsyncapi.bandsyncapi.constants.Constants;
+import com.bandsyncapi.bandsyncapi.response.ApiResponse;
+import com.bandsyncapi.bandsyncapi.response.PagedData;
+import com.bandsyncapi.bandsyncapi.security.RateLimited;
+
+import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
+
+import java.util.List;
+import java.util.UUID;
+
+import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+
+/**
+ * This is the controller to handle requests for the artists table.
+ */
+@RestController
+@RequestMapping(path = "api/v1/artists")
+@Slf4j
+@RateLimited(capacity = Constants.RATE_LIMIT_CAPACITY, refillTokens = Constants.RATE_LIMIT_TOKENS, refillMinutes = Constants.RATE_LIMIT_MINUTES)
+public class ArtistsController {
+
+  private final ArtistsService artistsService;
+
+  private final ArtistsMapper artistsMapper;
+
+  private static final int PAGE_SIZE = 10;
+
+  /**
+   * Constructor
+   * 
+   * @param artistsService - Service with methods for performing CRUD
+   *                       operations on the artists table.
+   * @param artistsMapper  - Mapper to convert between ArtistsModel and
+   *                       ArtistsDto.
+   */
+  public ArtistsController(ArtistsService artistsService, ArtistsMapper artistsMapper) {
+    this.artistsService = artistsService;
+    this.artistsMapper = artistsMapper;
+  }
+
+  /**
+   * Save a new artist
+   * 
+   * @param artistsPostDto - Request to save the new artist
+   * @return - An ApiResponse object with the new artist
+   */
+  @PostMapping("/save")
+  @PreAuthorize("hasRole('" + UserPermissions.ADD_ARTIST + "')")
+  @RateLimited(capacity = 20, refillTokens = 20, refillMinutes = 1)
+  public ResponseEntity<ApiResponse<ArtistsDto>> save(@Valid @RequestBody ArtistsPostDto artistsPostDto) {
+    ArtistsModel artistsModel = artistsMapper.toModel(artistsPostDto);
+    ArtistsModel artistsModelSaved = artistsService.save(artistsModel);
+    ArtistsDto artistsDto = artistsMapper.toDto(artistsModelSaved);
+
+    log.info("Artist successfully saved: {}", artistsDto);
+
+    return ResponseEntity.status(HttpStatus.CREATED)
+        .body(new ApiResponse<>(true, "Artist successfully register.", artistsDto, null));
+  }
+
+  /**
+   * finds artists by musical band id
+   * 
+   * @param id - musical band id
+   * @return An ApiResponse Object with a List of artists
+   */
+  @GetMapping("/findByMusicalBandId/{id}")
+  public ResponseEntity<ApiResponse<List<ArtistsDto>>> findByMusicalRoleId(@PathVariable UUID id) {
+    List<ArtistsModel> artistsModelList = artistsService.findByMusicalBandId(id);
+    List<ArtistsDto> artistsDtoList = artistsMapper.toDtoList(artistsModelList);
+
+    log.info("Artists found by musical band id: {}", id);
+
+    return ResponseEntity.status(HttpStatus.OK)
+        .body(new ApiResponse<>(true, "Artists found successfully.", artistsDtoList, null));
+  }
+
+  /**
+   * Finds all artists by musical band id and name.
+   * 
+   * @param musicalBandId - Musical Band id
+   * @param query         - Artist name
+   * @return An ApiResponse Object with a List of artists
+   */
+  @GetMapping("/findByMusicalBandIdAndName/{musicalBandId}")
+  public ResponseEntity<ApiResponse<PagedData<ArtistsDto>>> findByMusicalBandIdAndName(
+      @PathVariable UUID musicalBandId,
+      @RequestParam String query,
+      @RequestParam(defaultValue = "0") int page) {
+
+    page--; // convert to zero-based index
+
+    Page<ArtistsModel> resultPage = artistsService.findByMusicalBandIdAndName(musicalBandId, query, page, PAGE_SIZE);
+
+    List<ArtistsDto> artistsDtoList = artistsMapper.toDtoList(resultPage.getContent());
+
+    PagedData<ArtistsDto> pagedData = new PagedData<>(artistsDtoList, resultPage);
+
+    log.info("Artists found by musical band id: {} and name: {}", musicalBandId, query);
+
+    return ResponseEntity.status(HttpStatus.OK)
+        .body(new ApiResponse<>(true, "Artists found successfully.", pagedData, null));
+  }
+
+  /**
+   * Update artist name
+   * 
+   * @param id            - Artist id
+   * @param artistsPutDto - the request body to update the artist
+   * @return - An ApiResponse object indicating that the artist name was
+   *         updated
+   */
+  @PutMapping("/updateArtistName/{id}")
+  @PreAuthorize("hasRole('" + UserPermissions.UPDATE_ARTIST + "')")
+  @RateLimited(capacity = 20, refillTokens = 20, refillMinutes = 1)
+  public ResponseEntity<ApiResponse<Void>> updateArtistName(@PathVariable Integer id,
+      @Valid @RequestBody ArtistsPutDto artistsPutDto) {
+    artistsService.updateArtist(id, artistsPutDto.name());
+
+    log.info("Artist name updated successfully: {}", artistsPutDto.name());
+
+    return ResponseEntity.status(HttpStatus.OK)
+        .body(new ApiResponse<>(true, "Artist name updated successfully.", null, null));
+  }
+
+  /**
+   * Deletes an Artist by id
+   * 
+   * @param id - Artist id
+   * @return An ApiResponse object indicating that the musical genre was deleted
+   */
+  @DeleteMapping("/delete/{id}")
+  @PreAuthorize("hasRole('" + UserPermissions.DELETE_ARTIST + "')")
+  @RateLimited(capacity = 20, refillTokens = 20, refillMinutes = 1)
+  public ResponseEntity<ApiResponse<Void>> deleteById(@PathVariable Integer id) {
+    artistsService.deleteById(id);
+
+    log.info("Artist deleted successfully: {}", id);
+
+    return ResponseEntity.status(HttpStatus.OK)
+        .body(new ApiResponse<>(true, "Artist deleted successfully.", null, null));
+  }
+}

@@ -1,0 +1,44 @@
+package com.bandsyncapi.bandsyncapi.api.v1.models;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+/*
+ * In this class are defined all the permissions that each role can have.
+ */
+@Entity
+@Data
+@Table(name = "permissions")
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class PermissionsModel {
+
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Integer id;
+
+  @ManyToOne
+  @JoinColumn(name = "type_permission_id", nullable = false)
+  private TypeOfPermissionsModel typeOfPermission;
+
+  @Column(name = "name", nullable = false, unique = true)
+  private String name;
+
+  @Column(name = "status", nullable = false, columnDefinition = "BIT DEFAULT 1")
+  private Boolean status;
+
+  public PermissionsModel(Integer id) {
+    this.id = id;
+  }
+}

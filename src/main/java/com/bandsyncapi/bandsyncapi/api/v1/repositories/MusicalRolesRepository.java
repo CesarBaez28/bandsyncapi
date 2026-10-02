@@ -1,0 +1,73 @@
+package com.bandsyncapi.bandsyncapi.api.v1.repositories;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+import com.bandsyncapi.bandsyncapi.api.v1.models.MusicalRolesModel;
+
+import jakarta.transaction.Transactional;
+
+import java.util.List;
+import java.util.UUID;
+
+/*
+ * This interface is a repository for the musical_roles table in the database.
+ * Provides methods for performing CRUD operations on the musical_roles table.
+ */
+public interface MusicalRolesRepository extends JpaRepository<MusicalRolesModel, Integer> {
+
+  /**
+   * finds musical roles by musical band id
+   * 
+   * @param id - musical band id
+   * @return A MusicalRolesModel list
+   */
+  @Query("""
+      SELECT mr FROM MusicalRolesModel mr
+      JOIN FETCH mr.musicalBand mb
+      WHERE mb.id = :musicalBandId
+      """)
+  List<MusicalRolesModel> findByMusicalBandId(@Param("musicalBandId") UUID musicalBandId);
+
+  /**
+   * finds all musical roles by musical band id with pagination
+   * 
+   * @param musicalBandId - musical band id
+   * @param name          - name
+   * @param pageable      - parameter for pagination
+   * @return A Page List of MusicalRolesModel
+   */
+  @Query("""
+      SELECT mr FROM MusicalRolesModel mr
+      JOIN FETCH mr.musicalBand mb
+      WHERE mb.id = :musicalBandId AND mr.name LIKE %:name%
+        """)
+  Page<MusicalRolesModel> findAllByMusicalBandId(@Param("musicalBandId") UUID musicalBandId, @Param("name") String name,
+      Pageable pageable);
+
+  /**
+   * update musical role name
+   * 
+   * @param id              - musical role id
+   * @param musicalRoleName - new musical role name
+   * @return - The row updated
+   */
+  @Modifying
+  @Transactional
+  @Query("UPDATE MusicalRolesModel mr SET mr.name = :musicalRoleName WHERE mr.id = :id")
+  int updateMusicalRoleName(@Param("id") Integer id, @Param("musicalRoleName") String musicalRoleName);
+
+  /**
+   * Delete by musical band id
+   * 
+   * @param musicalBandId - musical band id
+   */
+  @Modifying
+  @Transactional
+  @Query(value = "DELETE FROM musical_roles WHERE musical_band_id = :musicalBandId", nativeQuery = true)
+  void deleteByMusicalBandId(@Param("musicalBandId") UUID musicalBandId);
+}

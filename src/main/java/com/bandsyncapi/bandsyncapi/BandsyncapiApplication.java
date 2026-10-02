@@ -6,8 +6,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class BandsyncapiApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(BandsyncapiApplication.class, args);
-	}
+  public static void main(String[] args) {
+    SpringApplication.run(BandsyncapiApplication.class, args);
+  }
 
 }
