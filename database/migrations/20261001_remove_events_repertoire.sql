@@ -1,5 +1,7 @@
 -- Delete the column repertoire_id from table events
 
+use bandsync;
+
 SET @repertoire_fk_name = (
     SELECT CONSTRAINT_NAME
     FROM information_schema.KEY_COLUMN_USAGE
