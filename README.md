@@ -490,8 +490,6 @@ The API is protected with:
 - Password reset and email-based recovery flows
 - Two-factor authentication support
 
-This is a strong foundation for a music platform requiring structured access control for bands, roles, and user responsibilities.
-
 ## Typical Use Cases
 
 The API is designed to support:
